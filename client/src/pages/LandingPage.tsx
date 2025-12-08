@@ -269,13 +269,13 @@ export default function LandingPage() {
         </section>
 
         {/* 5. Pain Points */}
-        <section className="py-20 bg-slate-900 text-white">
+        <section className="py-20 bg-slate-50 border-y border-border/50">
           <div className="container mx-auto px-4">
              <div className="text-center mb-16 max-w-3xl mx-auto">
-               <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+               <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
                  Se você usa planilha, você já viveu isso:
                </h2>
-               <p className="text-slate-400 text-lg">
+               <p className="text-muted-foreground text-lg">
                  Deixe o caos manual para trás e assuma o controle estratégico.
                </p>
              </div>
@@ -289,9 +289,9 @@ export default function LandingPage() {
                  { icon: Factory, label: "Produção parada" },
                  { icon: Users, label: "Negociação ruim" },
                ].map((pain, i) => (
-                 <div key={i} className="flex flex-col items-center text-center gap-4 p-6 rounded-2xl bg-slate-800/50 hover:bg-slate-800 transition-colors border border-slate-700">
-                   <pain.icon className="w-8 h-8 text-red-400" />
-                   <span className="font-medium text-slate-200">{pain.label}</span>
+                 <div key={i} className="flex flex-col items-center text-center gap-4 p-6 rounded-2xl bg-white hover:shadow-md transition-all border border-border group">
+                   <pain.icon className="w-8 h-8 text-red-500/80 group-hover:text-red-500 transition-colors" />
+                   <span className="font-medium text-slate-700 group-hover:text-slate-900">{pain.label}</span>
                  </div>
                ))}
              </div>
@@ -476,17 +476,17 @@ export default function LandingPage() {
         </section>
 
         {/* 11. CTA Footer */}
-        <section className="py-20 bg-primary text-white text-center">
+        <section className="py-24 bg-gradient-to-b from-blue-50/50 to-white text-center border-t border-border">
           <div className="container mx-auto px-4">
-             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6">
+             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6 text-foreground">
                Teste a Equalização Grátis e veja a economia.
              </h2>
-             <p className="text-blue-100 text-lg mb-10 max-w-2xl mx-auto">
+             <p className="text-muted-foreground text-lg mb-10 max-w-2xl mx-auto">
                Não requer cartão de crédito. Comece a economizar hoje mesmo.
              </p>
              <Button 
                size="lg" 
-               className="bg-white text-primary hover:bg-blue-50 text-lg px-8 h-14 font-bold shadow-lg"
+               className="bg-primary hover:bg-blue-600 text-white text-lg px-8 h-14 font-bold shadow-xl shadow-blue-500/20"
                onClick={() => scrollToSection("equalization")}
              >
                Testar Equalização Grátis
