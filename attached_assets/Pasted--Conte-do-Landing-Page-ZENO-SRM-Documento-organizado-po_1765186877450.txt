@@ -1,0 +1,367 @@
+# Conteúdo Landing Page — ZENO SRM
+
+> Documento organizado por blocos. Cada bloco tem: 1) objetivo, 2) componentes (texto, imagem, vídeo, CTA), 3) copy sugerida curta e 4) notas de implementação (assets, comportamento, integração CellFlux).
+>
+> **Atualização:** Este documento foi alinhado para garantir **continuidade total** entre a **Ferramenta de Equalização da Landing Page** e a **interface do ZENO**, para zerar curva de aprendizado. O fluxo salva email + economia + data, roda um CRON semanal que agrega por email e envia relatório (resend) para nutrir e converter leads. O usuário que testar na LP encontrará a mesma tela ao entrar no ZENO.
+
+---
+
+## 1 — HEADER (Topo)
+
+**Objetivo:** gerar confiança imediata e oferecer caminho rápido para o teste gratuito.
+
+**Componentes:**
+
+* Logo ZENO (esq.)
+* Menu curto: Soluções | Preços | Para quem é | Entrar
+* CTA principal à direita: **Fazer Equalização Grátis** (botão destacado)
+* CTA secundário menor: **Testar o Sistema Completo**
+
+**Copy curta sugerida:**
+
+* Botão principal: `Fazer Equalização Grátis`
+* Botão secundário: `Testar o Sistema Completo`
+
+**Notas de implementação:**
+
+* Sticky header (fixo ao rolar). Botão principal em cor CTA (#FF5722). Menu apenas ancoras para seções.
+* Mensurar clicks com eventos no CellFlux/GTM.
+
+---
+
+## 2 — HERO (acima da dobra)
+
+**Objetivo:** captar atenção em <3s; prometer valor claro e direto.
+
+**Componentes:**
+
+* Título grande
+* Subtítulo curto
+* CTA primário grande (Equalização)
+* CTA secundário (ver demo)
+* Visual: vídeo 15s / GIF da equalização / imagem do dashboard
+* Microprova social (linha pequena)
+
+**Copy curta sugerida:**
+
+* Título: `Organize suas compras e economize dinheiro — sem planilhas complicadas.`
+* Sub: `Envie cotações, equalize em segundos e veja a economia real.`
+* Microprova: `+1.200 empresas já testaram` (ou placeholder)
+
+**Notas de implementação:**
+
+* Vídeo autoplay muted (loop curto). Priorizar carregamento rápido (webp/gif curto).
+* CTA principal deve rolar até o bloco da ferramenta gratuita.
+
+---
+
+## 3 — BLOCO PRINCIPAL: TESTE GRATUITO DE EQUALIZAÇÃO (Convergente com ZENO)
+
+**Objetivo:** gerar prova imediata de valor, captura de leads e garantir continuidade 1:1 da experiência entre LP e produto.
+
+**Comportamento-chave (estratégia de convergência):**
+
+* A ferramenta apresentada na Landing Page é **idêntica** à interface do ZENO (mesmo layout, mesmas labels, mesmo fluxo). O processamento inicial é feito no frontend para resposta imediata (UX rápida). Após a equalização o resultado é mostrado, mas o resultado completo só é liberado mediante cadastro (email + telefone). Ao cadastrar, o sistema **salva**: email, economia encontrada e data. Esse registro alimenta o pipeline de nutrição e o CRON semanal.
+
+**Componentes:**
+
+* Título e subtítulo explicando em 1 frase
+* Coluna esquerda: passos (ícones)
+* Coluna direita: widget de upload (PDF, XLS, TXT) + área para colar ou digitar
+* Botão: `Equalizar Agora`
+* Resultado em modal/tela com tabela simplificada e badge de economia (ex.: `Economia: R$ 2.180`)
+* Gate de cadastro: resultado completo e opção de baixar relatório ficam disponíveis somente após inserir nome, e-mail e telefone
+
+**Copy curta sugerida:**
+
+* Title: `Teste Grátis: Veja quanto você pode economizar agora`
+* Steps: `1. Envie propostas 2. Clique Equalizar 3. Veja a economia`
+* Botão: `Equalizar Agora`
+* Badge exemplo: `Economia encontrada: R$ 2.180 — você já pagou 4 meses do ZENO.`
+
+**Notas de implementação técnica e de UX:**
+
+* O widget realiza o processamento inicial no frontend (para retorno em segundos). Use WebAssembly / worker para OCR leve e parsing local quando possível. Em paralelo, envie os dados estruturados para backend para validação (se o usuário completar cadastro).
+* Aceitar arrastar e soltar; permitir colar texto; aceitar imagens (OCR simples) e PDFs.
+* Ao final da equalização, exibir modal com resumo e botão `Ver resultado completo` que abre o gate de cadastro.
+* Após cadastro, persistir no backend um registro mínimo: `{email, economia_detectada, data, ip_hash, user_agent}`. Não salvar uploads de arquivos para não infringir privacidade; mantenha somente os dados extraídos.
+* Nomear os eventos para tracking: `equalizacao_init`, `equalizacao_complete_frontend`, `equalizacao_gate_shown`, `lead_cadastro_submitted`.
+* Garantir que a UI/UX do widget seja **pixel-match** com a tela equivalente dentro do ZENO (mesma fonte, botões, labels). Objetivo: quando o lead migrar para o ZENO, ele verá a **mesma tela** e não terá curva de aprendizado.
+
+---
+
+## 4 — PROVA SOCIAL E CASES
+
+**Objetivo:** reduzir objeção mostrando resultados reais.
+
+**Componentes:**
+
+* 3 depoimentos curtos (nome + cargo + economia) em cards
+* Logotipos de clientes (se tiver)
+* Case rápido: número com headline
+
+**Copy curta sugerida:**
+
+* Headline: `O ZENO já ajudou empresas a economizar em compras reais.`
+* Exemplo: `"Economizamos R$ 7.000 em uma única compra" — Cliente X`
+
+**Notas de implementação:**
+
+* Use fotos reais quando possível. Alternativa: ilustrações humanizadas.
+* Eventos de conversão: `lead_veu_case`.
+
+---
+
+## 5 — DOR DO PÚBLICO (simples e direta)
+
+**Objetivo:** fazer o visitante reconhecer a própria dor.
+
+**Componentes:**
+
+* Título curto explicando o problema
+* Lista com 6 cards/ícones (cada um uma dor: planilhas, demora, falta de histórico, erro de compra, produção parada, negociação ruim)
+
+**Copy curta sugerida:**
+
+* Título: `Se você usa planilha, você já viveu isso:`
+* Cards: frases curtas, ex: `Perder orçamentos`, `Falta de histórico`, `Produção parada`.
+
+**Notas de implementação:**
+
+* Tom empático. Evite termos técnicos. Botão: link para testar equalização.
+
+---
+
+## 6 — SOLUÇÃO: FUNCIONALIDADES PRINCIPAIS (blocos claros)
+
+**Objetivo:** apresentar funcionalidades do ZENO alinhadas à linguagem do público.
+
+**Componentes (cada item em card com ícone):**
+
+* Gestão de Solicitações de Compra (8 estágios)
+* Controle de Estoque Inteligente (Estoque vs Spot)
+* Gestão de Fornecedores
+* Produtos Finais + BOM
+* Produção e Simulação MRP
+* Cotações e RFQ por Email
+* Multi-tenant e Controle de Acesso
+* Planos/Preços
+
+**Copy curta sugerida (cada bloco):**
+
+* Ex: `Gestão de Solicitações: Nunca mais perca um pedido. Veja quem faz o quê.`
+
+**Notas de implementação:**
+
+* Cada card linka para seção de detalhe (âncora). Use micro-animações ao passar o mouse.
+
+---
+
+## 7 — DEMONSTRAÇÃO GUIADA (vídeo curto + passo a passo)
+
+**Objetivo:** mostrar fluxo para compradores pouco técnicos.
+
+**Componentes:**
+
+* Vídeo 30–45s (tutorial rápido) com legenda
+* 3 bullets abaixo com passos visuais
+
+**Copy curta sugerida:**
+
+* `Se você sabe usar WhatsApp, sabe usar o ZENO. Veja em 30s.`
+
+**Notas de implementação:**
+
+* Legendas necessárias. Otimizar para mobile.
+
+---
+
+## 8 — PLANOS E PREÇOS (claro e direto)
+
+**Objetivo:** mostrar oferta e reduzir fricção na decisão.
+
+**Componentes:**
+
+* Tabela com 3 planos e bullets de diferenças
+* Destaque do plano recomendado
+* CTA: `Começar teste de 7 dias` e `Falar com o Agente ZENO`
+
+**Copy curta sugerida:**
+
+* Título: `Planos simples. Comece pequeno e cresça quando precisar.`
+* Exemplo badge: `Plano Básico: ideal para pequenas empresas — até 5 usuários`.
+
+**Notas de implementação:**
+
+* Mostrar preço do plano básico (ex: R$ 497/mês). Mostrar economia exemplo comparativa.
+
+---
+
+## 9 — CRON SEMANAL (BACKEND / NURTURING)
+
+**Objetivo:** agregar testes por email, calcular totais e re-engajar leads com um email semanal que resume as economias encontradas.
+
+**Comportamento:**
+
+* Um processo agendado semanalmente (CRON) agrupa registros por email.
+* Para cada email com múltiplos testes, calcular:
+
+  * `total_economias_semana` = soma das economias detectadas
+  * `media_por_teste` = média das economias por teste
+  * `maior_economia` = maior economia detectada
+* Enviar um email automático (Resend) com assunto do tipo: `Resumo ZENO — Você economizou R$ X esta semana` contendo:
+
+  * lista resumida de testes (data, economia)
+  * link para “ver mais” que leva para a conta ZENO (se o usuário já tiver criado) ou para criar conta com o mesmo email
+* Trackear aberturas e cliques: eventos `cron_email_sent`, `cron_email_opened`, `cron_email_clicked`.
+
+**Notas de implementação:**
+
+* Emails devem ser personalizados com o primeiro nome e com número claro de economia (valor absoluto). Incluir CTA para `Ver sua conta` e `Criar acesso agora`.
+* Limitador: não enviar mais que 1 CRON por semana por lead.
+* Se o lead ainda não converteu, o link de “ver mais” direciona ao gate de cadastro com promessa de recuperar histórico caso assine.
+
+---
+
+## 10 — CONVERSÃO: MIGRAÇÃO PARA ZENO (mesma interface)
+
+**Objetivo:** converter leads ao inserir o usuário na mesma interface que ele já usou no site, minimizando churn e curva de aprendizado.
+
+**Fluxo:**
+
+1. Usuário testa na LP → salva email + economia + data
+2. CRON semanal envia resumo → lead abre e clica `Ver mais`
+3. Se lead cria conta com o mesmo email, o sistema **liga** o registro de economia ao workspace dele e apresenta **exatamente a mesma tela** de equalização e histórico (agora persistente) dentro do ZENO
+4. Onboarding automatizado (Agente ZENO) guia o usuário pelo mesmo fluxo que ele já conhece
+
+**Notas de implementação:**
+
+* Na criação de conta, buscar por registros extraídos (email) e sugerir importação automática de testes como “seus testes salvos” na primeira tela do dashboard.
+* A UI deve ser pixel-matched: o widget da LP deve ser o mesmo componente React usado dentro do produto. Se usar iframe na LP, garantir que o path e o CSS sejam idênticos.
+* Eventos de conversão: `lead_converted`, `workspace_linked_tests`, `user_onboarded_complete`.
+
+---
+
+## 11 — COMPARATIVO ANTES / DEPOIS (visual)
+
+**Objetivo:** tornar o ganho tangível e emocional.
+
+**Componentes:**
+
+* Tabela/ilustração com colunas Antes (Excel) / Depois (ZENO)
+* Ícones simples para cada linha (tempo, dinheiro, erros, organização)
+
+**Copy curta sugerida:**
+
+* `Antes: planilha, atrasos, retrabalho. Depois: fluxo, economia, controle.`
+
+**Notas de implementação:**
+
+* Use contraste de cores para facilitar leitura.
+
+---
+
+## 12 — FAQ (respostas simples e objetivas)
+
+**Objetivo:** reduzir objeções rápidas.
+
+**Perguntas sugeridas:**
+
+* Preciso saber Excel? (Não.)
+* Posso usar sozinho? (Sim.)
+* O teste salva os dados? (Sim: email + economia + data. Arquivos não são salvos.)
+* Quanto custa? (R$ 497/mês — exemplo.)
+* Tem suporte? (Sim, via Agente ZENO.)
+
+**Notas de implementação:**
+
+* Cada FAQ linka para a seção correspondente.
+
+---
+
+## 13 — CTA FINAL (rodapé) + Footer
+
+**Objetivo:** última chance de conversão.
+
+**Componentes:**
+
+* Texto curto de reforço: `Teste a Equalização Grátis e veja a economia em minutos.`
+* Botão grande: `Testar Equalização Grátis`
+* Footer com contatos, termos, redes, CNPJ
+
+**Notas de implementação:**
+
+* Botão sticky/mobile sempre visível.
+
+---
+
+## 14 — ASSETS E REQUISITOS TÉCNICOS (detalhado)
+
+**Objetivo:** lista prática para construir a página.
+
+**Assets necessários:**
+
+* Logo em SVG e PNG
+* Vídeo 15s (hero) + vídeo 30–45s (demo)
+* GIF curto da equalização (opcional)
+* Ícones das funcionalidades
+* Fotos ou ilustrações de clientes
+* Texto de depoimentos
+
+**Requisitos técnicos:**
+
+* Front: React/Next.js + Tailwind (ou builder CellFlux)
+* Widget: componente React compartilhado entre LP e produto (mesmo código)
+* APIs: endpoint IA (GPT/Gemini) para extração de propostas (validação no backend)
+* CRON: job semanal para agrupar economias por email e disparar resumo
+* Events: track `equalizacao_init`, `equalizacao_complete_frontend`, `lead_cadastro_submitted`, `cron_email_sent`, `cron_email_opened`, `lead_converted`.
+* Mobile-first design
+
+---
+
+## 15 — FLUXO DE NUTRIÇÃO E AUTOMAÇÃO (para CellFlux)
+
+**Objetivo:** mapear automação após uso do teste gratuito.
+
+**Gatilho:** usuário finalizou equalização e cadastrou (nome, e-mail, telefone)
+
+**Sequência imediata:**
+
+* Dia 0 (imediato): Email com resultado + CTA para criar conta (`Ver resultado completo`) + link para FAQ
+* Dia 1: Email com 3 dicas rápidas para melhorar cotações (educacional)
+* Dia 3: Email com case pequeno (economia real) + convite para demo
+* Dia 5: Email com vídeo rápido (30s) mostrando como o ZENO transfoma o teste em histórico salvo
+* Dia 7: Email de oferta (ex: desconto 10% por 30 dias) + CTA `Criar Conta`.
+
+**Sequência pós-CRON semanal (re-engajamento):**
+
+* Quando o CRON enviar o resumo da semana e o usuário clicar `Ver mais`, direcionar para gate de criação de conta. Se o usuário criar conta com o mesmo e-mail, ligar os testes ao workspace e mostrar os resultados imediatamente.
+
+**Observações:**
+
+* Use o Agente ZENO para mensagens via WhatsApp para leads que abriram o email mas não clicaram no link de criação de conta.
+* Personalizar emails com a economia total encontrada e com mensagens do tipo: "Você economizou R$ X esta semana — veja como transformar isso em rotina".
+
+---
+
+## 16 — CHECKLIST ANTES DO LAUNCH
+
+* Validar widget de upload e o pipeline de IA
+* Garantir pixel-match do componente LP <-> produto
+* Criar vídeos e GIFs (compressão web)
+* Testar rota de cadastro e gate corretamente
+* Implementar tracking (CellFlux/GTM)
+* Teste de velocidade e responsividade
+* Revisão de textos (linguagem simples)
+
+---
+
+## 17 — OBSERVAÇÕES FINAIS
+
+* Priorizar clareza e continuidade: a experiência da LP deve ser 1:1 com o produto.
+* O teste gratuito é a peça central. Toda a página deve empurrar o usuário para testar e voltar ao ZENO.
+* Não salvar arquivos no LP para reduzir barreiras legais e de privacidade; salvar apenas os metadados extraídos.
+
+---
+
+*Fim do documento. Posso atualizar qualquer bloco individualmente quando quiser.*

@@ -1,0 +1,104 @@
+🎨 IDENTIDADE VISUAL - ZENO SRM
+1. CORES
+Cores Primárias
+Nome	Hex	HSL	Uso
+Azul Primário	#2196F3	207 90% 54%	Botões, links, destaques, CTAs
+Azul Escuro	#1976D2	207 90% 41%	Headers, elementos de destaque
+Azul Claro	#BBDEFB	207 89% 86%	Backgrounds suaves, badges info
+Cores de Ação
+Nome	Hex	HSL	Uso
+Laranja (Accent)	#FF5722	14 100% 57%	CTAs importantes, "Começar Grátis"
+Verde	#4CAF50	142 76% 36%	Sucesso, confirmações
+Vermelho	#F44336	0 84% 60%	Erros, alertas
+Cores Neutras
+Nome	Hex	HSL	Uso
+Texto Principal	#212121	0 0% 13%	Títulos, texto corpo
+Texto Secundário	#757575	0 0% 46%	Descrições, labels
+Background	#F8FAFC	210 20% 98%	Fundo da página
+Cards	#FFFFFF	0 0% 100%	Fundo de cards
+Bordas	#E5E7EB	210 14% 89%	Divisores, bordas suaves
+2. TIPOGRAFIA
+Fonte Principal: Montserrat (Google Fonts)
+
+Fallback: Open Sans, sans-serif
+
+Hierarquia
+Tipo	Tamanho	Peso	Tracking	Uso
+H1	32px	Bold (700)	-2%	Títulos principais
+H2	24px	Semibold (600)	-1.5%	Seções
+H3	20px	Semibold (600)	Normal	Subtítulos
+Body	16px	Regular (400)	Normal	Texto corpo
+Small	14px	Regular (400)	Normal	Texto secundário
+Importar no HTML:
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+3. ESTILO GERAL
+Característica	Valor
+Modo	Light Mode (fundo claro) com suporte a Dark Mode
+Estilo	Moderno, minimalista, inspirado em fintechs
+Border Radius	12px (botões), 16px (cards)
+Sombras	Suaves e difusas (não pesadas)
+Sombras (CSS)
+--shadow-sm: 0px 4px 12px -2px hsl(220 26% 14% / 0.06);
+--shadow-md: 0px 12px 28px -6px hsl(220 26% 14% / 0.08);
+
+4. COMPONENTES VISUAIS
+Botões
+Primary (Azul):
+
+background: #2196F3;
+color: white;
+border-radius: 12px;
+padding: 12px 24px;
+font-weight: 600;
+
+Accent (Laranja - CTA):
+
+background: #FF5722;
+color: white;
+border-radius: 12px;
+padding: 12px 24px;
+font-weight: 600;
+
+Outline:
+
+background: transparent;
+border: 1px solid #E5E7EB;
+color: #212121;
+border-radius: 12px;
+
+Cards
+background: #FFFFFF;
+border-radius: 16px;
+padding: 24px;
+box-shadow: 0px 4px 12px -2px hsl(220 26% 14% / 0.06);
+
+5. DARK MODE (Opcional)
+Elemento	Cor
+Background	#1a1a1a (210 20% 10%)
+Cards	#262626 (210 20% 14%)
+Texto	#F5F5F5 (0 0% 95%)
+Bordas	#3D3D3D (210 14% 22%)
+Primário	Mantém #2196F3
+6. ÍCONES
+Biblioteca: Lucide React (ou Lucide Icons)
+
+Tamanho padrão: 20px
+Estilo: Outline (linhas finas)
+7. RESUMO RÁPIDO (Copy & Paste)
+:root {
+  --primary: #2196F3;
+  --primary-dark: #1976D2;
+  --accent: #FF5722;
+  --success: #4CAF50;
+  --danger: #F44336;
+  --text: #212121;
+  --text-muted: #757575;
+  --background: #F8FAFC;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --font: 'Montserrat', 'Open Sans', sans-serif;
+}
