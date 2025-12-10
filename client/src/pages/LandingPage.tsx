@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { EqualizationCalculator } from "@/components/EqualizationCalculator"; // Import Calculator
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -158,8 +157,77 @@ export default function LandingPage() {
         {/* 3. Equalization Widget Section */}
         <section id="equalization" className="py-20 bg-slate-50 relative border-y border-border">
           <div className="container mx-auto px-4">
-            {/* The Calculator Component handles its own title and layout now */}
-            <EqualizationCalculator />
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+                Teste Grátis: Veja quanto você pode economizar
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Envie suas propostas e nossa IA encontrará a melhor combinação de preços.
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
+              {/* Steps */}
+              <div className="lg:col-span-4 flex flex-col justify-center gap-8 lg:pr-8">
+                {[
+                  { icon: Upload, title: "1. Envie propostas", desc: "Faça upload de PDFs, planilhas ou cole o texto." },
+                  { icon: Calculator, title: "2. Clique Equalizar", desc: "Nossa IA processa os itens e preços em segundos." },
+                  { icon: TrendingDown, title: "3. Veja a economia", desc: "Compare e descubra a melhor opção de compra." }
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-4 items-start group">
+                    <div className="w-12 h-12 rounded-xl bg-white border border-border shadow-sm flex items-center justify-center shrink-0 group-hover:border-primary/50 group-hover:shadow-md transition-all">
+                      <step.icon className="text-primary w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg text-foreground mb-1">{step.title}</h3>
+                      <p className="text-muted-foreground leading-snug">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Widget Mockup */}
+              <Card className="lg:col-span-8 border-none shadow-2xl ring-1 ring-border/50 overflow-hidden bg-white">
+                <div className="bg-primary/5 border-b border-primary/10 p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  </div>
+                  <div className="text-xs font-semibold text-primary/70 uppercase tracking-wider">Nova Equalização</div>
+                </div>
+                
+                <CardContent className="p-6 sm:p-8">
+                   {/* Placeholder for the actual functional widget */}
+                   <div className="border-2 border-dashed border-border rounded-xl bg-slate-50/50 p-8 text-center hover:bg-slate-50 transition-colors cursor-pointer group min-h-[300px] flex flex-col items-center justify-center">
+                      <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <Upload className="w-8 h-8 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2">Arraste seus arquivos aqui</h3>
+                      <p className="text-muted-foreground max-w-sm mx-auto mb-6">
+                        Suportamos PDF, Excel (XLSX), CSV e imagens.
+                      </p>
+                      <div className="relative w-full max-w-md">
+                         <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-border"></span>
+                         </div>
+                         <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-slate-50 px-2 text-muted-foreground">Ou cole o texto</span>
+                         </div>
+                      </div>
+                      <Button className="mt-6 bg-primary hover:bg-blue-600">
+                        Selecionar Arquivos
+                      </Button>
+                   </div>
+                   
+                   <div className="mt-8 flex justify-end">
+                      <Button size="lg" className="w-full sm:w-auto bg-accent hover:bg-orange-600 text-white font-bold px-8">
+                         Equalizar Agora
+                      </Button>
+                   </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </section>
 
