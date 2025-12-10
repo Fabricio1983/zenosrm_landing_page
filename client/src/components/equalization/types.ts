@@ -27,25 +27,45 @@ export interface LeadData {
 }
 
 export const MOCK_ITENS: Item[] = [
-  { id: "1", descricao: "Parafuso Sextavado M6 x 20mm", quantidade: 100, unidade: "un" },
-  { id: "2", descricao: "Porca Sextavada M6 Zincada", quantidade: 100, unidade: "un" },
-  { id: "3", descricao: "Arruela Lisa M6 Zincada", quantidade: 200, unidade: "un" },
-  { id: "4", descricao: "Chave de Fenda Cruzada 1/4 x 6", quantidade: 5, unidade: "un" },
-  { id: "5", descricao: "Luva de Proteção Pigmentada", quantidade: 20, unidade: "par" },
+  { id: "1", descricao: "Parafuso Sextavado M6 x 20mm", quantidade: 1000, unidade: "un" },
+  { id: "2", descricao: "Porca Sextavada M6 Zincada", quantidade: 1000, unidade: "un" },
+  { id: "3", descricao: "Arruela Lisa M6 Zincada", quantidade: 2000, unidade: "un" },
+  { id: "4", descricao: "Chave de Fenda Cruzada 1/4 x 6", quantidade: 20, unidade: "un" },
+  { id: "5", descricao: "Luva de Proteção Pigmentada", quantidade: 50, unidade: "par" },
 ];
 
 // Helper to generate mock response based on file upload
 export const generateMockFornecedor = (fileName: string, index: number): Fornecedor => {
   const basePrices = [0.45, 0.25, 0.10, 15.90, 4.50];
-  const variation = 0.85 + Math.random() * 0.3; // Random price variation between -15% and +15%
   
-  // Specific mock logic to ensure "Fornecedor 2" is usually best for some items as per requirements example
-  // But let's make it random enough to be interesting
+  // Strategy to ensure significant savings (> R$ 200):
+  // We create one supplier that is generally cheap but expensive on specific items,
+  // and others that are expensive generally but cheap on those specific items.
+  // This forces the "Mix" to be much better than any single "Package".
+
+  let variation: number;
+  let itemVariations: number[];
+
+  if (index === 0) {
+    // Fornecedor 1: Average overall, but expensive on high volume items
+    variation = 1.0; 
+    itemVariations = [1.2, 1.2, 0.9, 0.9, 1.0]; 
+  } else if (index === 1) {
+    // Fornecedor 2: Good overall (usually best single), but expensive on tools/gloves
+    variation = 0.95;
+    itemVariations = [0.9, 0.9, 1.0, 1.3, 1.3];
+  } else {
+    // Fornecedor 3: Expensive overall, but very cheap on specific high volume items to break the mix
+    variation = 1.1;
+    itemVariations = [0.8, 1.3, 1.2, 0.8, 0.8];
+  }
   
   const precos: PrecoItem[] = MOCK_ITENS.map((item, i) => {
-    // Add some noise to individual item prices
-    const itemVariation = 0.9 + Math.random() * 0.2;
-    const unitPrice = Number((basePrices[i] * variation * itemVariation).toFixed(2));
+    // Add small random noise to make it look organic
+    const noise = 0.98 + Math.random() * 0.04;
+    const itemStrategy = itemVariations[i];
+    
+    const unitPrice = Number((basePrices[i] * variation * itemStrategy * noise).toFixed(2));
     return {
       itemId: item.id,
       precoUnitario: unitPrice,

@@ -58,6 +58,7 @@ export function ResultStep({ fornecedores, onReset }: ResultStepProps) {
   
   // ROI Calculation (Zeno cost R$ 497)
   const zenoMonths = savings / 497;
+  const isHighSavings = savings > 400;
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -73,8 +74,26 @@ export function ResultStep({ fornecedores, onReset }: ResultStepProps) {
           <span>{savingsPercent.toFixed(1)}% de redução de custo</span>
         </div>
         
-        <div className="max-w-xl mx-auto mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-yellow-800 text-sm">
-          💡 <strong>Insight Zeno:</strong> Apenas nesta compra, você pagaria o equivalente a <strong>{zenoMonths.toFixed(1)} meses</strong> da assinatura do Zeno SRM.
+        <div className={`max-w-2xl mx-auto mt-6 p-6 border rounded-xl text-sm shadow-sm transition-all ${
+          isHighSavings ? "bg-green-50 border-green-200 text-green-900" : "bg-yellow-50 border-yellow-200 text-yellow-900"
+        }`}>
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <div className={`p-3 rounded-full shrink-0 ${isHighSavings ? "bg-green-200 text-green-700" : "bg-yellow-200 text-yellow-700"}`}>
+               {isHighSavings ? <Trophy size={24} /> : <TrendingDown size={24} />}
+            </div>
+            <div>
+              <strong className="block text-lg mb-1">Impacto Imediato:</strong>
+              {isHighSavings ? (
+                <span>
+                   Uau! Com a economia de apenas <strong>UMA equalização</strong>, você paga praticamente <strong>o mês inteiro</strong> do Zeno e ainda sobra dinheiro. Imagine esse impacto multiplicado por todas as suas compras do ano.
+                </span>
+              ) : (
+                <span>
+                   Esta equalização sozinha já cobre <strong>{(zenoMonths * 100).toFixed(0)}% da mensalidade</strong> do Zeno. Com apenas mais uma ou duas compras como essa, o sistema sai de graça para sua empresa.
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
