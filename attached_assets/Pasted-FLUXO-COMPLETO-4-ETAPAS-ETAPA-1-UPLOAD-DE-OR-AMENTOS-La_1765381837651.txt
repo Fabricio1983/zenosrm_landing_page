@@ -1,0 +1,158 @@
+FLUXO COMPLETO (4 ETAPAS)
+ETAPA 1: UPLOAD DE ORÇAMENTOS
+Layout:
+
+Título: "Calcule sua Economia com Equalização Inteligente"
+Subtítulo: "Faça upload de 3 orçamentos de fornecedores diferentes"
+3 áreas de drop lado a lado (ou empilhadas no mobile)
+Cada área aceita: PDF, imagem (JPG/PNG), Excel (.xlsx), CSV
+Limite: 10MB por arquivo
+Ao fazer upload, mostrar loading enquanto Gemini processa
+Após processar, mostrar check verde + nome do arquivo
+Visual de cada dropzone:
+┌─────────────────────────┐
+│ 📄 Orçamento 1 │
+│ │
+│ Arraste um arquivo │
+│ ou clique para │
+│ selecionar │
+│ │
+│ PDF, Excel, Imagem │
+└─────────────────────────┘
+
+Após upload com sucesso:
+┌─────────────────────────┐
+│ ✅ proposta_abc.pdf │
+│ Fornecedor: ABC Ltda │ ← Nome extraído pelo Gemini
+│ 10 itens detectados │
+│ [🗑️ Remover] │
+└─────────────────────────┘
+
+Botão: [Processar Orçamentos] (ativo só com 3 arquivos)
+
+ETAPA 2: REVISÃO E EDIÇÃO
+Após Gemini processar os 3 arquivos, mostrar:
+
+Cabeçalho com nomes editáveis:
+┌──────────────────────────────────────────────────────────────┐
+│ Fornecedor 1: [ABC Comercial Ltda ✏️] │
+│ Fornecedor 2: [Fornecedor 2 ✏️] ← Usuário pode editar│
+│ Fornecedor 3: [XYZ Distribuidora ✏️] │
+└──────────────────────────────────────────────────────────────┘
+
+Tabela de itens extraídos:
+┌────────────────────────────────────────────────────────────────────────┐
+│ Item │ Qtd │ ABC Comercial │ Fornecedor 2 │ XYZ Distrib │
+│───────────────────│──────│───────────────│──────────────│─────────────│
+│ Parafuso M6 │ 100 │ R$ 0,50 │ R$ 0,45 ✓ │ R$ 0,55 │
+│ Porca M6 │ 100 │ R$ 0,30 │ R$ 0,35 │ R$ 0,28 ✓ │
+│ Arruela Lisa │ 200 │ R$ 0,15 ✓ │ R$ 0,18 │ R$ 0,16 │
+│ ... │ ... │ ... │ ... │ ... │
+└────────────────────────────────────────────────────────────────────────┘
+
+✓ = menor preço (destacar em verde)
+
+Totais:
+│ TOTAL │ │ R$ 1.250,00 │ R$ 1.180,00 │ R$ 1.320,00 │
+
+Botão: [Ver Minha Economia]
+
+ETAPA 3: CAPTURA DE LEAD (MODAL)
+Quando clicar "Ver Minha Economia", abrir modal:
+
+┌──────────────────────────────────────────────────────┐
+│ │
+│ 📊 Sua equalização está pronta! │
+│ │
+│ Para ver o resultado completo, │
+│ informe seus dados: │
+│ │
+│ Email corporativo * │
+│ [] │
+│ │
+│ Nome da empresa * │
+│ [] │
+│ │
+│ [ Ver Minha Economia ] │
+│ │
+│ 🔒 Seus dados estão seguros │
+│ │
+└──────────────────────────────────────────────────────┘
+
+Validações:
+
+Email obrigatório, formato válido
+Empresa obrigatório, mínimo 2 caracteres
+Bloquear emails pessoais (gmail, hotmail, yahoo)? Opcional.
+ETAPA 4: RESULTADO DA EQUALIZAÇÃO
+Após capturar lead, mostrar:
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 💰 ECONOMIA POTENCIAL │
+│ │
+│ R$ 140,00 │
+│ Economia de 10.6% usando a melhor combinação │
+│ │
+│ 💡 Essa economia paga 0.28 meses de Zeno (R$ 497/mês) │
+│ Imagine fazer isso em TODAS as suas compras! │
+└─────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────┐ ┌────────────────────────────┐
+│ 🏆 MELHOR PACOTE │ │ 🎯 MELHOR COMBINAÇÃO │
+│ Single-Source │ │ Multi-Source │
+│ │ │ │
+│ Fornecedor 2 │ │ Mix de 3 fornecedores │
+│ Cotou todos os itens │ │ Melhor preço por item │
+│ │ │ │
+│ R$ 1.180,00 │ │ R$ 1.040,00 │
+└────────────────────────────┘ └────────────────────────────┘
+
+Tabela da Melhor Combinação:
+┌──────────────────────────────────────────────────────────────┐
+│ Item │ Fornecedor │ Qtd │ Unit. │ Total │
+│───────────────────│─────────────────│──────│────────│───────│
+│ Parafuso M6 │ Fornecedor 2 │ 100 │ R$0,45 │ R$45 │
+│ Porca M6 │ XYZ Distrib │ 100 │ R$0,28 │ R$28 │
+│ Arruela Lisa │ ABC Comercial │ 200 │ R$0,15 │ R$30 │
+│ ... │ ... │ ... │ ... │ ... │
+└──────────────────────────────────────────────────────────────┘
+
+CTA Final (fundo azul primário):
+┌─────────────────────────────────────────────────────────────────┐
+│ │
+│ 🚀 Quer automatizar suas equalizações? │
+│ │
+│ No Zeno você: │
+│ ✓ Envia RFQs por email para fornecedores │
+│ ✓ Recebe propostas automaticamente │
+│ ✓ Equaliza em segundos, não em horas │
+│ ✓ Gera pedidos de compra com 1 clique │
+│ │
+│ [ Começar Agora - 7 dias grátis ] │
+│ │
+└─────────────────────────────────────────────────────────────────┘
+
+Link abaixo: [🔄 Fazer nova simulação] (X/5 restantes hoje)
+
+TELA DE LIMITE ATINGIDO
+Quando usuário tentar a 6ª equalização no mesmo dia:
+
+┌─────────────────────────────────────────────────────────────────┐
+│ │
+│ ⚠️ Você atingiu o limite de 5 equalizações hoje │
+│ │
+│ Com o Zeno você tem: │
+│ │
+│ ✓ Equalizações ilimitadas │
+│ ✓ RFQs automáticas por email │
+│ ✓ Gestão completa de fornecedores │
+│ ✓ Controle de estoque integrado │
+│ ✓ Produção com MRP │
+│ ✓ E muito mais... │
+│ │
+│ Por apenas R$ 497/mês │
+│ │
+│ [ Conhecer o Zeno ] [ Voltar amanhã ] │
+│ │
+└─────────────────────────────────────────────────────────────────┘
+

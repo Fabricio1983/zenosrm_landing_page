@@ -1,0 +1,196 @@
+LÓGICA DE NEGÓCIO
+Nome do Fornecedor
+// Após Gemini processar:
+const nomeExibido = geminiResponse.fornecedor || `Fornecedor ${index + 1}`;
+// Usuário pode editar o nome na Etapa 2
+// O nome editado é usado no resultado final
+
+Rate Limiting (5/dia)
+const STORAGE_KEY = "zeno_demo_usage";
+const DAILY_LIMIT = 5;
+interface UsageData {
+  date: string;      // "2025-01-10"
+  count: number;     // 0-5
+}
+function canPerformEqualization(): boolean {
+  const today = new Date().toISOString().split('T')[0];
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (!data) return true;
+  
+  const usage: UsageData = JSON.parse(data);
+  if (usage.date !== today) return true;
+  
+  return usage.count < DAILY_LIMIT;
+}
+function incrementUsage(): void {
+  const today = new Date().toISOString().split('T')[0];
+  const data = localStorage.getItem(STORAGE_KEY);
+  
+  if (!data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: today, count: 1 }));
+    return;
+  }
+  
+  const usage: UsageData = JSON.parse(data);
+  if (usage.date !== today) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: today, count: 1 }));
+  } else {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: today, count: usage.count + 1 }));
+  }
+}
+function getRemainingToday(): number {
+  const today = new Date().toISOString().split('T')[0];
+  const data = localStorage.getItem(STORAGE_KEY);
+  
+  if (!data) return DAILY_LIMIT;
+  
+  const usage: UsageData = JSON.parse(data);
+  if (usage.date !== today) return DAILY_LIMIT;
+  
+  return Math.max(0, DAILY_LIMIT - usage.count);
+}
+
+Cálculo da Equalização
+interface Item {
+  descricao: string;
+  quantidade: number;
+  precoUnitario: number;
+}
+interface FornecedorData {
+  nome: string;
+  itens: Item[];
+  total: number;
+}
+// Melhor Combinação (multi-source)
+function calcularMelhorCombinacao(fornecedores: FornecedorData[]) {
+  const todosItens = fornecedores[0].itens.map(item => item.descricao);
+  
+  return todosItens.map(descricao => {
+    let menorPreco = Infinity;
+    let melhorFornecedor = "";
+    let quantidade = 0;
+    
+    fornecedores.forEach(f => {
+      const item = f.itens.find(i => i.descricao === descricao);
+      if (item && item.precoUnitario < menorPreco) {
+        menorPreco = item.precoUnitario;
+        melhorFornecedor = f.nome;
+        quantidade = item.quantidade;
+      }
+    });
+    
+    return {
+      descricao,
+      fornecedor: melhorFornecedor,
+      quantidade,
+      precoUnitario: menorPreco,
+      precoTotal: menorPreco * quantidade
+    };
+  });
+}
+// Melhor Pacote (single-source) - fornecedor que cotou TODOS os itens
+function calcularMelhorPacote(fornecedores: FornecedorData[]) {
+  const todosItens = fornecedores[0].itens.map(item => item.descricao);
+  
+  // Filtra fornecedores que cotaram todos os itens
+  const completos = fornecedores.filter(f => {
+    return todosItens.every(desc => 
+      f.itens.some(item => item.descricao === desc && item.precoUnitario > 0)
+    );
+  });
+  
+  if (completos.length === 0) return null;
+  
+  // Retorna o de menor total
+  return completos.reduce((menor, atual) => 
+    atual.total < menor.total ? atual : menor
+  );
+}
+// Economia
+function calcularEconomia(melhorPacote: FornecedorData | null, totalCombinacao: number) {
+  if (!melhorPacote) return 0;
+  return melhorPacote.total - totalCombinacao;
+}
+// ROI vs Zeno
+const MENSALIDADE_ZENO = 497;
+function calcularMesesPagos(economia: number) {
+  return (economia / MENSALIDADE_ZENO).toFixed(2);
+}
+
+BACKEND NECESSÁRIO
+Endpoint: POST /api/process-quote
+Recebe um arquivo, envia para Gemini, retorna JSON com dados extraídos.
+
+// Request
+FormData com campo "file" (arquivo)
+// Response
+{
+  "success": true,
+  "data": {
+    "fornecedor": "ABC Ltda" | null,
+    "itens": [...],
+    "total": 1500.00
+  }
+}
+
+Endpoint: POST /api/capture-lead
+Salva o lead capturado.
+
+// Request
+{
+  "email": "compras@empresa.com",
+  "empresa": "Empresa XYZ",
+  "economia": 140.00,
+  "percentualEconomia": 10.6,
+  "quantidadeItens": 10,
+  "quantidadeFornecedores": 3
+}
+// Response
+{
+  "success": true
+}
+
+COMPONENTES REACT NECESSÁRIOS
+UploadStep.tsx - 3 dropzones para upload
+ReviewStep.tsx - Tabela com dados + edição de nomes
+LeadModal.tsx - Formulário de captura
+ResultStep.tsx - Resultado da equalização
+LimitReached.tsx - Tela de limite atingido
+EqualizacaoDemo.tsx - Componente principal que orquestra tudo
+CONSTANTES
+const MENSALIDADE_ZENO = 497; // R$ 497/mês
+const DAILY_LIMIT = 5; // equalizações por dia
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ACCEPTED_FORMATS = [".pdf", ".xlsx", ".csv", ".jpg", ".jpeg", ".png"];
+
+FORMATAÇÃO DE MOEDA
+const formatCurrency = (value: number) => {
+  return value.toLocaleString("pt-BR", { 
+    style: "currency", 
+    currency: "BRL" 
+  });
+};
+
+DEPENDÊNCIAS
+shadcn/ui
+Button, Card, CardContent, CardHeader, CardTitle
+Badge, Input, Label
+Dialog, DialogContent, DialogHeader, DialogTitle
+Table, TableBody, TableCell, TableHead, TableHeader, TableRow
+Progress (para loading)
+Lucide Icons
+Upload, FileText, Check, X, Trash2
+TrendingDown, Award, Trophy, Target
+ArrowRight, RefreshCw, Lock
+Building2, Mail
+Outras
+Integração Gemini do Replit (AI Integrations)
+REGRAS DE NEGÓCIO RESUMO
+Regra	Comportamento
+Nome fornecedor	Gemini extrai → se null, usa "Fornecedor N"
+Edição nome	Usuário pode editar na Etapa 2
+Lead obrigatório	Resultado só aparece após email
+Rate limit	5/dia por navegador (localStorage)
+Limite atingido	CTA para conhecer Zeno
+Formatos aceitos	PDF, Excel, CSV, JPG, PNG
+Tamanho máximo	10MB por arquivo
