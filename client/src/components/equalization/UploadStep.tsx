@@ -119,8 +119,47 @@ export function UploadStep({ onComplete }: UploadStepProps) {
           {isProcessing ? 'Processando...' : 'Processar Orçamentos'}
         </Button>
       </div>
+
+      {!isProcessing && files.length === 0 && (
+        <div className="text-center pt-2">
+          <button 
+            onClick={() => {
+              // Create dummy files for simulation
+              const dummyFiles = [
+                new File([""], "Orçamento_Parafusos_A.pdf", { type: "application/pdf" }),
+                new File([""], "Orçamento_Fornecedor_B.xlsx", { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
+                new File([""], "Orçamento_Distribuidora_C.pdf", { type: "application/pdf" })
+              ];
+              setFiles(dummyFiles);
+              // Small timeout to allow UI to update before processing starts
+              setTimeout(() => {
+                // Trigger process automatically or let user click? 
+                // Let's just fill them and let user click process to feel control, 
+                // OR trigger the process function logic directly.
+                // Re-using the logic requires extraction or state manipulation.
+                // For simplicity in this event handler:
+                setIsProcessing(true);
+                let p = 0;
+                const interval = setInterval(() => {
+                  p += 5;
+                  if (p > 100) {
+                    clearInterval(interval);
+                    setIsProcessing(false);
+                    onComplete(dummyFiles);
+                  } else {
+                    setProgress(p);
+                  }
+                }, 150);
+              }, 500);
+            }}
+            className="text-sm text-primary hover:underline font-medium"
+          >
+            Não tem arquivos agora? <span className="font-bold">Simular com dados de exemplo</span>
+          </button>
+        </div>
+      )}
       
-      {files.length < 2 && !isProcessing && (
+      {files.length < 2 && files.length > 0 && !isProcessing && (
         <p className="text-center text-xs text-muted-foreground">Adicione pelo menos 2 orçamentos para comparar.</p>
       )}
     </div>
