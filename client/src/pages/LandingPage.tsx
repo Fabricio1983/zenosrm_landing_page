@@ -74,7 +74,7 @@ export default function LandingPage() {
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center gap-3">
             <Button variant="outline" className="hidden lg:flex border-primary text-primary hover:bg-blue-50">
-              Testar Sistema
+              Testar Zeno
             </Button>
             <Button 
               className="bg-accent hover:bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/20"
