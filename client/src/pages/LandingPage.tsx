@@ -153,17 +153,6 @@ export default function LandingPage() {
                 Ver Demo Interativa
               </Button>
             </div>
-
-            {/* Hero Visual / Video Placeholder */}
-            <div className="relative mx-auto max-w-5xl rounded-xl sm:rounded-2xl border border-border shadow-2xl overflow-hidden bg-slate-900 group">
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/5 transition-colors cursor-pointer z-10">
-              </div>
-              <img 
-                src="/assets/dashboard.png" 
-                alt="Zeno Dashboard" 
-                className="w-full h-auto object-cover"
-              />
-            </div>
           </div>
         </section>
 
