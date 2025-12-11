@@ -62,7 +62,13 @@ export default function LandingPage() {
             <button onClick={() => scrollToSection("solutions")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Soluções</button>
             <button onClick={() => scrollToSection("pricing")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Preços</button>
             <button onClick={() => scrollToSection("faq")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Para quem é</button>
-            <Button variant="ghost" className="text-primary font-semibold hover:bg-blue-50">Entrar</Button>
+            <Button 
+              variant="ghost" 
+              className="text-primary font-semibold hover:bg-blue-50"
+              onClick={() => window.location.href = "https://app.zenosrm.com"}
+            >
+              Entrar
+            </Button>
           </nav>
 
           {/* Desktop CTAs */}
@@ -91,7 +97,13 @@ export default function LandingPage() {
             <button onClick={() => scrollToSection("pricing")} className="text-left py-2 font-medium text-muted-foreground">Preços</button>
             <button onClick={() => scrollToSection("faq")} className="text-left py-2 font-medium text-muted-foreground">Para quem é</button>
             <div className="flex flex-col gap-3 mt-2">
-              <Button variant="ghost" className="justify-start text-primary">Entrar</Button>
+              <Button 
+                variant="ghost" 
+                className="justify-start text-primary"
+                onClick={() => window.location.href = "https://app.zenosrm.com"}
+              >
+                Entrar
+              </Button>
               <Button 
                 className="w-full bg-accent hover:bg-orange-600 text-white"
                 onClick={() => scrollToSection("equalization")}
