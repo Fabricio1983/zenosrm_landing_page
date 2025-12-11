@@ -469,24 +469,26 @@ export default function LandingPage() {
 
         {/* 10. FAQ */}
         <section id="faq" className="py-20 bg-white">
-          <div className="container mx-auto px-4 max-w-3xl">
-            <h2 className="text-3xl font-heading font-bold mb-8 text-center">Perguntas Frequentes</h2>
+          <div className="container mx-auto px-4 max-w-5xl">
+            <h2 className="text-3xl font-heading font-bold mb-12 text-center">Perguntas Frequentes</h2>
             
-            <Accordion type="single" collapsible className="w-full">
+            <div className="grid md:grid-cols-2 gap-6">
               {[
                 { q: "Preciso saber usar Excel?", a: "Não! O Zeno substitui as planilhas complexas por uma interface visual e intuitiva." },
                 { q: "Posso usar sozinho?", a: "Sim, o plano Start é perfeito para compradores individuais ou equipes pequenas." },
                 { q: "O teste salva meus dados?", a: "Sim. Se você criar uma conta após o teste, todos os dados da equalização são salvos no seu histórico." },
                 { q: "Tem suporte?", a: "Sim, oferecemos suporte via chat e email em todos os planos, com gerente de conta no Enterprise." }
               ].map((item, i) => (
-                <AccordionItem key={i} value={`item-${i}`}>
-                  <AccordionTrigger className="text-left font-semibold text-lg">{item.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground text-base">
-                    {item.a}
-                  </AccordionContent>
-                </AccordionItem>
+                <Card key={i} className="border border-border shadow-sm hover:shadow-md transition-all bg-white h-full">
+                  <CardContent className="p-6 flex flex-col justify-center h-full">
+                    <h3 className="font-bold text-lg mb-3 text-foreground">{item.q}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {item.a}
+                    </p>
+                  </CardContent>
+                </Card>
               ))}
-            </Accordion>
+            </div>
           </div>
         </section>
 
