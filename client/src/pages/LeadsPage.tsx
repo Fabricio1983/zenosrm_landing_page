@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download, Trash2, ArrowLeft } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Download, Trash2, ArrowLeft, Lock } from "lucide-react";
 import { Link } from "wouter";
 
 interface Lead {
@@ -13,12 +15,37 @@ interface Lead {
 }
 
 export default function LeadsPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [leads, setLeads] = useState<Lead[]>([]);
 
   useEffect(() => {
+    // Check if previously authenticated in this session
+    const auth = sessionStorage.getItem("leads_admin_auth");
+    if (auth === "true") {
+      setIsAuthenticated(true);
+      loadLeads();
+    }
+  }, []);
+
+  const loadLeads = () => {
     const savedLeads = JSON.parse(localStorage.getItem('zeno_demo_leads') || '[]');
     setLeads(savedLeads);
-  }, []);
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email === "fabricio.7f@gmail.com" && password === "@Aug325791") {
+      setIsAuthenticated(true);
+      sessionStorage.setItem("leads_admin_auth", "true");
+      loadLeads();
+      setError("");
+    } else {
+      setError("Credenciais inválidas");
+    }
+  };
 
   const clearLeads = () => {
     if (confirm("Tem certeza que deseja limpar todos os leads?")) {
@@ -42,6 +69,50 @@ export default function LeadsPage() {
     document.body.appendChild(link);
     link.click();
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-xl">
+          <CardHeader className="space-y-2 text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-2">
+              <Lock size={24} />
+            </div>
+            <CardTitle className="text-2xl font-bold">Acesso Restrito</CardTitle>
+            <CardDescription>Área administrativa de leads</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  placeholder="admin@zeno.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-11"
+                />
+              </div>
+              {error && <p className="text-sm text-red-500 font-medium text-center">{error}</p>}
+              <Button type="submit" className="w-full h-11 font-bold">Entrar</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 p-8">
