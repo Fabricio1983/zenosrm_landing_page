@@ -80,7 +80,7 @@ export default function LandingPage() {
               className="bg-accent hover:bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/20"
               onClick={() => scrollToSection("equalization")}
             >
-              Fazer Equalização Grátis
+              Equalize orçamentos grátis
             </Button>
           </div>
 
@@ -108,7 +108,7 @@ export default function LandingPage() {
                 className="w-full bg-accent hover:bg-orange-600 text-white"
                 onClick={() => scrollToSection("equalization")}
               >
-                Fazer Equalização Grátis
+                Equalize orçamentos grátis
               </Button>
             </div>
           </div>
