@@ -506,7 +506,7 @@ export default function LandingPage() {
                className="bg-primary hover:bg-blue-600 text-white text-lg px-8 h-14 font-bold shadow-xl shadow-blue-500/20"
                onClick={() => scrollToSection("equalization")}
              >
-               Testar Equalização Grátis
+               Equalize orçamentos grátis
              </Button>
           </div>
         </section>
