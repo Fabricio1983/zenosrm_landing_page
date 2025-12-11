@@ -163,6 +163,89 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* 3.5 ROI / Value Proposition Section */}
+        <section className="py-20 bg-white border-b border-border">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                Matemática simples: O Zeno se paga no primeiro mês.
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Não é apenas um software, é uma ferramenta de geração de caixa para sua empresa.
+              </p>
+            </div>
+
+            {/* Group A: Numbers */}
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              <Card className="border-none shadow-lg hover:shadow-xl transition-all bg-blue-50/50">
+                <CardContent className="p-8 text-center flex flex-col items-center h-full">
+                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-6 text-blue-600">
+                    <TrendingDown size={32} strokeWidth={2.5} />
+                  </div>
+                  <div className="text-4xl font-bold text-blue-600 mb-2">8% a 15%</div>
+                  <h3 className="font-bold text-lg mb-3">de Economia Real</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Em cada compra realizada. Compare fornecedores inteligentemente e pague menos pelo mesmo item. Geralmente, uma única compra já paga a mensalidade.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-none shadow-lg hover:shadow-xl transition-all bg-orange-50/50">
+                <CardContent className="p-8 text-center flex flex-col items-center h-full">
+                  <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-6 text-orange-600">
+                    <Clock size={32} strokeWidth={2.5} />
+                  </div>
+                  <div className="text-4xl font-bold text-orange-600 mb-2">-60%</div>
+                  <h3 className="font-bold text-lg mb-3">Tempo Operacional</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Sua equipe custa caro. Libere horas de digitação e planilhas para que eles negociem melhor e foquem em estratégia.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-none shadow-lg hover:shadow-xl transition-all bg-green-50/50">
+                <CardContent className="p-8 text-center flex flex-col items-center h-full">
+                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6 text-green-600">
+                    <BarChart3 size={32} strokeWidth={2.5} />
+                  </div>
+                  <div className="text-4xl font-bold text-green-600 mb-2">Cumulativo</div>
+                  <h3 className="font-bold text-lg mb-3">Ganhos Mensais</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    A mensalidade é fixa, mas sua economia cresce. Quanto mais você compra pelo Zeno, maior é o retorno financeiro no final do mês.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Group B: Security & Strategy */}
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              <div className="flex gap-6 p-6 rounded-xl border border-border hover:border-primary/30 transition-colors">
+                <div className="shrink-0 w-12 h-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
+                  <Shield size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-xl mb-2">Fim das Compras Erradas</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Elimine erros de digitação e compras de última hora ou emergenciais, que geram prejuízos dezenas de vezes maiores que o custo do sistema.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-6 p-6 rounded-xl border border-border hover:border-primary/30 transition-colors">
+                <div className="shrink-0 w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
+                  <Calculator size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-xl mb-2">Decisões Baseadas em Dados</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Chega de "achismo". Tenha histórico de preços, análise tributária e comparativos estruturados para nunca mais pagar caro por falta de informação.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* 4. Social Proof */}
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
