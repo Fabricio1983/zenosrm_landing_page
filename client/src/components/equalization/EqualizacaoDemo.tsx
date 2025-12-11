@@ -25,7 +25,16 @@ export function EqualizacaoDemo() {
   };
 
   const handleLeadSubmit = (data: any) => {
-    console.log("Lead captured:", data);
+    // Save to localStorage for demo purposes
+    const newLead = {
+      ...data,
+      date: new Date().toISOString(),
+      id: Math.random().toString(36).substr(2, 9)
+    };
+    
+    const existingLeads = JSON.parse(localStorage.getItem('zeno_demo_leads') || '[]');
+    localStorage.setItem('zeno_demo_leads', JSON.stringify([newLead, ...existingLeads]));
+
     // Simulate API call
     setTimeout(() => {
       setIsModalOpen(false);

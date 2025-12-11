@@ -473,8 +473,9 @@ export default function LandingPage() {
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs">
-          © {new Date().getFullYear()} Zeno SRM. Todos os direitos reservados.
+        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs flex justify-between items-center text-slate-500">
+          <span>© {new Date().getFullYear()} Zeno SRM. Todos os direitos reservados.</span>
+          <a href="/leads-admin" className="hover:text-slate-300 transition-colors">Admin Access</a>
         </div>
       </footer>
     </div>
