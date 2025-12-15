@@ -8,6 +8,7 @@ function getGenAI(): GoogleGenerativeAI {
     if (!apiKey) {
       throw new Error("GEMINI_LP_ZENO or GEMINI_API environment variable is required. Please add it to your secrets.");
     }
+    console.log(`Using Gemini API key starting with: ${apiKey.substring(0, 8)}...`);
     genAI = new GoogleGenerativeAI(apiKey);
   }
   return genAI;
