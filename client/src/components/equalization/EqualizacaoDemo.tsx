@@ -214,6 +214,11 @@ export function EqualizacaoDemo() {
     }
   };
 
+  const handleBack = () => {
+    // Go back to upload step to allow changing/replacing files
+    setStep(1);
+  };
+
   // Block Modal Content
   const getBlockContent = () => {
     switch (blockReason) {
@@ -261,7 +266,7 @@ export function EqualizacaoDemo() {
         <CardContent className="p-6 md:p-10">
           {step === 1 && <UploadStep onComplete={handleUploadComplete} />}
           {step === 2 && <ReviewStep fornecedores={fornecedores} onConfirm={handleReviewConfirm} />}
-          {step === 4 && <ResultStep fornecedores={fornecedores} onReset={handleReset} />}
+          {step === 4 && <ResultStep fornecedores={fornecedores} onReset={handleReset} onBack={handleBack} />}
         </CardContent>
       </Card>
 

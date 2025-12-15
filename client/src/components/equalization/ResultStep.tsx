@@ -2,15 +2,16 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Fornecedor, MOCK_ITENS, formatCurrency } from './types';
-import { ArrowRight, Check, Trophy, TrendingDown, RefreshCw, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Check, Trophy, TrendingDown, RefreshCw, BarChart3 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface ResultStepProps {
   fornecedores: Fornecedor[];
   onReset: () => void;
+  onBack: () => void;
 }
 
-export function ResultStep({ fornecedores, onReset }: ResultStepProps) {
+export function ResultStep({ fornecedores, onReset, onBack }: ResultStepProps) {
   // Logic to calculate best combination
   const getBestCombination = () => {
     let total = 0;
@@ -228,15 +229,24 @@ export function ResultStep({ fornecedores, onReset }: ResultStepProps) {
         </CardContent>
       </Card>
 
-      <div className="text-center pb-8">
+      <div className="text-center pb-8 flex flex-col sm:flex-row gap-4 justify-center">
         <Button 
-          onClick={onReset}
+          onClick={onBack}
           variant="outline"
           size="lg"
           className="gap-2 font-semibold"
         >
+          <ArrowLeft size={16} />
+          Voltar e Editar Orçamentos
+        </Button>
+        <Button 
+          onClick={onReset}
+          variant="ghost"
+          size="lg"
+          className="gap-2 font-semibold text-muted-foreground"
+        >
           <RefreshCw size={16} />
-          Reiniciar Equalização
+          Reiniciar do Zero
         </Button>
       </div>
     </div>
