@@ -4,10 +4,11 @@ let genAI: GoogleGenerativeAI | null = null;
 
 function getGenAI(): GoogleGenerativeAI {
   if (!genAI) {
-    if (!process.env.GEMINI_API) {
-      throw new Error("GEMINI_API environment variable is required. Please add it to your secrets.");
+    const apiKey = process.env.GEMINI_LP_ZENO || process.env.GEMINI_API;
+    if (!apiKey) {
+      throw new Error("GEMINI_LP_ZENO or GEMINI_API environment variable is required. Please add it to your secrets.");
     }
-    genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
+    genAI = new GoogleGenerativeAI(apiKey);
   }
   return genAI;
 }
