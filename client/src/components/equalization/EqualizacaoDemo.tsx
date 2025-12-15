@@ -214,13 +214,10 @@ export function EqualizacaoDemo() {
   };
 
   const handleReset = () => {
-    // Re-check limits before allowing reset
-    checkLimits();
-    if (!isBlocked) {
-      setFornecedores([]);
-      setUploadedFiles([]);
-      setStep(1);
-    }
+    // Clear all data and go back to upload step
+    setFornecedores([]);
+    setUploadedFiles([]);
+    setStep(1);
   };
 
   const handleBack = () => {
