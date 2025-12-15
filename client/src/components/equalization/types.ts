@@ -26,6 +26,26 @@ export interface LeadData {
   empresa: string;
 }
 
+export interface UsageStats {
+  firstVisit: number; // Timestamp
+  lastVisitDate: string; // YYYY-MM-DD
+  dailyCount: number;
+}
+
+export interface AppConfig {
+  dailyLimit: number;
+  sessionLimit: number;
+  trialDays: number;
+  enableLimits: boolean;
+}
+
+export const DEFAULT_CONFIG: AppConfig = {
+  dailyLimit: 5,
+  sessionLimit: 3,
+  trialDays: 7,
+  enableLimits: true
+};
+
 export const MOCK_ITENS: Item[] = [
   { id: "1", descricao: "Parafuso Sextavado M6 x 20mm", quantidade: 1000, unidade: "un" },
   { id: "2", descricao: "Porca Sextavada M6 Zincada", quantidade: 1000, unidade: "un" },
