@@ -237,18 +237,20 @@ export function ResultStep({ fornecedores, onReset, onBack }: ResultStepProps) {
           onClick={onBack}
           variant="outline"
           size="lg"
-          className="gap-2 font-semibold"
+          className="gap-2 font-semibold border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200 h-12 px-6"
+          data-testid="button-back-to-edit"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={18} />
           Voltar e Editar Orçamentos
         </Button>
         <Button 
           onClick={onReset}
-          variant="ghost"
+          variant="outline"
           size="lg"
-          className="gap-2 font-semibold text-muted-foreground"
+          className="gap-2 font-semibold border-2 border-red-400 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-200 h-12 px-6"
+          data-testid="button-reset"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={18} />
           Reiniciar do Zero
         </Button>
       </div>
