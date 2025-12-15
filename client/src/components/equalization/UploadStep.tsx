@@ -107,8 +107,8 @@ export function UploadStep({ onComplete }: UploadStepProps) {
           <div key={i} className="relative">
             {files[i] ? (
               <Card className="h-48 border-2 border-primary/20 bg-blue-50/50 flex flex-col items-center justify-center p-4 relative overflow-hidden group">
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => removeFile(i)} className="p-1 hover:bg-red-100 rounded-full text-red-500" data-testid={`button-remove-file-${i}`}>
+                <div className="absolute top-2 right-2">
+                  <button onClick={() => removeFile(i)} className="p-1.5 bg-red-100 hover:bg-red-200 rounded-full text-red-500 transition-colors" data-testid={`button-remove-file-${i}`}>
                     <X size={16} />
                   </button>
                 </div>
