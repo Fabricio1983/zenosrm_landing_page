@@ -80,10 +80,9 @@ export function LeadModal({ open, onOpenChange, onSubmit }: LeadModalProps) {
               Ver Minha Economia
             </Button>
             
-            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Lock size={12} />
-              <span>Seus dados estão seguros e não serão compartilhados.</span>
-            </div>
+            <p className="text-xs text-center text-muted-foreground leading-relaxed">
+              Ao preencher, você concorda em receber dicas e novidades sobre o universo de compras. Pode cancelar a qualquer momento.
+            </p>
           </form>
         </Form>
       </DialogContent>
