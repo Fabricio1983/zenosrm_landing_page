@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 const formSchema = z.object({
   empresa: z.string().min(2, "Nome da empresa é obrigatório"),
   email: z.string().email("Email inválido"),
+  telefone: z.string().optional(),
 });
 
 interface LeadModalProps {
@@ -26,6 +27,7 @@ export function LeadModal({ open, onOpenChange, onSubmit }: LeadModalProps) {
     defaultValues: {
       empresa: "",
       email: "",
+      telefone: "",
     },
   });
 
@@ -69,14 +71,28 @@ export function LeadModal({ open, onOpenChange, onSubmit }: LeadModalProps) {
                 <FormItem>
                   <FormLabel>Email Corporativo *</FormLabel>
                   <FormControl>
-                    <Input placeholder="seunome@empresa.com" {...field} className="h-11" />
+                    <Input placeholder="seunome@empresa.com" {...field} className="h-11" data-testid="input-email" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20">
+            <FormField
+              control={form.control}
+              name="telefone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone / WhatsApp</FormLabel>
+                  <FormControl>
+                    <Input placeholder="(11) 99999-9999" {...field} className="h-11" data-testid="input-telefone" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20" data-testid="button-submit-lead">
               Ver Minha Economia
             </Button>
             

@@ -7,6 +7,7 @@ export const leads = pgTable("leads", {
   id: serial("id").primaryKey(),
   email: text("email").notNull(),
   empresa: text("empresa").notNull(),
+  telefone: text("telefone"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

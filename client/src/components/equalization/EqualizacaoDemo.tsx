@@ -14,7 +14,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Lock } from 'lucide-react';
+import { Lock, Phone, Unlock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export function EqualizacaoDemo() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -25,6 +27,8 @@ export function EqualizacaoDemo() {
   // Limit Control State
   const [isBlocked, setIsBlocked] = useState(false);
   const [blockReason, setBlockReason] = useState<"trial" | "daily" | "session" | null>(null);
+  const [unlockPhone, setUnlockPhone] = useState("");
+  const [isUnlocking, setIsUnlocking] = useState(false);
 
   useEffect(() => {
     checkLimits();
@@ -223,6 +227,40 @@ export function EqualizacaoDemo() {
     setStep(1);
   };
 
+  const handleUnlockWithPhone = async () => {
+    if (!unlockPhone || unlockPhone.length < 10) return;
+    
+    setIsUnlocking(true);
+    
+    try {
+      // Save phone lead to backend
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lead: { 
+            empresa: 'Desbloqueio por telefone', 
+            email: 'unlock@session.local',
+            telefone: unlockPhone 
+          },
+          fornecedores: [],
+          items: [],
+          totalSavings: 0,
+        }),
+      });
+
+      // Reset session count to allow more uses
+      sessionStorage.setItem('zeno_session_count', '0');
+      setIsBlocked(false);
+      setBlockReason(null);
+      setUnlockPhone("");
+    } catch (error) {
+      console.error('Error unlocking:', error);
+    } finally {
+      setIsUnlocking(false);
+    }
+  };
+
   // Block Modal Content
   const getBlockContent = () => {
     switch (blockReason) {
@@ -255,14 +293,54 @@ export function EqualizacaoDemo() {
         {isBlocked && step === 1 && (
            <div className="absolute inset-0 z-50 bg-white/60 backdrop-blur-[2px] flex items-center justify-center rounded-xl">
              <div className="bg-white p-8 rounded-xl shadow-2xl border max-w-md text-center">
-               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
-                 <Lock size={32} />
-               </div>
-               <h3 className="text-xl font-bold mb-2">{blockContent.title}</h3>
-               <p className="text-muted-foreground mb-6">{blockContent.desc}</p>
-               <button onClick={() => window.open("https://wa.me/5511999999999", "_blank")} className="w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                 Falar com Consultor
-               </button>
+               {blockReason === "session" ? (
+                 <>
+                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+                     <Phone size={32} />
+                   </div>
+                   <h3 className="text-xl font-bold mb-2">Quer continuar equalizando?</h3>
+                   <p className="text-muted-foreground mb-4">
+                     Informe seu telefone para liberar mais simulações agora, ou volte amanhã.
+                   </p>
+                   <div className="space-y-4">
+                     <Input
+                       type="tel"
+                       placeholder="(11) 99999-9999"
+                       value={unlockPhone}
+                       onChange={(e) => setUnlockPhone(e.target.value)}
+                       className="h-12 text-center text-lg"
+                       data-testid="input-unlock-phone"
+                     />
+                     <Button 
+                       onClick={handleUnlockWithPhone}
+                       disabled={unlockPhone.length < 10 || isUnlocking}
+                       className="w-full h-12 font-bold"
+                       data-testid="button-unlock"
+                     >
+                       {isUnlocking ? "Liberando..." : (
+                         <>
+                           <Unlock size={18} className="mr-2" />
+                           Liberar Mais Simulações
+                         </>
+                       )}
+                     </Button>
+                     <p className="text-xs text-muted-foreground">
+                       Ou volte amanhã para mais simulações gratuitas.
+                     </p>
+                   </div>
+                 </>
+               ) : (
+                 <>
+                   <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+                     <Lock size={32} />
+                   </div>
+                   <h3 className="text-xl font-bold mb-2">{blockContent.title}</h3>
+                   <p className="text-muted-foreground mb-6">{blockContent.desc}</p>
+                   <button onClick={() => window.open("https://wa.me/5511999999999", "_blank")} className="w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                     Falar com Consultor
+                   </button>
+                 </>
+               )}
              </div>
            </div>
         )}
