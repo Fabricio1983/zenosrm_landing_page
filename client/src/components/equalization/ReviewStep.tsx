@@ -91,13 +91,13 @@ export function ReviewStep({ fornecedores: initialFornecedores, onConfirm, onBac
     return lowest === Infinity ? "" : fornecedorId;
   };
 
-  const isManualComplete = (f: Fornecedor) => {
-    if (!f.isManual) return true;
+  const isFornecedorComplete = (f: Fornecedor) => {
     if (!f.nome.trim()) return false;
-    return f.precos.every(p => p.precoUnitario !== null && p.precoUnitario > 0);
+    const hasAllPrices = f.precos.every(p => p.precoUnitario !== null && p.precoUnitario > 0);
+    return hasAllPrices && f.total > 0;
   };
 
-  const canConfirm = fornecedores.length >= 2 && fornecedores.every(isManualComplete);
+  const canConfirm = fornecedores.length >= 2 && fornecedores.every(isFornecedorComplete);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

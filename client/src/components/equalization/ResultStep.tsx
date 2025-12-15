@@ -46,7 +46,9 @@ export function ResultStep({ fornecedores, onReset, onBack }: ResultStepProps) {
   };
 
   const getBestSinglePackage = () => {
-    return fornecedores.reduce((prev, curr) => prev.total < curr.total ? prev : curr);
+    const validFornecedores = fornecedores.filter(f => f.total > 0);
+    if (validFornecedores.length === 0) return fornecedores[0];
+    return validFornecedores.reduce((prev, curr) => prev.total < curr.total ? prev : curr);
   };
 
   const bestCombo = getBestCombination();
