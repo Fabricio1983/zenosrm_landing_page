@@ -228,9 +228,9 @@ export function EqualizacaoDemo() {
     setStep(1);
   };
 
-  const handleBackToReview = () => {
-    // Go back to review step to edit suppliers
-    setStep(2);
+  const handleBackToUpload = () => {
+    // Go back to upload step keeping files for editing
+    setStep(1);
   };
 
   const handleUnlockWithPhone = async () => {
@@ -354,7 +354,7 @@ export function EqualizacaoDemo() {
         <CardContent className="p-6 md:p-10">
           {step === 1 && <UploadStep onComplete={handleUploadComplete} initialFiles={uploadedFiles} />}
           {step === 2 && <ReviewStep fornecedores={fornecedores} onConfirm={handleReviewConfirm} onBack={handleBack} />}
-          {step === 4 && <ResultStep fornecedores={fornecedores} onReset={handleReset} onBack={handleBackToReview} />}
+          {step === 4 && <ResultStep fornecedores={fornecedores} onReset={handleReset} onBack={handleBackToUpload} />}
         </CardContent>
       </Card>
 
