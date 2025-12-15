@@ -3,16 +3,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Check, Pencil, ArrowLeft, Plus, X } from 'lucide-react';
-import { Fornecedor, MOCK_ITENS, formatCurrency, PrecoItem } from './types';
+import { Fornecedor, Item, formatCurrency, PrecoItem } from './types';
 import { Badge } from '@/components/ui/badge';
 
 interface ReviewStepProps {
   fornecedores: Fornecedor[];
+  items: Item[];
   onConfirm: (updatedFornecedores: Fornecedor[]) => void;
   onBack: () => void;
 }
 
-export function ReviewStep({ fornecedores: initialFornecedores, onConfirm, onBack }: ReviewStepProps) {
+export function ReviewStep({ fornecedores: initialFornecedores, items, onConfirm, onBack }: ReviewStepProps) {
   const [fornecedores, setFornecedores] = useState(initialFornecedores);
 
   const handleNameChange = (id: string, newName: string) => {
@@ -21,7 +22,7 @@ export function ReviewStep({ fornecedores: initialFornecedores, onConfirm, onBac
 
   const handlePriceChange = (fornecedorId: string, itemId: string, value: string) => {
     const numValue = parseFloat(value.replace(',', '.')) || 0;
-    const item = MOCK_ITENS.find(i => i.id === itemId);
+    const item = items.find(i => i.id === itemId);
     const quantidade = item?.quantidade || 1;
     
     setFornecedores(prev => prev.map(f => {
@@ -53,7 +54,7 @@ export function ReviewStep({ fornecedores: initialFornecedores, onConfirm, onBac
     if (fornecedores.length >= 3) return;
     
     const newId = `manual-${Date.now()}`;
-    const emptyPrecos: PrecoItem[] = MOCK_ITENS.map(item => ({
+    const emptyPrecos: PrecoItem[] = items.map((item: Item) => ({
       itemId: item.id,
       precoUnitario: null,
       precoTotal: null
@@ -164,7 +165,7 @@ export function ReviewStep({ fornecedores: initialFornecedores, onConfirm, onBac
               </TableRow>
             </TableHeader>
             <TableBody>
-              {MOCK_ITENS.map(item => {
+              {items.map((item: Item) => {
                 const bestPriceFornId = getLowestPriceId(item.id);
                 
                 return (

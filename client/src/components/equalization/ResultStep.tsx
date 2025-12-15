@@ -1,21 +1,22 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Fornecedor, MOCK_ITENS, formatCurrency } from './types';
+import { Fornecedor, Item, formatCurrency } from './types';
 import { ArrowLeft, Check, Trophy, TrendingDown, RefreshCw, BarChart3 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface ResultStepProps {
   fornecedores: Fornecedor[];
+  items: Item[];
   onReset: () => void;
   onBack: () => void;
 }
 
-export function ResultStep({ fornecedores, onReset, onBack }: ResultStepProps) {
+export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: ResultStepProps) {
   // Logic to calculate best combination
   const getBestCombination = () => {
     let total = 0;
-    const items = MOCK_ITENS.map(item => {
+    const items = propItems.map(item => {
       let lowest = Infinity;
       let fornecedorId = "";
       let fornecedorName = "";

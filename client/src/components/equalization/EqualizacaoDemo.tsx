@@ -4,7 +4,7 @@ import { UploadStep } from './UploadStep';
 import { ReviewStep } from './ReviewStep';
 import { LeadModal } from './LeadModal';
 import { ResultStep } from './ResultStep';
-import { Fornecedor, generateMockFornecedor, AppConfig, DEFAULT_CONFIG, UsageStats } from './types';
+import { Fornecedor, Item, generateMockFornecedor, AppConfig, DEFAULT_CONFIG, UsageStats, MOCK_ITENS } from './types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 export function EqualizacaoDemo() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -128,11 +129,13 @@ export function EqualizacaoDemo() {
       }
 
       const data = await response.json();
+      setItems(data.items);
       setFornecedores(data.fornecedores);
       setStep(2);
     } catch (error) {
       console.error('Error processing quotes:', error);
       // Fallback to mock data if API fails
+      setItems(MOCK_ITENS);
       const mocks = files.map((f, i) => generateMockFornecedor(f.name, i));
       setFornecedores(mocks);
       setStep(2);
@@ -360,8 +363,8 @@ export function EqualizacaoDemo() {
 
         <CardContent className="p-6 md:p-10">
           {step === 1 && <UploadStep onComplete={handleUploadComplete} initialFiles={uploadedFiles} />}
-          {step === 2 && <ReviewStep fornecedores={fornecedores} onConfirm={handleReviewConfirm} onBack={handleBack} />}
-          {step === 4 && <ResultStep fornecedores={fornecedores} onReset={handleReset} onBack={handleBackToUpload} />}
+          {step === 2 && <ReviewStep fornecedores={fornecedores} items={items} onConfirm={handleReviewConfirm} onBack={handleBack} />}
+          {step === 4 && <ResultStep fornecedores={fornecedores} items={items} onReset={handleReset} onBack={handleBackToUpload} />}
         </CardContent>
       </Card>
 
