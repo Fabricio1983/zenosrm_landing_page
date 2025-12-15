@@ -70,8 +70,8 @@ export async function registerRoutes(
             itemsMap.set(key, {
               id: `item-${itemsMap.size + 1}`,
               descricao: item.descricao,
-              quantidade: item.quantidade,
-              unidade: item.unidade,
+              quantidade: item.quantidade || 1,
+              unidade: item.unidade || 'un',
             });
           }
         });
