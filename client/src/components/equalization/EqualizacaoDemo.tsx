@@ -213,21 +213,31 @@ export function EqualizacaoDemo() {
     }
   };
 
+  const scrollToEqualization = () => {
+    const element = document.getElementById('equalization');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleReset = () => {
     // Clear all data and go back to upload step
     setFornecedores([]);
     setUploadedFiles([]);
     setStep(1);
+    setTimeout(scrollToEqualization, 100);
   };
 
   const handleBack = () => {
     // Go back to upload step keeping uploaded files for editing
     setStep(1);
+    setTimeout(scrollToEqualization, 100);
   };
 
   const handleBackToUpload = () => {
     // Go back to upload step keeping files for editing
     setStep(1);
+    setTimeout(scrollToEqualization, 100);
   };
 
   const handleUnlockWithPhone = async () => {
