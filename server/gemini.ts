@@ -1,10 +1,16 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-if (!process.env.GEMINI_API) {
-  throw new Error("GEMINI_API environment variable is required");
-}
+let genAI: GoogleGenerativeAI | null = null;
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
+function getGenAI(): GoogleGenerativeAI {
+  if (!genAI) {
+    if (!process.env.GEMINI_API) {
+      throw new Error("GEMINI_API environment variable is required. Please add it to your secrets.");
+    }
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
+  }
+  return genAI;
+}
 
 export interface ExtractedItem {
   descricao: string;
@@ -23,7 +29,7 @@ export async function extractQuoteFromFile(
   mimeType: string,
   fileName: string
 ): Promise<ExtractedQuote> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = getGenAI().getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `Você é um assistente especializado em extrair dados de cotações e orçamentos de fornecedores.
 
