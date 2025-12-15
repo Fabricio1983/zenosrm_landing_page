@@ -159,12 +159,11 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
       </div>
 
       {isProcessing && (
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 text-primary font-medium">
-            <Loader2 className="animate-spin" size={20} />
-            <span>Processando com IA...</span>
+        <div className="w-full max-w-md mx-auto space-y-2">
+          <Progress value={progress} className="h-3" />
+          <div className="flex justify-center">
+            <Loader2 className="animate-spin text-primary" size={20} />
           </div>
-          <p className="text-xs text-muted-foreground">Extraindo itens, quantidades e preços unitários...</p>
         </div>
       )}
 
