@@ -164,7 +164,8 @@ export function EqualizacaoDemo() {
           f.precos.find(p => p.itemId === item.itemId)?.precoUnitario || Infinity
         ));
         const quantity = fornecedores[0].precos.find(p => p.itemId === item.itemId)?.precoTotal || 0;
-        return sum + (lowestPrice * (quantity / item.precoUnitario));
+        const unitPrice = item.precoUnitario || 1;
+        return sum + (lowestPrice * (quantity / unitPrice));
       }, 0);
       
       const worstTotal = Math.max(...fornecedores.map(f => f.total));

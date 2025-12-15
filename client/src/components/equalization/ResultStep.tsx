@@ -22,19 +22,20 @@ export function ResultStep({ fornecedores, onReset, onBack }: ResultStepProps) {
       
       fornecedores.forEach(f => {
         const price = f.precos.find(p => p.itemId === item.id);
-        if (price && price.precoUnitario < lowest) {
+        if (price && price.precoUnitario !== null && price.precoUnitario < lowest) {
           lowest = price.precoUnitario;
           fornecedorId = f.id;
           fornecedorName = f.nome;
         }
       });
       
-      const itemTotal = lowest * item.quantidade;
+      const finalPrice = lowest === Infinity ? 0 : lowest;
+      const itemTotal = finalPrice * item.quantidade;
       total += itemTotal;
       
       return {
         ...item,
-        bestPrice: lowest,
+        bestPrice: finalPrice,
         bestTotal: itemTotal,
         fornecedorId,
         fornecedorName

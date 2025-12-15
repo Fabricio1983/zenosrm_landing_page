@@ -7,8 +7,8 @@ export interface Item {
 
 export interface PrecoItem {
   itemId: string;
-  precoUnitario: number;
-  precoTotal: number;
+  precoUnitario: number | null;
+  precoTotal: number | null;
 }
 
 export interface Fornecedor {
@@ -19,6 +19,7 @@ export interface Fornecedor {
   subtotal: number;
   impostos: number;
   fileName: string;
+  isManual?: boolean; // Flag for manually added suppliers
 }
 
 export interface LeadData {
@@ -94,7 +95,7 @@ export const generateMockFornecedor = (fileName: string, index: number): Fornece
     };
   });
 
-  const subtotal = precos.reduce((acc, curr) => acc + curr.precoTotal, 0);
+  const subtotal = precos.reduce((acc, curr) => acc + (curr.precoTotal || 0), 0);
   const impostos = Number((subtotal * 0.1).toFixed(2)); // 10% tax mock
 
   return {
