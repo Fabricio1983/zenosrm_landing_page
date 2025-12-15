@@ -229,13 +229,15 @@ export function ResultStep({ fornecedores, onReset }: ResultStepProps) {
       </Card>
 
       <div className="text-center pb-8">
-        <button 
+        <Button 
           onClick={onReset}
-          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          variant="outline"
+          size="lg"
+          className="gap-2 font-semibold"
         >
-          <RefreshCw size={14} />
-          Fazer nova simulação (4/5 restantes hoje)
-        </button>
+          <RefreshCw size={16} />
+          Reiniciar Equalização
+        </Button>
       </div>
     </div>
   );
