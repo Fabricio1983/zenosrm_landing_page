@@ -188,15 +188,24 @@ export async function registerRoutes(
   // PUT /api/config - Update app configuration (admin)
   app.put("/api/config", async (req, res) => {
     try {
-      const configData = insertAppConfigSchema.parse(req.body);
+      console.log("Received config update:", req.body);
+      
+      // Ensure proper types
+      const configData = {
+        dailyLimit: Number(req.body.dailyLimit) || 5,
+        sessionLimit: Number(req.body.sessionLimit) || 3,
+        trialDays: Number(req.body.trialDays) || 7,
+        enableLimits: Boolean(req.body.enableLimits),
+      };
+      
+      console.log("Parsed config data:", configData);
+      
       const config = await storage.updateAppConfig(configData);
       res.json(config);
     } catch (error) {
       console.error("Error updating config:", error);
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: "Invalid data", details: error.errors });
-      }
-      res.status(500).json({ error: "Failed to update config" });
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      res.status(500).json({ error: "Failed to update config", details: errorMessage });
     }
   });
 
