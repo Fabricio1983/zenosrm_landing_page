@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone'; // Need to check if this is installed, if not will use standard input
-import { Upload, FileText, Check, X, Loader2 } from 'lucide-react';
+import { useDropzone } from 'react-dropzone';
+import { Upload, FileText, Check, X, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -13,21 +13,39 @@ export function UploadStep({ onComplete }: UploadStepProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [showLimitMessage, setShowLimitMessage] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const handleAddFiles = useCallback((newFiles: File[]) => {
     setFiles(prev => {
-      const newFiles = [...prev, ...acceptedFiles].slice(0, 3);
-      return newFiles;
+      const combined = [...prev, ...newFiles];
+      if (combined.length > 3) {
+        setShowLimitMessage(true);
+        setTimeout(() => setShowLimitMessage(false), 5000);
+        return combined.slice(0, 3);
+      }
+      return combined;
     });
   }, []);
 
-  // Simple drag and drop implementation without extra library if needed, 
-  // but let's assume standard HTML5 drag and drop for simplicity and speed in prototype
-  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: handleAddFiles,
+    accept: {
+      'application/pdf': ['.pdf'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+      'text/csv': ['.csv'],
+      'image/*': ['.jpg', '.jpeg', '.png']
+    },
+    multiple: true,
+    disabled: isProcessing,
+    noClick: true,
+    noKeyboard: true
+  });
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
-      setFiles(prev => [...prev, ...newFiles].slice(0, 3));
+      handleAddFiles(newFiles);
+      e.target.value = '';
     }
   };
 
@@ -63,22 +81,41 @@ export function UploadStep({ onComplete }: UploadStepProps) {
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-heading font-bold text-foreground">Calcule sua Economia com Equalização Inteligente</h2>
         <p className="text-muted-foreground">Faça upload de até 3 orçamentos para nossa IA analisar.</p>
+        <p className="text-xs text-muted-foreground">Dica: Você pode selecionar ou arrastar vários arquivos de uma vez!</p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      {showLimitMessage && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-4 text-center animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center justify-center gap-2 text-blue-700 font-semibold mb-1">
+            <Sparkles size={18} />
+            <span>Quer equalizar mais propostas?</span>
+          </div>
+          <p className="text-sm text-blue-600">
+            No <strong>Zeno SRM</strong> você pode comparar quantas propostas quiser, sem limite!
+          </p>
+        </div>
+      )}
+
+      <div 
+        {...getRootProps()} 
+        className={`grid md:grid-cols-3 gap-4 p-4 -m-4 rounded-2xl transition-all ${
+          isDragActive ? 'bg-blue-50 ring-2 ring-primary ring-dashed' : ''
+        }`}
+      >
+        <input {...getInputProps()} />
         {[0, 1, 2].map((i) => (
           <div key={i} className="relative">
             {files[i] ? (
               <Card className="h-48 border-2 border-primary/20 bg-blue-50/50 flex flex-col items-center justify-center p-4 relative overflow-hidden group">
                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => removeFile(i)} className="p-1 hover:bg-red-100 rounded-full text-red-500">
+                  <button onClick={() => removeFile(i)} className="p-1 hover:bg-red-100 rounded-full text-red-500" data-testid={`button-remove-file-${i}`}>
                     <X size={16} />
                   </button>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mb-3">
                   <Check size={24} />
                 </div>
-                <p className="font-semibold text-sm text-center truncate w-full px-2">{files[i].name}</p>
+                <p className="font-semibold text-sm text-center truncate w-full px-2" data-testid={`text-filename-${i}`}>{files[i].name}</p>
                 <p className="text-xs text-muted-foreground mt-1">{(files[i].size / 1024).toFixed(1)} KB</p>
                 {isProcessing && (
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200">
@@ -87,19 +124,29 @@ export function UploadStep({ onComplete }: UploadStepProps) {
                 )}
               </Card>
             ) : (
-              <label className="h-48 border-2 border-dashed border-border hover:border-primary/50 hover:bg-slate-50 rounded-xl flex flex-col items-center justify-center p-4 cursor-pointer transition-all group">
+              <label className={`h-48 border-2 border-dashed rounded-xl flex flex-col items-center justify-center p-4 cursor-pointer transition-all group ${
+                isDragActive ? 'border-primary bg-blue-50' : 'border-border hover:border-primary/50 hover:bg-slate-50'
+              }`}>
                 <input 
                   type="file" 
                   accept=".pdf,.xlsx,.csv,.jpg,.png,.jpeg" 
                   className="hidden" 
                   onChange={handleFileChange}
                   disabled={isProcessing}
+                  multiple
+                  data-testid={`input-file-${i}`}
                 />
-                <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 group-hover:text-primary group-hover:bg-blue-50 flex items-center justify-center mb-3 transition-colors">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors ${
+                  isDragActive ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-400 group-hover:text-primary group-hover:bg-blue-50'
+                }`}>
                   <Upload size={24} />
                 </div>
-                <p className="font-medium text-sm text-center text-foreground">Orçamento {i + 1}</p>
-                <p className="text-xs text-muted-foreground text-center mt-1">Arraste ou clique</p>
+                <p className="font-medium text-sm text-center text-foreground">
+                  {isDragActive ? 'Solte aqui!' : `Orçamento ${i + 1}`}
+                </p>
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  {isDragActive ? '' : 'Arraste ou clique'}
+                </p>
               </label>
             )}
           </div>
