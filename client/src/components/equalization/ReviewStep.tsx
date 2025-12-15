@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Check, Edit2, Pencil } from 'lucide-react';
+import { Check, Edit2, Pencil, ArrowLeft } from 'lucide-react';
 import { Fornecedor, MOCK_ITENS, formatCurrency } from './types';
 import { Badge } from '@/components/ui/badge';
 
 interface ReviewStepProps {
   fornecedores: Fornecedor[];
   onConfirm: (updatedFornecedores: Fornecedor[]) => void;
+  onBack: () => void;
 }
 
-export function ReviewStep({ fornecedores: initialFornecedores, onConfirm }: ReviewStepProps) {
+export function ReviewStep({ fornecedores: initialFornecedores, onConfirm, onBack }: ReviewStepProps) {
   const [fornecedores, setFornecedores] = useState(initialFornecedores);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -106,10 +107,19 @@ export function ReviewStep({ fornecedores: initialFornecedores, onConfirm }: Rev
         </div>
       </div>
 
-      <div className="flex justify-center pt-4">
+      <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
         <Button 
           size="lg" 
-          className="w-full md:w-auto min-w-[200px] h-12 text-lg font-bold shadow-lg shadow-primary/20"
+          variant="outline"
+          className="gap-2"
+          onClick={onBack}
+        >
+          <ArrowLeft size={16} />
+          Voltar e Trocar Arquivos
+        </Button>
+        <Button 
+          size="lg" 
+          className="min-w-[200px] h-12 text-lg font-bold shadow-lg shadow-primary/20"
           onClick={() => onConfirm(fornecedores)}
         >
           Ver Minha Economia
