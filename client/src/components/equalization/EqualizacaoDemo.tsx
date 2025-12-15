@@ -94,13 +94,34 @@ export function EqualizacaoDemo() {
     sessionStorage.setItem('zeno_session_count', (sessionCount + 1).toString());
   };
 
-  const handleUploadComplete = (files: File[]) => {
+  const handleUploadComplete = async (files: File[]) => {
     if (isBlocked) return;
     
-    // Generate mock data based on files
-    const mocks = files.map((f, i) => generateMockFornecedor(f.name, i));
-    setFornecedores(mocks);
-    setStep(2);
+    try {
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('files', file);
+      });
+
+      const response = await fetch('/api/process-quotes', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process quotes');
+      }
+
+      const data = await response.json();
+      setFornecedores(data.fornecedores);
+      setStep(2);
+    } catch (error) {
+      console.error('Error processing quotes:', error);
+      // Fallback to mock data if API fails
+      const mocks = files.map((f, i) => generateMockFornecedor(f.name, i));
+      setFornecedores(mocks);
+      setStep(2);
+    }
   };
 
   const handleReviewConfirm = (updated: Fornecedor[]) => {
@@ -109,25 +130,60 @@ export function EqualizacaoDemo() {
     // Don't advance step yet, wait for lead capture
   };
 
-  const handleLeadSubmit = (data: any) => {
-    // Save to localStorage for demo purposes
-    const newLead = {
-      ...data,
-      date: new Date().toISOString(),
-      id: Math.random().toString(36).substr(2, 9)
-    };
-    
-    const existingLeads = JSON.parse(localStorage.getItem('zeno_demo_leads') || '[]');
-    localStorage.setItem('zeno_demo_leads', JSON.stringify([newLead, ...existingLeads]));
+  const handleLeadSubmit = async (data: any) => {
+    try {
+      // Calculate total savings
+      const bestMixTotal = fornecedores[0].precos.reduce((sum, item) => {
+        const lowestPrice = Math.min(...fornecedores.map(f => 
+          f.precos.find(p => p.itemId === item.itemId)?.precoUnitario || Infinity
+        ));
+        const quantity = fornecedores[0].precos.find(p => p.itemId === item.itemId)?.precoTotal || 0;
+        return sum + (lowestPrice * (quantity / item.precoUnitario));
+      }, 0);
+      
+      const worstTotal = Math.max(...fornecedores.map(f => f.total));
+      const totalSavings = Math.round(worstTotal - bestMixTotal);
 
-    // Increment limits only on successful capture
-    incrementUsage();
+      // Save to backend
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lead: data,
+          fornecedores,
+          items: [], // Items are embedded in fornecedores
+          totalSavings,
+        }),
+      });
 
-    // Simulate API call
-    setTimeout(() => {
+      if (!response.ok) {
+        throw new Error('Failed to save lead');
+      }
+
+      // Also save to localStorage for backward compatibility
+      const newLead = {
+        ...data,
+        date: new Date().toISOString(),
+        id: Math.random().toString(36).substr(2, 9)
+      };
+      
+      const existingLeads = JSON.parse(localStorage.getItem('zeno_demo_leads') || '[]');
+      localStorage.setItem('zeno_demo_leads', JSON.stringify([newLead, ...existingLeads]));
+
+      // Increment limits only on successful capture
+      incrementUsage();
+
       setIsModalOpen(false);
       setStep(4); // Show results
-    }, 1000);
+    } catch (error) {
+      console.error('Error saving lead:', error);
+      // Continue to results even if save fails
+      incrementUsage();
+      setIsModalOpen(false);
+      setStep(4);
+    }
   };
 
   const handleReset = () => {

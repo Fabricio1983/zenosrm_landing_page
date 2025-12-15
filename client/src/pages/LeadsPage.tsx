@@ -49,15 +49,47 @@ export default function LeadsPage() {
     }
   }, []);
 
-  const loadData = () => {
-    // Load Leads
-    const savedLeads = JSON.parse(localStorage.getItem('zeno_demo_leads') || '[]');
-    setLeads(savedLeads);
+  const loadData = async () => {
+    try {
+      // Load Leads from API
+      const leadsResponse = await fetch('/api/leads');
+      if (leadsResponse.ok) {
+        const apiLeads = await leadsResponse.json();
+        // Transform API leads to match frontend format
+        const transformedLeads = apiLeads.map((lead: any) => ({
+          id: lead.id.toString(),
+          empresa: lead.empresa,
+          email: lead.email,
+          date: lead.createdAt,
+        }));
+        setLeads(transformedLeads);
+      } else {
+        // Fallback to localStorage if API fails
+        const savedLeads = JSON.parse(localStorage.getItem('zeno_demo_leads') || '[]');
+        setLeads(savedLeads);
+      }
 
-    // Load Config
-    const savedConfig = localStorage.getItem('zeno_app_config');
-    if (savedConfig) {
-      setConfig(JSON.parse(savedConfig));
+      // Load Config from API
+      const configResponse = await fetch('/api/config');
+      if (configResponse.ok) {
+        const apiConfig = await configResponse.json();
+        setConfig(apiConfig);
+      } else {
+        // Fallback to localStorage
+        const savedConfig = localStorage.getItem('zeno_app_config');
+        if (savedConfig) {
+          setConfig(JSON.parse(savedConfig));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+      // Fallback to localStorage on error
+      const savedLeads = JSON.parse(localStorage.getItem('zeno_demo_leads') || '[]');
+      setLeads(savedLeads);
+      const savedConfig = localStorage.getItem('zeno_app_config');
+      if (savedConfig) {
+        setConfig(JSON.parse(savedConfig));
+      }
     }
   };
 
@@ -84,13 +116,36 @@ export default function LeadsPage() {
     }
   };
 
-  const saveConfig = () => {
-    localStorage.setItem('zeno_app_config', JSON.stringify(config));
-    toast({
-      title: "Configurações Salvas",
-      description: "As regras de limite foram atualizadas na Landing Page.",
-      className: "bg-green-50 border-green-200 text-green-800"
-    });
+  const saveConfig = async () => {
+    try {
+      const response = await fetch('/api/config', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save config');
+      }
+
+      // Also save to localStorage for backward compatibility
+      localStorage.setItem('zeno_app_config', JSON.stringify(config));
+      
+      toast({
+        title: "Configurações Salvas",
+        description: "As regras de limite foram atualizadas na Landing Page.",
+        className: "bg-green-50 border-green-200 text-green-800"
+      });
+    } catch (error) {
+      console.error('Error saving config:', error);
+      toast({
+        title: "Erro ao Salvar",
+        description: "Não foi possível salvar as configurações. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   const exportCSV = () => {

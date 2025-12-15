@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
 interface UploadStepProps {
-  onComplete: (files: File[]) => void;
+  onComplete: (files: File[]) => void | Promise<void>;
 }
 
 export function UploadStep({ onComplete }: UploadStepProps) {
@@ -35,20 +35,27 @@ export function UploadStep({ onComplete }: UploadStepProps) {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleProcess = () => {
+  const handleProcess = async () => {
     setIsProcessing(true);
-    // Simulate AI Processing
-    let p = 0;
-    const interval = setInterval(() => {
-      p += 5;
-      if (p > 100) {
-        clearInterval(interval);
-        setIsProcessing(false);
-        onComplete(files);
-      } else {
-        setProgress(p);
-      }
-    }, 150); // 3 seconds total approx
+    setProgress(0);
+    
+    // Simulate progress animation
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 90) return prev; // Stop at 90%, complete when API responds
+        return prev + 10;
+      });
+    }, 300);
+
+    try {
+      await onComplete(files);
+      setProgress(100);
+    } catch (error) {
+      console.error('Error processing:', error);
+    } finally {
+      clearInterval(progressInterval);
+      setIsProcessing(false);
+    }
   };
 
   return (

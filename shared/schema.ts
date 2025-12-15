@@ -1,18 +1,51 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, serial, timestamp, integer, jsonb, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+export const leads = pgTable("leads", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  empresa: text("empresa").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const equalizations = pgTable("equalizations", {
+  id: serial("id").primaryKey(),
+  leadId: integer("lead_id").references(() => leads.id),
+  fornecedores: jsonb("fornecedores").notNull(),
+  items: jsonb("items").notNull(),
+  totalSavings: integer("total_savings").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export const appConfig = pgTable("app_config", {
+  id: serial("id").primaryKey(),
+  dailyLimit: integer("daily_limit").notNull().default(5),
+  sessionLimit: integer("session_limit").notNull().default(3),
+  trialDays: integer("trial_days").notNull().default(7),
+  enableLimits: boolean("enable_limits").notNull().default(true),
+});
+
+export const insertLeadSchema = createInsertSchema(leads).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertEqualizationSchema = createInsertSchema(equalizations).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertAppConfigSchema = createInsertSchema(appConfig).omit({
+  id: true,
+});
+
+export type InsertLead = z.infer<typeof insertLeadSchema>;
+export type Lead = typeof leads.$inferSelect;
+
+export type InsertEqualization = z.infer<typeof insertEqualizationSchema>;
+export type Equalization = typeof equalizations.$inferSelect;
+
+export type InsertAppConfig = z.infer<typeof insertAppConfigSchema>;
+export type AppConfig = typeof appConfig.$inferSelect;
