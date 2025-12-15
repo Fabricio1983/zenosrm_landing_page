@@ -19,6 +19,7 @@ import { Lock } from 'lucide-react';
 export function EqualizacaoDemo() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Limit Control State
@@ -104,6 +105,8 @@ export function EqualizacaoDemo() {
 
   const handleUploadComplete = async (files: File[]) => {
     if (isBlocked) return;
+    
+    setUploadedFiles(files);
     
     try {
       const formData = new FormData();
@@ -210,12 +213,13 @@ export function EqualizacaoDemo() {
     checkLimits();
     if (!isBlocked) {
       setFornecedores([]);
+      setUploadedFiles([]);
       setStep(1);
     }
   };
 
   const handleBack = () => {
-    // Go back to upload step to allow changing/replacing files
+    // Go back to upload step keeping uploaded files for editing
     setStep(1);
   };
 
@@ -264,7 +268,7 @@ export function EqualizacaoDemo() {
         )}
 
         <CardContent className="p-6 md:p-10">
-          {step === 1 && <UploadStep onComplete={handleUploadComplete} />}
+          {step === 1 && <UploadStep onComplete={handleUploadComplete} initialFiles={uploadedFiles} />}
           {step === 2 && <ReviewStep fornecedores={fornecedores} onConfirm={handleReviewConfirm} onBack={handleBack} />}
           {step === 4 && <ResultStep fornecedores={fornecedores} onReset={handleReset} onBack={handleBack} />}
         </CardContent>

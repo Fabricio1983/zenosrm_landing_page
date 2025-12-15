@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, FileText, Check, X, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,13 +7,18 @@ import { Progress } from '@/components/ui/progress';
 
 interface UploadStepProps {
   onComplete: (files: File[]) => void | Promise<void>;
+  initialFiles?: File[];
 }
 
-export function UploadStep({ onComplete }: UploadStepProps) {
-  const [files, setFiles] = useState<File[]>([]);
+export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
+  const [files, setFiles] = useState<File[]>(initialFiles);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showLimitMessage, setShowLimitMessage] = useState(false);
+
+  useEffect(() => {
+    setFiles(initialFiles);
+  }, [initialFiles]);
 
   const handleAddFiles = useCallback((newFiles: File[]) => {
     setFiles(prev => {
