@@ -29,7 +29,8 @@ export async function extractQuoteFromFile(
   mimeType: string,
   fileName: string
 ): Promise<ExtractedQuote> {
-  const model = getGenAI().getGenerativeModel({ model: "gemini-1.5-flash" });
+  // Use gemini-1.5-flash-latest or gemini-pro-vision for better compatibility
+  const model = getGenAI().getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const prompt = `Você é um assistente especializado em extrair dados de cotações e orçamentos de fornecedores.
 
