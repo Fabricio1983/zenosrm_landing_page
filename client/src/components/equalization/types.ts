@@ -30,6 +30,7 @@ export interface UsageStats {
   firstVisit: number; // Timestamp
   lastVisitDate: string; // YYYY-MM-DD
   dailyCount: number;
+  completedEqualizations: number; // Total equalizations completed (for "first free" logic)
 }
 
 export interface AppConfig {

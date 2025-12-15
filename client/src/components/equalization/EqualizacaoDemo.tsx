@@ -47,8 +47,15 @@ export function EqualizacaoDemo() {
       stats = {
         firstVisit: now.getTime(),
         lastVisitDate: todayStr,
-        dailyCount: 0
+        dailyCount: 0,
+        completedEqualizations: 0
       };
+      localStorage.setItem('zeno_usage_stats', JSON.stringify(stats));
+    }
+    
+    // Ensure completedEqualizations exists (for users with old data)
+    if (stats.completedEqualizations === undefined) {
+      stats.completedEqualizations = 0;
       localStorage.setItem('zeno_usage_stats', JSON.stringify(stats));
     }
 
@@ -84,9 +91,10 @@ export function EqualizacaoDemo() {
   };
 
   const incrementUsage = () => {
-    // Increment Daily
+    // Increment Daily and Total Completed
     const stats: UsageStats = JSON.parse(localStorage.getItem('zeno_usage_stats') || '{}');
     stats.dailyCount = (stats.dailyCount || 0) + 1;
+    stats.completedEqualizations = (stats.completedEqualizations || 0) + 1;
     localStorage.setItem('zeno_usage_stats', JSON.stringify(stats));
 
     // Increment Session
@@ -126,8 +134,19 @@ export function EqualizacaoDemo() {
 
   const handleReviewConfirm = (updated: Fornecedor[]) => {
     setFornecedores(updated);
-    setIsModalOpen(true);
-    // Don't advance step yet, wait for lead capture
+    
+    // Check if this is the first equalization - if so, skip lead form
+    const stats: UsageStats = JSON.parse(localStorage.getItem('zeno_usage_stats') || '{}');
+    const completedCount = stats.completedEqualizations || 0;
+    
+    if (completedCount === 0) {
+      // First equalization: show results directly without form
+      incrementUsage();
+      setStep(4);
+    } else {
+      // Second+ equalization: require lead form first
+      setIsModalOpen(true);
+    }
   };
 
   const handleLeadSubmit = async (data: any) => {
