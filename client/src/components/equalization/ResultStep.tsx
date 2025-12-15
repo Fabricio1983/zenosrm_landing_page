@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Fornecedor, MOCK_ITENS, formatCurrency } from './types';
-import { ArrowRight, Check, Trophy, TrendingDown, RefreshCw } from 'lucide-react';
+import { ArrowRight, Check, Trophy, TrendingDown, RefreshCw, BarChart3 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface ResultStepProps {
@@ -137,10 +137,53 @@ export function ResultStep({ fornecedores, onReset }: ResultStepProps) {
         </Card>
       </div>
 
+      {/* 2.5 Supplier Comparison List */}
+      <div className="space-y-4">
+        <h3 className="font-bold text-lg text-foreground flex items-center gap-2">
+          <BarChart3 size={20} className="text-primary" />
+          Comparativo por Fornecedor
+        </h3>
+        <div className="grid gap-4">
+          {fornecedores.map(f => {
+            const savingsValue = f.total - bestCombo.total;
+            const savingsPct = (savingsValue / f.total) * 100;
+            const isBestSingle = f.id === bestSingle.id;
+
+            return (
+              <Card key={f.id} className={`border border-border shadow-sm ${isBestSingle ? "bg-slate-50" : "bg-white"}`}>
+                <CardContent className="p-4 flex items-center justify-between flex-wrap gap-4">
+                  <div className="min-w-[150px]">
+                    <div className="font-bold text-foreground">{f.nome}</div>
+                    <div className="text-sm text-muted-foreground">Total da Proposta: {formatCurrency(f.total)}</div>
+                  </div>
+                  
+                  <div className="flex items-center gap-6 flex-1 justify-end">
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Economia com Equalização</div>
+                      <div className="font-bold text-green-600 text-lg">
+                        {formatCurrency(savingsValue)}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-sm">
+                      <TrendingDown size={14} />
+                      {savingsPct.toFixed(1)}% OFF
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
       {/* 3. Detailed Breakdown */}
       <div className="border rounded-xl overflow-hidden shadow-sm">
-        <div className="bg-slate-50 px-6 py-4 border-b border-border">
-          <h3 className="font-bold text-foreground">Detalhamento da Melhor Combinação</h3>
+        <div className="bg-slate-50 px-6 py-4 border-b border-border flex items-center justify-between">
+          <h3 className="font-bold text-foreground">Lista de Itens (Menor Preço Encontrado)</h3>
+          <span className="text-xs font-medium px-2 py-1 bg-white border border-border rounded text-muted-foreground">
+            {bestCombo.items.length} itens equalizados
+          </span>
         </div>
         <div className="overflow-x-auto">
           <Table>
