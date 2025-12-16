@@ -1,5 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import * as XLSX from "xlsx";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pdf = require("pdf-parse");
 
 let genAI: GoogleGenerativeAI | null = null;
 
@@ -14,6 +17,16 @@ function excelToText(buffer: Buffer): string {
   }
   
   return text;
+}
+
+async function pdfToText(buffer: Buffer): Promise<string> {
+  try {
+    const data = await pdf(buffer);
+    return data.text;
+  } catch (error) {
+    console.error("Error parsing PDF:", error);
+    return "";
+  }
 }
 
 function getGenAI(): GoogleGenerativeAI {
@@ -75,12 +88,14 @@ REGRAS IMPORTANTES:
   try {
     let result;
     
-    // Check if it's Excel or CSV - convert to text instead of sending binary
+    // Detect file types
     const isExcel = mimeType.includes("spreadsheet") || 
                     mimeType.includes("excel") || 
                     fileName.endsWith(".xlsx") || 
                     fileName.endsWith(".xls");
     const isCsv = mimeType === "text/csv" || fileName.endsWith(".csv");
+    const isPdf = mimeType === "application/pdf" || fileName.endsWith(".pdf");
+    const isImage = mimeType.startsWith("image/");
     
     if (isExcel) {
       // Convert Excel to text
@@ -92,8 +107,24 @@ REGRAS IMPORTANTES:
       const textContent = fileBuffer.toString("utf-8");
       const textPrompt = `${prompt}\n\nConteúdo do arquivo CSV:\n${textContent}`;
       result = await model.generateContent(textPrompt);
-    } else {
-      // PDF and images - send as binary
+    } else if (isPdf) {
+      // Convert PDF to text
+      const textContent = await pdfToText(fileBuffer);
+      if (textContent.trim()) {
+        const textPrompt = `${prompt}\n\nConteúdo do arquivo PDF:\n${textContent}`;
+        result = await model.generateContent(textPrompt);
+      } else {
+        // PDF has no extractable text (scanned image) - send as binary
+        const imagePart = {
+          inlineData: {
+            data: fileBuffer.toString("base64"),
+            mimeType: mimeType,
+          },
+        };
+        result = await model.generateContent([prompt, imagePart]);
+      }
+    } else if (isImage) {
+      // Images must be sent as binary
       const imagePart = {
         inlineData: {
           data: fileBuffer.toString("base64"),
@@ -101,6 +132,11 @@ REGRAS IMPORTANTES:
         },
       };
       result = await model.generateContent([prompt, imagePart]);
+    } else {
+      // Unknown format - try as text first
+      const textContent = fileBuffer.toString("utf-8");
+      const textPrompt = `${prompt}\n\nConteúdo do arquivo:\n${textContent}`;
+      result = await model.generateContent(textPrompt);
     }
 
     const response = await result.response;
