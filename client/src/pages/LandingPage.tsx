@@ -118,40 +118,68 @@ export default function LandingPage() {
       <main className="flex-1 pt-16 sm:pt-20">
         {/* 2. Hero Section */}
         <section className="relative overflow-hidden pt-12 pb-20 lg:pt-24 lg:pb-32 bg-gradient-to-b from-blue-50/50 to-white">
-          <div className="container mx-auto px-4 text-center max-w-5xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 text-blue-700 text-sm font-semibold mb-6 border border-blue-200">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              +1.200 empresas já testaram
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 leading-[1.1]">
-              Organize suas compras e <span className="text-primary">economize dinheiro</span>
-              <br className="hidden md:block" /> sem planilhas complicadas.
-            </h1>
-            
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              Envie cotações, equalize em segundos e veja a economia real.
-              Otimize seu processo de compras do início ao fim com o Zeno.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto text-lg h-14 px-8 bg-accent hover:bg-orange-600 text-white shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-0.5"
-                onClick={() => scrollToSection("equalization")}
-              >
-                Equalizar Agora
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="w-full sm:w-auto text-lg h-14 px-8 border-2 hover:bg-gray-50 text-foreground"
-              >
-                Ver Demo Interativa
-              </Button>
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
+              {/* Left Column - Text */}
+              <div className="text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 text-blue-700 text-sm font-semibold mb-6 border border-blue-200">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                  </span>
+                  +1.200 empresas já testaram
+                </div>
+                
+                <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 leading-[1.1]">
+                  Organize suas compras e <span className="text-primary">economize dinheiro</span> sem planilhas complicadas.
+                </h1>
+                
+                <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                  Envie cotações, equalize em segundos e veja a economia real.
+                  Otimize seu processo de compras do início ao fim com o Zeno.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
+                  <Button 
+                    size="lg" 
+                    className="w-full sm:w-auto text-lg h-14 px-8 bg-accent hover:bg-orange-600 text-white shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-0.5"
+                    onClick={() => scrollToSection("equalization")}
+                  >
+                    Equalizar Agora
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="w-full sm:w-auto text-lg h-14 px-8 border-2 hover:bg-gray-50 text-foreground"
+                    onClick={() => scrollToSection("equalization")}
+                  >
+                    Ver Demo Interativa
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Column - Video */}
+              <div className="relative order-first lg:order-last">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border bg-white">
+                  {/* Video placeholder - replace src with your video file */}
+                  <video 
+                    className="w-full h-auto aspect-video object-cover"
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    poster="/assets/video-poster.jpg"
+                  >
+                    <source src="/assets/demo-video.mp4" type="video/mp4" />
+                    {/* Fallback image if video not available */}
+                  </video>
+                  {/* Decorative gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
+                </div>
+                {/* Decorative elements */}
+                <div className="absolute -z-10 -top-4 -right-4 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+                <div className="absolute -z-10 -bottom-4 -left-4 w-48 h-48 bg-accent/5 rounded-full blur-2xl" />
+              </div>
             </div>
           </div>
         </section>
