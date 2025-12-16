@@ -56,12 +56,23 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Maximum 3 files allowed" });
       }
 
-      // Process each file with Gemini - use allSettled so failures don't block others
-      const extractionPromises = files.map(file => 
-        extractQuoteFromFile(file.buffer, file.mimetype, file.originalname)
-      );
-
-      const results = await Promise.allSettled(extractionPromises);
+      // Process files sequentially with small delay to avoid rate limiting
+      const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+      const results: PromiseSettledResult<Awaited<ReturnType<typeof extractQuoteFromFile>>>[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        try {
+          const quote = await extractQuoteFromFile(file.buffer, file.mimetype, file.originalname);
+          results.push({ status: 'fulfilled', value: quote });
+        } catch (error) {
+          results.push({ status: 'rejected', reason: error });
+        }
+        // Small delay between files to avoid rate limiting (except after last file)
+        if (i < files.length - 1) {
+          await delay(1500);
+        }
+      }
 
       // Separate successful extractions and failures
       const extractedQuotes: { quote: Awaited<ReturnType<typeof extractQuoteFromFile>> | null; file: Express.Multer.File; error?: string }[] = 
