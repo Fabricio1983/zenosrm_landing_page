@@ -23,9 +23,13 @@ const FRASES_IMPACTO = [
   "Cada real economizado em compras vai direto para o lucro da empresa.",
 ];
 
+const COOLDOWN_SECONDS = 5;
+
 export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isCoolingDown, setIsCoolingDown] = useState(false);
+  const [cooldownRemaining, setCooldownRemaining] = useState(COOLDOWN_SECONDS);
   const [progress, setProgress] = useState(0);
   const [showLimitMessage, setShowLimitMessage] = useState(false);
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
@@ -34,9 +38,9 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
     setFiles(initialFiles);
   }, [initialFiles]);
 
-  // Rotate phrases during processing
+  // Rotate phrases during cooldown or processing
   useEffect(() => {
-    if (!isProcessing) return;
+    if (!isProcessing && !isCoolingDown) return;
     
     // Set initial random phrase
     setCurrentPhraseIndex(Math.floor(Math.random() * FRASES_IMPACTO.length));
@@ -44,16 +48,15 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
     const interval = setInterval(() => {
       setCurrentPhraseIndex(prev => {
         let next = Math.floor(Math.random() * FRASES_IMPACTO.length);
-        // Avoid repeating same phrase
         while (next === prev && FRASES_IMPACTO.length > 1) {
           next = Math.floor(Math.random() * FRASES_IMPACTO.length);
         }
         return next;
       });
-    }, 4000); // Change phrase every 4 seconds
+    }, 2500); // Change phrase every 2.5 seconds during cooldown
     
     return () => clearInterval(interval);
-  }, [isProcessing]);
+  }, [isProcessing, isCoolingDown]);
 
   const handleAddFiles = useCallback((newFiles: File[]) => {
     setFiles(prev => {
@@ -94,13 +97,33 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   };
 
   const handleProcess = async () => {
+    // Start cooldown phase first (shows carousel for 5 seconds before calling API)
+    setIsCoolingDown(true);
+    setCooldownRemaining(COOLDOWN_SECONDS);
+    
+    // Countdown timer
+    const countdownInterval = setInterval(() => {
+      setCooldownRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    // Wait for cooldown to complete
+    await new Promise(resolve => setTimeout(resolve, COOLDOWN_SECONDS * 1000));
+    
+    // Now start actual processing
+    setIsCoolingDown(false);
     setIsProcessing(true);
     setProgress(0);
     
     // Simulate progress animation
     const progressInterval = setInterval(() => {
       setProgress(prev => {
-        if (prev >= 90) return prev; // Stop at 90%, complete when API responds
+        if (prev >= 90) return prev;
         return prev + 10;
       });
     }, 300);
@@ -193,6 +216,32 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
         ))}
       </div>
 
+      {isCoolingDown && (
+        <div className="w-full max-w-lg mx-auto space-y-6 py-4">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-medium text-sm mb-4">
+              <Sparkles size={16} className="animate-pulse" />
+              <span>Preparando análise... {cooldownRemaining}s</span>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-blue-50 rounded-xl p-6 border border-blue-100 shadow-sm">
+            <p className="text-lg text-slate-700 italic text-center animate-in fade-in duration-700" key={currentPhraseIndex}>
+              "{FRASES_IMPACTO[currentPhraseIndex]}"
+            </p>
+          </div>
+          <div className="flex justify-center gap-2">
+            {FRASES_IMPACTO.slice(0, 5).map((_, i) => (
+              <div 
+                key={i} 
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  i === currentPhraseIndex % 5 ? 'bg-primary scale-125' : 'bg-slate-300'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {isProcessing && (
         <div className="w-full max-w-lg mx-auto space-y-4">
           <Progress value={progress} className="h-3" />
@@ -209,10 +258,10 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
         <Button 
           size="lg" 
           className="w-full md:w-auto min-w-[200px] h-12 text-lg font-bold shadow-lg shadow-primary/20"
-          disabled={files.length < 2 || isProcessing} // Require at least 2 for meaningful comparison
+          disabled={files.length < 2 || isProcessing || isCoolingDown}
           onClick={handleProcess}
         >
-          {isProcessing ? 'Processando...' : 'Processar Orçamentos'}
+          {isCoolingDown ? 'Preparando...' : isProcessing ? 'Processando...' : 'Processar Orçamentos'}
         </Button>
       </div>
 

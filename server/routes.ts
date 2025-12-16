@@ -68,9 +68,9 @@ export async function registerRoutes(
         } catch (error) {
           results.push({ status: 'rejected', reason: error });
         }
-        // Longer delay between files to avoid rate limiting (except after last file)
+        // Shorter delay between files now that frontend has cooldown buffer
         if (i < files.length - 1) {
-          await delay(3000);
+          await delay(1000);
         }
       }
 

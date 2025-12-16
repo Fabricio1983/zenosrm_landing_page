@@ -18,12 +18,15 @@ import { Lock, Phone, Unlock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
+const MIN_INTERVAL_MS = 10000; // Minimum 10 seconds between API calls
+
 export function EqualizacaoDemo() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [lastProcessTimestamp, setLastProcessTimestamp] = useState<number>(0);
   
   // Limit Control State
   const [isBlocked, setIsBlocked] = useState(false);
@@ -111,7 +114,17 @@ export function EqualizacaoDemo() {
   const handleUploadComplete = async (files: File[]) => {
     if (isBlocked) return;
     
+    // Guard: ensure minimum interval between API calls
+    const now = Date.now();
+    const timeSinceLastProcess = now - lastProcessTimestamp;
+    if (lastProcessTimestamp > 0 && timeSinceLastProcess < MIN_INTERVAL_MS) {
+      const waitTime = Math.ceil((MIN_INTERVAL_MS - timeSinceLastProcess) / 1000);
+      console.log(`Rate limit guard: waiting ${waitTime}s before next API call`);
+      await new Promise(resolve => setTimeout(resolve, MIN_INTERVAL_MS - timeSinceLastProcess));
+    }
+    
     setUploadedFiles(files);
+    setLastProcessTimestamp(Date.now());
     
     try {
       const formData = new FormData();
