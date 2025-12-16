@@ -10,15 +10,50 @@ interface UploadStepProps {
   initialFiles?: File[];
 }
 
+const FRASES_IMPACTO = [
+  "Empresas que equalizam cotações economizam em média 12% em cada compra.",
+  "Você sabia? Pequenas diferenças de preço somam milhares de reais ao ano.",
+  "Comprar do fornecedor mais barato nem sempre é a melhor escolha. Equalizar é.",
+  "A cada 10 equalizações, empresas descobrem pelo menos 3 oportunidades de economia ocultas.",
+  "Tempo é dinheiro: equalizar manualmente leva horas. Com o Zeno, segundos.",
+  "Negociar com dados na mão aumenta seu poder de barganha em até 40%.",
+  "Profissionais de compras que usam equalização são promovidos 2x mais rápido.",
+  "Uma única equalização bem feita pode pagar o Zeno por um ano inteiro.",
+  "Fornecedores respeitam quem conhece os preços do mercado.",
+  "Cada real economizado em compras vai direto para o lucro da empresa.",
+];
+
 export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showLimitMessage, setShowLimitMessage] = useState(false);
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
 
   useEffect(() => {
     setFiles(initialFiles);
   }, [initialFiles]);
+
+  // Rotate phrases during processing
+  useEffect(() => {
+    if (!isProcessing) return;
+    
+    // Set initial random phrase
+    setCurrentPhraseIndex(Math.floor(Math.random() * FRASES_IMPACTO.length));
+    
+    const interval = setInterval(() => {
+      setCurrentPhraseIndex(prev => {
+        let next = Math.floor(Math.random() * FRASES_IMPACTO.length);
+        // Avoid repeating same phrase
+        while (next === prev && FRASES_IMPACTO.length > 1) {
+          next = Math.floor(Math.random() * FRASES_IMPACTO.length);
+        }
+        return next;
+      });
+    }, 4000); // Change phrase every 4 seconds
+    
+    return () => clearInterval(interval);
+  }, [isProcessing]);
 
   const handleAddFiles = useCallback((newFiles: File[]) => {
     setFiles(prev => {
@@ -159,10 +194,13 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
       </div>
 
       {isProcessing && (
-        <div className="w-full max-w-md mx-auto space-y-2">
+        <div className="w-full max-w-lg mx-auto space-y-4">
           <Progress value={progress} className="h-3" />
-          <div className="flex justify-center">
-            <Loader2 className="animate-spin text-primary" size={20} />
+          <div className="flex items-center justify-center gap-3">
+            <Loader2 className="animate-spin text-primary flex-shrink-0" size={20} />
+            <p className="text-sm text-muted-foreground italic text-center animate-in fade-in duration-500" key={currentPhraseIndex}>
+              "{FRASES_IMPACTO[currentPhraseIndex]}"
+            </p>
           </div>
         </div>
       )}
