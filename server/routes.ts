@@ -68,9 +68,9 @@ export async function registerRoutes(
         } catch (error) {
           results.push({ status: 'rejected', reason: error });
         }
-        // Small delay between files to avoid rate limiting (except after last file)
+        // Longer delay between files to avoid rate limiting (except after last file)
         if (i < files.length - 1) {
-          await delay(1500);
+          await delay(3000);
         }
       }
 
