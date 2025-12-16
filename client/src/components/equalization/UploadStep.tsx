@@ -119,8 +119,8 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-heading font-bold text-foreground">Calcule sua Economia com Equalização Inteligente</h2>
-        <p className="text-muted-foreground">Faça upload de até 3 orçamentos para nossa IA analisar.</p>
+        <h2 className="text-2xl font-heading font-bold text-foreground">Compare vários orçamentos e veja a economia gerada em segundos</h2>
+        <p className="text-muted-foreground">Adicione orçamentos em PDF ou Excel e veja a mágica acontecendo</p>
         <p className="text-xs text-muted-foreground">Dica: Você pode selecionar ou arrastar vários arquivos de uma vez!</p>
       </div>
 
