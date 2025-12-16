@@ -1,6 +1,20 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import * as XLSX from "xlsx";
 
 let genAI: GoogleGenerativeAI | null = null;
+
+function excelToText(buffer: Buffer): string {
+  const workbook = XLSX.read(buffer, { type: "buffer" });
+  let text = "";
+  
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName];
+    const csv = XLSX.utils.sheet_to_csv(sheet);
+    text += `=== ${sheetName} ===\n${csv}\n\n`;
+  }
+  
+  return text;
+}
 
 function getGenAI(): GoogleGenerativeAI {
   if (!genAI) {
@@ -59,14 +73,36 @@ REGRAS IMPORTANTES:
 6. Retorne APENAS o JSON válido, sem explicações adicionais`;
 
   try {
-    const imagePart = {
-      inlineData: {
-        data: fileBuffer.toString("base64"),
-        mimeType: mimeType,
-      },
-    };
+    let result;
+    
+    // Check if it's Excel or CSV - convert to text instead of sending binary
+    const isExcel = mimeType.includes("spreadsheet") || 
+                    mimeType.includes("excel") || 
+                    fileName.endsWith(".xlsx") || 
+                    fileName.endsWith(".xls");
+    const isCsv = mimeType === "text/csv" || fileName.endsWith(".csv");
+    
+    if (isExcel) {
+      // Convert Excel to text
+      const textContent = excelToText(fileBuffer);
+      const textPrompt = `${prompt}\n\nConteúdo do arquivo Excel:\n${textContent}`;
+      result = await model.generateContent(textPrompt);
+    } else if (isCsv) {
+      // Send CSV as text
+      const textContent = fileBuffer.toString("utf-8");
+      const textPrompt = `${prompt}\n\nConteúdo do arquivo CSV:\n${textContent}`;
+      result = await model.generateContent(textPrompt);
+    } else {
+      // PDF and images - send as binary
+      const imagePart = {
+        inlineData: {
+          data: fileBuffer.toString("base64"),
+          mimeType: mimeType,
+        },
+      };
+      result = await model.generateContent([prompt, imagePart]);
+    }
 
-    const result = await model.generateContent([prompt, imagePart]);
     const response = await result.response;
     const text = response.text();
 
