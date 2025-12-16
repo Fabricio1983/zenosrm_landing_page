@@ -34,6 +34,8 @@ interface Fornecedor {
   subtotal: number;
   impostos: number;
   fileName: string;
+  isManual?: boolean;
+  extractionError?: string;
 }
 
 export async function registerRoutes(
@@ -54,33 +56,69 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Maximum 3 files allowed" });
       }
 
-      // Process each file with Gemini
+      // Process each file with Gemini - use allSettled so failures don't block others
       const extractionPromises = files.map(file => 
         extractQuoteFromFile(file.buffer, file.mimetype, file.originalname)
       );
 
-      const extractedQuotes = await Promise.all(extractionPromises);
+      const results = await Promise.allSettled(extractionPromises);
 
-      // Build unified item list (merge all unique items across all quotes)
-      const itemsMap = new Map<string, Item>();
-      extractedQuotes.forEach(quote => {
-        quote.items.forEach(item => {
-          const key = item.descricao.toLowerCase().trim();
-          if (!itemsMap.has(key)) {
-            itemsMap.set(key, {
-              id: `item-${itemsMap.size + 1}`,
-              descricao: item.descricao,
-              quantidade: item.quantidade || 1,
-              unidade: item.unidade || 'un',
-            });
+      // Separate successful extractions and failures
+      const extractedQuotes: { quote: Awaited<ReturnType<typeof extractQuoteFromFile>> | null; file: Express.Multer.File; error?: string }[] = 
+        results.map((result, index) => {
+          if (result.status === 'fulfilled') {
+            return { quote: result.value, file: files[index] };
+          } else {
+            console.warn(`Failed to extract from ${files[index].originalname}:`, result.reason);
+            return { quote: null, file: files[index], error: result.reason?.message || 'Erro ao processar' };
           }
         });
+
+      // Build unified item list (merge all unique items across successful quotes)
+      const itemsMap = new Map<string, Item>();
+      extractedQuotes.forEach(({ quote }) => {
+        if (quote) {
+          quote.items.forEach(item => {
+            const key = item.descricao.toLowerCase().trim();
+            if (!itemsMap.has(key)) {
+              itemsMap.set(key, {
+                id: `item-${itemsMap.size + 1}`,
+                descricao: item.descricao,
+                quantidade: item.quantidade || 1,
+                unidade: item.unidade || 'un',
+              });
+            }
+          });
+        }
       });
 
       const items = Array.from(itemsMap.values());
 
       // Build fornecedores structure
-      const fornecedores: Fornecedor[] = extractedQuotes.map((quote, index) => {
+      const fornecedores: Fornecedor[] = extractedQuotes.map(({ quote, file, error }, index) => {
+        // If extraction failed, create empty fornecedor for manual entry
+        if (!quote) {
+          const emptyPrecos: PrecoItem[] = items.map(item => ({
+            itemId: item.id,
+            precoUnitario: 0,
+            precoTotal: 0,
+          }));
+
+          const fileNameWithoutExt = file.originalname.replace(/\.[^/.]+$/, "");
+          
+          return {
+            id: `forn-${index}`,
+            nome: fileNameWithoutExt,
+            precos: emptyPrecos,
+            subtotal: 0,
+            impostos: 0,
+            total: 0,
+            fileName: file.originalname,
+            isManual: true,
+            extractionError: error,
+          };
+        }
+
         const precos: PrecoItem[] = [];
 
         items.forEach(item => {
@@ -96,11 +134,11 @@ export async function registerRoutes(
               precoTotal: matchingItem.precoUnitario * item.quantidade,
             });
           } else {
-            // Item not present in this quote - set high price to penalize
+            // Item not present in this quote - leave as 0 for manual entry
             precos.push({
               itemId: item.id,
-              precoUnitario: 999999,
-              precoTotal: 999999 * item.quantidade,
+              precoUnitario: 0,
+              precoTotal: 0,
             });
           }
         });
@@ -115,7 +153,7 @@ export async function registerRoutes(
           subtotal,
           impostos,
           total: subtotal + impostos,
-          fileName: files[index].originalname,
+          fileName: file.originalname,
         };
       });
 
