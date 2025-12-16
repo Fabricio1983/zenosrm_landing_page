@@ -1,0 +1,188 @@
+Contexto geral:
+Você está projetando a interface de um diagnóstico gratuito dentro da landing page do Zeno SRM.
+A landing page JÁ EXISTE e JÁ POSSUI UI definida.
+Seu trabalho NÃO é redesenhar a landing page.
+Seu trabalho é ADICIONAR um bloco de diagnóstico mantendo:
+- identidade visual existente
+- tipografia existente
+- cores existentes
+- espaçamentos existentes
+- componentes já usados (botões, cards, inputs)
+
+O diagnóstico deve parecer que sempre fez parte da página.
+
+Objetivo do bloco:
+Permitir que o usuário responda 10 perguntas rápidas (2–3 minutos) para entender
+quanto dinheiro pode estar deixando na mesa nas compras.
+
+Público:
+- Dono de pequena ou média indústria
+- Gestor de compras
+- Pessoa não técnica
+- Uso majoritário via celular
+
+Princípios de UI (obrigatório):
+- Mobile first
+- Pouquíssimos cliques
+- Nenhuma digitação, exceto se absolutamente necessário (preferencialmente nenhuma)
+- Todas as perguntas com múltipla escolha
+- Interação simples, fluida e leve
+- Nada de telas longas cansativas
+
+Estrutura do bloco:
+
+1. Container
+- Card centralizado (ou full-width no mobile)
+- Fundo neutro já usado na LP
+- Borda suave ou sombra leve (igual aos outros blocos)
+- Título curto no topo
+
+Título sugerido:
+"Diagnóstico rápido de compras industriais"
+
+Subtítulo:
+"Responda em menos de 3 minutos e veja o impacto no seu caixa"
+
+2. Componente de progresso
+- Barra de progresso horizontal discreta
+- Exemplo: “Pergunta 3 de 10”
+- Atualiza a cada resposta
+- Nunca trava o usuário
+
+3. Estrutura das perguntas (uma por vez)
+
+Cada pergunta deve ocupar apenas uma tela.
+Nada de scroll longo.
+
+Estrutura visual da pergunta:
+- Texto curto e claro
+- Fonte já usada na LP
+- Espaçamento confortável para toque
+- Respostas em formato de botões grandes (tap-friendly)
+
+Tipo de resposta:
+- Botões de seleção (radio buttons estilizados como cards ou buttons)
+- Um clique avança automaticamente para a próxima pergunta
+- Não usar dropdown
+- Não usar campo de texto
+
+4. Tipos de perguntas e respostas (OBRIGATÓRIO)
+
+Pergunta 1 – Faturamento mensal
+Tipo: seleção única (radio)
+Opções:
+- Até R$ 100 mil
+- R$ 100 mil a R$ 300 mil
+- R$ 300 mil a R$ 1 milhão
+- Acima de R$ 1 milhão
+
+Pergunta 2 – Compras mensais
+Tipo: seleção única
+Opções:
+- Até R$ 20 mil
+- R$ 20 mil a R$ 40 mil
+- R$ 40 mil a R$ 70 mil
+- Acima de R$ 70 mil
+- Não sei informar
+
+Pergunta 3 – Margem líquida aproximada
+Tipo: seleção única
+Opções:
+- Até 5%
+- 5% a 10%
+- 10% a 15%
+- Acima de 15%
+- Não sei informar
+
+Pergunta 4 – Como as compras são solicitadas
+Tipo: seleção única
+Opções:
+- WhatsApp / verbal
+- E-mail
+- Planilha
+- Sistema
+
+Pergunta 5 – Quantos fornecedores você costuma cotar
+Tipo: seleção única
+Opções:
+- Apenas 1
+- 2 fornecedores
+- 3 ou mais
+- Depende da urgência
+
+Pergunta 6 – Como compara os orçamentos
+Tipo: seleção única
+Opções:
+- No “olhômetro”
+- Comparação manual
+- Só preço final
+- Uso algum sistema
+
+Pergunta 7 – Controle de economia em compras
+Tipo: seleção única
+Opções:
+- Sei exatamente quanto economizo
+- Tenho uma noção
+- Não sei informar
+- Nunca medi
+
+Pergunta 8 – Compras urgentes / retrabalho
+Tipo: seleção única
+Opções:
+- Acontece com frequência
+- Às vezes
+- Raramente
+- Nunca
+
+Pergunta 9 – Sensação em relação ao caixa
+Tipo: seleção única
+Opções:
+- Sempre apertado
+- Controlado, mas justo
+- Estável
+- Confortável
+
+Pergunta 10 – O que mais faria diferença com mais caixa
+Tipo: seleção única
+Opções:
+- Mais tranquilidade no dia a dia
+- Investir na empresa
+- Melhorar retirada mensal
+- Facilitar vendas (preço / prazo)
+
+5. Transição pós-perguntas
+
+Após a última resposta:
+- Mostrar loading leve (ex: “Analisando seu cenário…”)
+- Duração: 1–2 segundos
+- Feedback visual sutil (spinner ou skeleton)
+
+6. Tela de resultado (pré-IA)
+
+Estrutura:
+- Headline curta:
+  “Seu diagnóstico está pronto”
+- Subheadline:
+  “Veja o impacto potencial das compras no seu caixa”
+
+A partir daqui:
+- Chamada para a IA gerar o diagnóstico textual
+- CTA suave abaixo do texto:
+  “Validar esse cenário com uma compra real (3 minutos)”
+
+Importante:
+- Não usar linguagem de venda agressiva
+- Não usar pop-ups
+- Não pedir cartão
+- Não forçar cadastro neste momento (se já existir no fluxo atual, manter igual)
+
+Estilo geral:
+- Simples
+- Elegante
+- Profissional
+- Industrial
+- Conversa de consultor, não de vendedor
+
+Regra final:
+Se algo parecer complexo demais para um dono de indústria responder no celular,
+simplifique.
