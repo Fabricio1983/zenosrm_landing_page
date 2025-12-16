@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { EqualizacaoDemo } from "@/components/equalization/EqualizacaoDemo";
+import { DiagnosticQuiz } from "@/components/diagnostic/DiagnosticQuiz";
 import {
   Accordion,
   AccordionContent,
@@ -181,6 +182,21 @@ export default function LandingPage() {
                 <div className="absolute -z-10 -bottom-4 -left-4 w-48 h-48 bg-accent/5 rounded-full blur-2xl" />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* 2.5. Diagnostic Quiz Section */}
+        <section id="diagnostic" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-10 max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                Diagnóstico rápido de compras industriais
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Responda em menos de 3 minutos e veja o impacto no seu caixa
+              </p>
+            </div>
+            <DiagnosticQuiz />
           </div>
         </section>
 
