@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileText, Check, X, Loader2, Sparkles } from 'lucide-react';
+import { Upload, FileText, Check, X, Loader2, Sparkles, PlayCircle, FileUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -33,6 +33,8 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   const [progress, setProgress] = useState(0);
   const [showLimitMessage, setShowLimitMessage] = useState(false);
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [examplesLoaded, setExamplesLoaded] = useState(false);
+  const [loadingExamples, setLoadingExamples] = useState(false);
 
   useEffect(() => {
     setFiles(initialFiles);
@@ -59,6 +61,7 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   }, [isProcessing, isCoolingDown]);
 
   const handleAddFiles = useCallback((newFiles: File[]) => {
+    setExamplesLoaded(false);
     setFiles(prev => {
       const combined = [...prev, ...newFiles];
       if (combined.length > 3) {
@@ -93,7 +96,13 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   };
 
   const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFiles(prev => {
+      const newFiles = prev.filter((_, i) => i !== index);
+      if (newFiles.length === 0) {
+        setExamplesLoaded(false);
+      }
+      return newFiles;
+    });
   };
 
   const handleProcess = async () => {
@@ -139,13 +148,112 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
     }
   };
 
+  const loadSampleFiles = async () => {
+    setLoadingExamples(true);
+    try {
+      const sampleUrls = [
+        '/samples/Proposta_MetalSul_Solucoes_Industriais.pdf',
+        '/samples/Proposta_Precisao_Industrial_Brasil.pdf',
+        '/samples/Proposta_Metal_Forte_Ltda.pdf'
+      ];
+      
+      const sampleFiles = await Promise.all(
+        sampleUrls.map(async (url) => {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const fileName = url.split('/').pop() || 'sample.pdf';
+          return new File([blob], fileName, { type: 'application/pdf' });
+        })
+      );
+      
+      setFiles(sampleFiles);
+      setExamplesLoaded(true);
+    } catch (error) {
+      console.error('Error loading sample files:', error);
+    } finally {
+      setLoadingExamples(false);
+    }
+  };
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-heading font-bold text-foreground">Compare vários orçamentos e veja a economia gerada em segundos</h2>
-        <p className="text-muted-foreground">Adicione orçamentos em PDF ou Excel e veja a mágica acontecendo</p>
-        <p className="text-xs text-muted-foreground">Dica: Você pode selecionar ou arrastar vários arquivos de uma vez!</p>
+        <h2 className="text-2xl font-heading font-bold text-foreground">Compare orçamentos e veja sua economia em segundos</h2>
+        <p className="text-muted-foreground">Carregue seus orçamentos ou use nossos exemplos para ver na prática</p>
       </div>
+      
+      {files.length === 0 && !isProcessing && (
+        <div 
+          {...getRootProps()}
+          className={`max-w-2xl mx-auto rounded-2xl transition-all ${
+            isDragActive ? 'bg-blue-50 ring-2 ring-primary ring-dashed p-4' : ''
+          }`}
+        >
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <div className="text-center py-12">
+              <Upload className="w-16 h-16 mx-auto mb-4 text-primary animate-bounce" />
+              <p className="text-xl font-bold text-primary">Solte seus arquivos aqui!</p>
+              <p className="text-muted-foreground">PDF, Excel ou imagem</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-4">
+              <Card 
+                className="border-2 border-dashed border-primary/30 bg-gradient-to-br from-blue-50 to-white hover:border-primary hover:shadow-lg transition-all cursor-pointer group"
+                onClick={(e) => { e.stopPropagation(); loadSampleFiles(); }}
+              >
+                <CardContent className="p-6 text-center">
+                  {loadingExamples ? (
+                    <Loader2 className="w-10 h-10 mx-auto mb-3 text-primary animate-spin" />
+                  ) : (
+                    <PlayCircle className="w-10 h-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
+                  )}
+                  <h3 className="font-bold text-foreground mb-1">Ver Demonstração</h3>
+                  <p className="text-sm text-muted-foreground">Use 3 orçamentos reais de exemplo</p>
+                  <p className="text-xs text-primary font-medium mt-2">Clique para carregar</p>
+                </CardContent>
+              </Card>
+              
+              <Card 
+                className="border-2 border-dashed border-border hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer group"
+                onClick={(e) => { e.stopPropagation(); document.getElementById('file-upload-input')?.click(); }}
+              >
+                <CardContent className="p-6 text-center">
+                  <FileUp className="w-10 h-10 mx-auto mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <h3 className="font-bold text-foreground mb-1">Usar Meus Orçamentos</h3>
+                  <p className="text-sm text-muted-foreground">Carregue seus próprios arquivos</p>
+                  <p className="text-xs text-muted-foreground mt-2">PDF, Excel ou imagem</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          <p className="text-xs text-center text-muted-foreground mt-4">
+            Ou arraste arquivos diretamente para esta área
+          </p>
+        </div>
+      )}
+      
+      {examplesLoaded && files.length > 0 && !isProcessing && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 text-center animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center justify-center gap-2 text-green-700 font-semibold">
+            <Check size={18} />
+            <span>3 propostas de exemplo carregadas!</span>
+          </div>
+          <p className="text-sm text-green-600 mt-1">
+            Clique em <strong>"Processar Orçamentos"</strong> para ver a mágica acontecer
+          </p>
+        </div>
+      )}
+
+      <input 
+        type="file" 
+        id="file-upload-input"
+        accept=".pdf,.xlsx,.csv,.jpg,.png,.jpeg" 
+        className="hidden" 
+        onChange={handleFileChange}
+        disabled={isProcessing}
+        multiple
+      />
 
       {showLimitMessage && (
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-4 text-center animate-in fade-in slide-in-from-top-2 duration-300">
@@ -159,13 +267,14 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
         </div>
       )}
 
-      <div 
-        {...getRootProps()} 
-        className={`grid md:grid-cols-3 gap-4 p-4 -m-4 rounded-2xl transition-all ${
-          isDragActive ? 'bg-blue-50 ring-2 ring-primary ring-dashed' : ''
-        }`}
-      >
-        <input {...getInputProps()} />
+      {files.length > 0 && (
+        <div 
+          {...getRootProps()} 
+          className={`grid md:grid-cols-3 gap-4 p-4 -m-4 rounded-2xl transition-all ${
+            isDragActive ? 'bg-blue-50 ring-2 ring-primary ring-dashed' : ''
+          }`}
+        >
+          <input {...getInputProps()} />
         {[0, 1, 2].map((i) => (
           <div key={i} className="relative">
             {files[i] ? (
@@ -214,7 +323,8 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
             )}
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {isCoolingDown && (
         <div className="w-full max-w-lg mx-auto space-y-6 py-4">
@@ -254,48 +364,16 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
         </div>
       )}
 
-      <div className="flex justify-center pt-4">
-        <Button 
-          size="lg" 
-          className="w-full md:w-auto min-w-[200px] h-12 text-lg font-bold shadow-lg shadow-primary/20"
-          disabled={files.length < 2 || isProcessing || isCoolingDown}
-          onClick={handleProcess}
-        >
-          {isCoolingDown ? 'Preparando...' : isProcessing ? 'Processando...' : 'Processar Orçamentos'}
-        </Button>
-      </div>
-
-      {!isProcessing && files.length === 0 && (
-        <div className="text-center pt-2">
-          <button 
-            onClick={async () => {
-              // Load real sample PDF files from public folder
-              try {
-                const sampleUrls = [
-                  '/samples/Proposta_MetalSul_Solucoes_Industriais.pdf',
-                  '/samples/Proposta_Precisao_Industrial_Brasil.pdf',
-                  '/samples/Proposta_Metal_Forte_Ltda.pdf'
-                ];
-                
-                const sampleFiles = await Promise.all(
-                  sampleUrls.map(async (url) => {
-                    const response = await fetch(url);
-                    const blob = await response.blob();
-                    const fileName = url.split('/').pop() || 'sample.pdf';
-                    return new File([blob], fileName, { type: 'application/pdf' });
-                  })
-                );
-                
-                setFiles(sampleFiles);
-              } catch (error) {
-                console.error('Error loading sample files:', error);
-              }
-            }}
-            className="text-sm text-primary hover:underline font-medium"
-            data-testid="button-load-samples"
+      {files.length > 0 && (
+        <div className="flex justify-center pt-4">
+          <Button 
+            size="lg" 
+            className="w-full md:w-auto min-w-[200px] h-12 text-lg font-bold shadow-lg shadow-primary/20"
+            disabled={files.length < 2 || isProcessing || isCoolingDown}
+            onClick={handleProcess}
           >
-            Não tem arquivos agora? <span className="font-bold">Usar propostas de exemplo</span>
-          </button>
+            {isCoolingDown ? 'Preparando...' : isProcessing ? 'Processando...' : 'Processar Orçamentos'}
+          </Button>
         </div>
       )}
       
