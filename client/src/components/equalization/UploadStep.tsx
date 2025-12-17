@@ -247,7 +247,7 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
           <Progress value={progress} className="h-3" />
           <div className="flex items-center justify-center gap-3">
             <Loader2 className="animate-spin text-primary flex-shrink-0" size={20} />
-            <p className="text-sm text-muted-foreground italic text-center animate-in fade-in duration-500" key={currentPhraseIndex}>
+            <p className="text-base md:text-lg text-muted-foreground italic text-center animate-in fade-in duration-500" key={currentPhraseIndex}>
               "{FRASES_IMPACTO[currentPhraseIndex]}"
             </p>
           </div>
