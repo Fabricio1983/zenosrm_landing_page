@@ -159,6 +159,7 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
   const [aiError, setAiError] = useState(false);
   
   const resultRef = useRef<HTMLDivElement>(null);
+  const analyzingRef = useRef<HTMLDivElement>(null);
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [shuffledPhrases, setShuffledPhrases] = useState<string[]>([]);
 
@@ -177,6 +178,10 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
       const shuffled = [...FRASES_IMPACTO_DIAGNOSTICO].sort(() => Math.random() - 0.5);
       setShuffledPhrases(shuffled);
       setCurrentPhraseIndex(0);
+      
+      setTimeout(() => {
+        analyzingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
       
       const interval = setInterval(() => {
         setCurrentPhraseIndex(prev => (prev + 1) % shuffled.length);
@@ -354,23 +359,25 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
     const currentPhrase = shuffledPhrases[currentPhraseIndex] || FRASES_IMPACTO_DIAGNOSTICO[0];
     
     return (
-      <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
-        <CardContent className="p-8 md:p-12 text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-6" />
-          <h3 className="text-xl font-bold text-foreground mb-4">Analisando seu cenário...</h3>
-          
-          <div className="bg-gradient-to-r from-blue-50 to-primary/10 rounded-xl p-5 border border-blue-100 min-h-[80px] flex items-center justify-center">
-            <p 
-              key={currentPhraseIndex}
-              className="text-primary font-medium text-sm md:text-base animate-in fade-in duration-500"
-            >
-              💡 {currentPhrase}
-            </p>
-          </div>
-          
-          <p className="text-muted-foreground text-sm mt-4">Preparando seu diagnóstico personalizado</p>
-        </CardContent>
-      </Card>
+      <div ref={analyzingRef} className="scroll-mt-8">
+        <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
+          <CardContent className="p-8 md:p-12 text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-6" />
+            <h3 className="text-xl font-bold text-foreground mb-4">Analisando seu cenário...</h3>
+            
+            <div className="bg-gradient-to-r from-blue-50 to-primary/10 rounded-xl p-5 border border-blue-100 min-h-[100px] flex items-center justify-center">
+              <p 
+                key={currentPhraseIndex}
+                className="text-primary font-medium text-sm md:text-base animate-in fade-in duration-500 leading-relaxed"
+              >
+                💡 {currentPhrase}
+              </p>
+            </div>
+            
+            <p className="text-muted-foreground text-sm mt-4">Preparando seu diagnóstico personalizado</p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
