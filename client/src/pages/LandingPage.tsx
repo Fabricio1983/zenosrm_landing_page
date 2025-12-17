@@ -60,6 +60,7 @@ export default function LandingPage() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => scrollToSection("diagnostic")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Diagnóstico</button>
             <button onClick={() => scrollToSection("solutions")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Soluções</button>
             <button onClick={() => scrollToSection("pricing")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Preços</button>
             <button onClick={() => scrollToSection("faq")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Para quem é</button>
@@ -94,6 +95,7 @@ export default function LandingPage() {
         {/* Mobile Nav */}
         {isMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-border p-4 flex flex-col gap-4 shadow-xl animate-in slide-in-from-top-5">
+            <button onClick={() => scrollToSection("diagnostic")} className="text-left py-2 font-medium text-muted-foreground">Diagnóstico</button>
             <button onClick={() => scrollToSection("solutions")} className="text-left py-2 font-medium text-muted-foreground">Soluções</button>
             <button onClick={() => scrollToSection("pricing")} className="text-left py-2 font-medium text-muted-foreground">Preços</button>
             <button onClick={() => scrollToSection("faq")} className="text-left py-2 font-medium text-muted-foreground">Para quem é</button>
