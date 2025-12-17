@@ -163,19 +163,19 @@ export default function LandingPage() {
 
               {/* Right Column - Video */}
               <div className="relative">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border bg-white">
-                  {/* Video placeholder - replace src with your video file */}
-                  <video 
-                    className="w-full h-auto aspect-video object-cover"
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
-                    poster="/assets/video-poster.jpg"
-                  >
-                    <source src="/assets/demo-video.mp4" type="video/mp4" />
-                    {/* Fallback image if video not available */}
-                  </video>
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border bg-gradient-to-br from-blue-50 to-slate-100">
+                  {/* Video with zoom to hide black bars */}
+                  <div className="aspect-video overflow-hidden">
+                    <video 
+                      className="w-full h-full object-cover scale-[1.35]"
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                    >
+                      <source src="/assets/demo-video.mp4" type="video/mp4" />
+                    </video>
+                  </div>
                   {/* Decorative gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
                 </div>
