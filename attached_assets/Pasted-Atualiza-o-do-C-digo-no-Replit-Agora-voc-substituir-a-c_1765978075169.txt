@@ -1,0 +1,78 @@
+Atualização do Código no Replit
+Agora você substituirá a chamada de API antiga pela nova chamada segura da Vertex AI.
+
+Defina Suas Constantes:
+
+No topo do seu arquivo principal Python (ex: main.py), defina seu ID de Projeto e Região (você pode ver seu ID de Projeto no Cloud Console).
+
+Python
+
+import os
+from google.cloud import aiplatform
+
+# *** SUBSTITUA ESTES VALORES ***
+# 1. ID do seu projeto GCP (ex: srm-vertex-ai-producao-12345)
+PROJECT_ID = "SEU_PROJECT_ID" 
+# 2. Região onde você ativou a Vertex AI (us-central1 é a mais comum para IA)
+REGION = "us-central1" 
+
+# Inicializa o cliente Vertex AI
+aiplatform.init(project=PROJECT_ID, location=REGION) 
+Chame o Modelo Gemini Pro:
+
+O código abaixo mostra como usar o Gemini Pro para sua tarefa de extração de dados. O Gemini Pro (aqui chamado gemini-2.5-pro) aceita arquivos para análise, o que é perfeito para seus PDFs.
+
+Python
+
+def extrair_dados_do_pdf(caminho_local_do_arquivo, prompt_instrucao):
+    # 1. Carrega o arquivo da sua máquina local/Replit
+    # OBS: Para produção, o ideal é usar o Cloud Storage
+    uploaded_file = aiplatform.File.upload(
+        file_path=caminho_local_do_arquivo,
+        display_name=caminho_local_do_arquivo.split('/')[-1]
+    )
+
+    # 2. Defina o modelo
+    model = aiplatform.models.get_model_registry().get_model("gemini-2.5-pro")
+
+    # 3. Faz a requisição, enviando o prompt e o arquivo
+    response = model.generate_content(
+        contents=[
+            prompt_instrucao,
+            uploaded_file
+        ],
+        config=aiplatform.types.GenerateContentConfig(
+            # Garante que a resposta será um JSON (Formato estruturado)
+            response_mime_type="application/json" 
+        )
+    )
+
+    # 4. Deleta o arquivo temporário após o uso (para não gerar custo de armazenamento)
+    uploaded_file.delete() 
+
+    return response.text
+
+# --- Exemplo de Uso ---
+
+# IMPORTANTE: Coloque um arquivo PDF real (ex: 'proposta.pdf') na pasta do seu Replit para testar!
+CAMINHO_DO_ARQUIVO = 'proposta_exemplo.pdf' 
+
+# O prompt deve instruir exatamente o que o modelo deve extrair (nome do fornecedor, itens, etc.)
+PROMPT = """
+Extraia o nome do fornecedor e todos os itens da tabela (Descrição e Preço Unitário). 
+Retorne o resultado estritamente no seguinte formato JSON, usando ponto como separador decimal:
+{
+  "fornecedor": "...",
+  "itens": [
+    {"descricao": "...", "preco_unitario": 0.0}
+  ]
+}
+"""
+
+# Extrai e imprime o resultado
+try:
+    dados_json = extrair_dados_do_pdf(CAMINHO_DO_ARQUIVO, PROMPT)
+    print("Extração bem-sucedida (via Vertex AI):")
+    print(dados_json)
+except Exception as e:
+    print(f"Erro na extração: {e}")
