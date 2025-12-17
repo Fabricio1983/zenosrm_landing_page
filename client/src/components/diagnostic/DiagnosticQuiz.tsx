@@ -508,10 +508,10 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
       {showHeader && (
         <div className="text-center mb-10 max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
-            Diagnóstico rápido de compras industriais
+            Quanto dinheiro sua empresa perde sem automatizar compras?
           </h2>
           <p className="text-lg text-muted-foreground">
-            Responda em menos de 3 minutos e veja o impacto no seu caixa
+            Responda em menos de 1 minuto e descubra quanto sua empresa pode estar deixando na mesa
           </p>
         </div>
       )}
