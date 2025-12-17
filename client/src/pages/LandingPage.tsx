@@ -154,9 +154,9 @@ export default function LandingPage() {
                     size="lg" 
                     variant="outline" 
                     className="w-full sm:w-auto text-lg h-14 px-8 border-2 hover:bg-gray-50 text-foreground"
-                    onClick={() => scrollToSection("equalization")}
+                    onClick={() => scrollToSection("diagnostic")}
                   >
-                    Ver Demo Interativa
+                    Fazer Diagnóstico Grátis
                   </Button>
                 </div>
               </div>
