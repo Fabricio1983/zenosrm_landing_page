@@ -5,7 +5,7 @@ import * as path from "path";
 
 const PROJECT_ID = process.env.GCP_PROJECT_ID || "gen-lang-client-0316098340";
 const LOCATION = "us-central1";
-const MODEL_ID = "gemini-1.5-pro";
+const MODEL_ID = "gemini-2.0-flash";
 
 let vertexAI: VertexAI | null = null;
 let credentialsConfigured = false;
@@ -196,8 +196,5 @@ REGRAS IMPORTANTES:
 }
 
 export function isVertexAIConfigured(): boolean {
-  // Temporarily disabled - Vertex AI project doesn't have model access
-  // Re-enable once Vertex AI API is properly configured in GCP console
-  return false;
-  // Original: return findCredentialsFile() !== null;
+  return findCredentialsFile() !== null;
 }
