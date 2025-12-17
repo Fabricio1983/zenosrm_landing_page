@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, Lightbulb, RotateCcw, Wallet, Calendar, DollarSign, Target } from 'lucide-react';
+import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, ArrowLeft, Lightbulb, RotateCcw, Wallet, Calendar, DollarSign, Target } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -153,6 +153,16 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
         ? prev.filter(v => v !== value)
         : [...prev, value]
     );
+  };
+
+  const goBack = () => {
+    if (currentQuestion > 0) {
+      const prevQuestion = QUESTIONS[currentQuestion - 1];
+      if (prevQuestion.multiSelect && answers[prevQuestion.id]) {
+        setMultiSelectAnswers(answers[prevQuestion.id].split(','));
+      }
+      setCurrentQuestion(prev => prev - 1);
+    }
   };
 
   const confirmMultiSelect = () => {
@@ -492,15 +502,27 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
                     {option.label}
                   </button>
                 ))}
-                <Button
-                  className="w-full h-12 mt-2 bg-primary hover:bg-blue-600 text-white font-semibold"
-                  onClick={confirmMultiSelect}
-                  disabled={multiSelectAnswers.length === 0}
-                  data-testid="button-continue-multiselect"
-                >
-                  Continuar
-                  <ArrowRight className="ml-2" size={18} />
-                </Button>
+                <div className="flex gap-3 mt-2">
+                  {currentQuestion > 0 && (
+                    <Button
+                      variant="outline"
+                      className="h-12 px-4 font-semibold border-2"
+                      onClick={goBack}
+                      data-testid="button-back"
+                    >
+                      <ArrowLeft size={18} />
+                    </Button>
+                  )}
+                  <Button
+                    className="flex-1 h-12 bg-primary hover:bg-blue-600 text-white font-semibold"
+                    onClick={confirmMultiSelect}
+                    disabled={multiSelectAnswers.length === 0}
+                    data-testid="button-continue-multiselect"
+                  >
+                    Continuar
+                    <ArrowRight className="ml-2" size={18} />
+                  </Button>
+                </div>
               </>
             ) : (
               question.options.map((option) => (
@@ -515,6 +537,20 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
               ))
             )}
           </div>
+          
+          {!question.multiSelect && currentQuestion > 0 && (
+            <div className="pt-2">
+              <Button
+                variant="ghost"
+                className="text-muted-foreground hover:text-primary"
+                onClick={goBack}
+                data-testid="button-back"
+              >
+                <ArrowLeft className="mr-2" size={16} />
+                Voltar à pergunta anterior
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

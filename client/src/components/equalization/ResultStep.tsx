@@ -226,7 +226,7 @@ export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: 
           </div>
           
           <div className="pt-4">
-            <Button size="lg" className="bg-white text-primary hover:bg-blue-50 text-lg h-14 px-8 font-bold shadow-lg">
+            <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-blue-50 text-lg h-14 px-8 font-bold shadow-lg">
               Começar Agora - 7 dias Grátis
             </Button>
           </div>
