@@ -268,38 +268,33 @@ export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
       {!isProcessing && files.length === 0 && (
         <div className="text-center pt-2">
           <button 
-            onClick={() => {
-              // Create dummy files for simulation
-              const dummyFiles = [
-                new File([""], "Orçamento_Parafusos_A.pdf", { type: "application/pdf" }),
-                new File([""], "Orçamento_Fornecedor_B.xlsx", { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }),
-                new File([""], "Orçamento_Distribuidora_C.pdf", { type: "application/pdf" })
-              ];
-              setFiles(dummyFiles);
-              // Small timeout to allow UI to update before processing starts
-              setTimeout(() => {
-                // Trigger process automatically or let user click? 
-                // Let's just fill them and let user click process to feel control, 
-                // OR trigger the process function logic directly.
-                // Re-using the logic requires extraction or state manipulation.
-                // For simplicity in this event handler:
-                setIsProcessing(true);
-                let p = 0;
-                const interval = setInterval(() => {
-                  p += 5;
-                  if (p > 100) {
-                    clearInterval(interval);
-                    setIsProcessing(false);
-                    onComplete(dummyFiles);
-                  } else {
-                    setProgress(p);
-                  }
-                }, 150);
-              }, 500);
+            onClick={async () => {
+              // Load real sample PDF files from public folder
+              try {
+                const sampleUrls = [
+                  '/samples/Proposta_MetalSul_Solucoes_Industriais.pdf',
+                  '/samples/Proposta_Precisao_Industrial_Brasil.pdf',
+                  '/samples/Proposta_Metal_Forte_Ltda.pdf'
+                ];
+                
+                const sampleFiles = await Promise.all(
+                  sampleUrls.map(async (url) => {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    const fileName = url.split('/').pop() || 'sample.pdf';
+                    return new File([blob], fileName, { type: 'application/pdf' });
+                  })
+                );
+                
+                setFiles(sampleFiles);
+              } catch (error) {
+                console.error('Error loading sample files:', error);
+              }
             }}
             className="text-sm text-primary hover:underline font-medium"
+            data-testid="button-load-samples"
           >
-            Não tem arquivos agora? <span className="font-bold">Simular com dados de exemplo</span>
+            Não tem arquivos agora? <span className="font-bold">Usar propostas de exemplo</span>
           </button>
         </div>
       )}
