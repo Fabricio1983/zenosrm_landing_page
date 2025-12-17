@@ -8,6 +8,7 @@ interface Question {
   id: string;
   question: string;
   options: { value: string; label: string; weight?: number }[];
+  multiSelect?: boolean;
 }
 
 const QUESTIONS: Question[] = [
@@ -15,9 +16,11 @@ const QUESTIONS: Question[] = [
     id: 'faturamento',
     question: 'Qual o faturamento mensal da sua empresa?',
     options: [
-      { value: 'ate100k', label: 'Até R$ 100 mil', weight: 1 },
-      { value: '100k-300k', label: 'R$ 100 mil a R$ 300 mil', weight: 2 },
-      { value: '300k-1m', label: 'R$ 300 mil a R$ 1 milhão', weight: 3 },
+      { value: 'ate50k', label: 'Até R$ 50 mil', weight: 1 },
+      { value: '50k-100k', label: 'R$ 50 mil a R$ 100 mil', weight: 2 },
+      { value: '100k-200k', label: 'R$ 100 mil a R$ 200 mil', weight: 2 },
+      { value: '200k-500k', label: 'R$ 200 mil a R$ 500 mil', weight: 3 },
+      { value: '500k-1m', label: 'R$ 500 mil a R$ 1 milhão', weight: 3 },
       { value: 'acima1m', label: 'Acima de R$ 1 milhão', weight: 4 },
     ]
   },
@@ -46,6 +49,7 @@ const QUESTIONS: Question[] = [
   {
     id: 'solicitacao',
     question: 'Como as compras são solicitadas na sua empresa?',
+    multiSelect: true,
     options: [
       { value: 'whatsapp', label: 'WhatsApp / verbal', weight: 4 },
       { value: 'email', label: 'E-mail', weight: 3 },
@@ -105,7 +109,7 @@ const QUESTIONS: Question[] = [
   },
   {
     id: 'desejo',
-    question: 'O que mais faria diferença com mais caixa?',
+    question: 'O que você faria com mais caixa na empresa?',
     options: [
       { value: 'tranquilidade', label: 'Mais tranquilidade no dia a dia', weight: 3 },
       { value: 'investir', label: 'Investir na empresa', weight: 3 },
@@ -130,6 +134,7 @@ interface DiagnosticQuizProps {
 export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [multiSelectAnswers, setMultiSelectAnswers] = useState<string[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
@@ -137,6 +142,70 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
   const [aiError, setAiError] = useState(false);
 
   const progress = ((currentQuestion) / QUESTIONS.length) * 100;
+
+  const toggleMultiSelect = (value: string) => {
+    setMultiSelectAnswers(prev => 
+      prev.includes(value) 
+        ? prev.filter(v => v !== value)
+        : [...prev, value]
+    );
+  };
+
+  const confirmMultiSelect = () => {
+    if (multiSelectAnswers.length === 0) return;
+    const question = QUESTIONS[currentQuestion];
+    const newAnswers = { ...answers, [question.id]: multiSelectAnswers.join(',') };
+    setAnswers(newAnswers);
+    setMultiSelectAnswers([]);
+    
+    if (currentQuestion < QUESTIONS.length - 1) {
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      processResults(newAnswers);
+    }
+  };
+
+  const processResults = async (finalAnswers: Record<string, string>) => {
+    setIsAnalyzing(true);
+    const totalScore = Object.keys(finalAnswers).reduce((acc, key) => {
+      const question = QUESTIONS.find(q => q.id === key);
+      const answerValue = finalAnswers[key];
+      if (answerValue.includes(',')) {
+        const values = answerValue.split(',');
+        const maxWeight = Math.max(...values.map(v => {
+          const opt = question?.options.find(o => o.value === v);
+          return opt?.weight || 0;
+        }));
+        return acc + maxWeight;
+      }
+      const option = question?.options.find(o => o.value === answerValue);
+      return acc + (option?.weight || 0);
+    }, 0);
+    setScore(totalScore);
+    
+    try {
+      const response = await fetch('/api/generate-diagnostic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers: finalAnswers, score: totalScore })
+      });
+      
+      if (response.ok) {
+        const diagnostic = await response.json();
+        setAiDiagnostic(diagnostic);
+      } else {
+        console.error('Failed to generate AI diagnostic');
+        setAiError(true);
+      }
+    } catch (error) {
+      console.error('Error calling AI:', error);
+      setAiError(true);
+    }
+    
+    setIsAnalyzing(false);
+    setShowResult(true);
+    onComplete?.(finalAnswers, totalScore);
+  };
 
   const handleAnswer = async (questionId: string, value: string, weight: number = 1) => {
     const newAnswers = { ...answers, [questionId]: value };
@@ -147,37 +216,7 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
         setCurrentQuestion(prev => prev + 1);
       }, 300);
     } else {
-      setIsAnalyzing(true);
-      const totalScore = Object.keys(newAnswers).reduce((acc, key) => {
-        const question = QUESTIONS.find(q => q.id === key);
-        const option = question?.options.find(o => o.value === newAnswers[key]);
-        return acc + (option?.weight || 0);
-      }, 0);
-      setScore(totalScore);
-      
-      // Call AI to generate personalized diagnostic
-      try {
-        const response = await fetch('/api/generate-diagnostic', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ answers: newAnswers, score: totalScore })
-        });
-        
-        if (response.ok) {
-          const diagnostic = await response.json();
-          setAiDiagnostic(diagnostic);
-        } else {
-          console.error('Failed to generate AI diagnostic');
-          setAiError(true);
-        }
-      } catch (error) {
-        console.error('Error calling AI:', error);
-        setAiError(true);
-      }
-      
-      setIsAnalyzing(false);
-      setShowResult(true);
-      onComplete?.(newAnswers, totalScore);
+      processResults(newAnswers);
     }
   };
 
@@ -210,6 +249,7 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
   const resetDiagnostic = () => {
     setCurrentQuestion(0);
     setAnswers({});
+    setMultiSelectAnswers([]);
     setShowResult(false);
     setScore(0);
     setAiDiagnostic(null);
@@ -363,18 +403,61 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
           <h3 className="text-xl md:text-2xl font-bold text-foreground text-center">
             {question.question}
           </h3>
+          
+          {question.multiSelect && (
+            <p className="text-sm text-muted-foreground text-center">
+              Selecione todas as opções que se aplicam
+            </p>
+          )}
 
           <div className="grid gap-3">
-            {question.options.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleAnswer(question.id, option.value, option.weight)}
-                className="w-full p-4 text-left rounded-xl border-2 border-border hover:border-primary hover:bg-blue-50/50 transition-all font-medium text-foreground active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/20"
-                data-testid={`option-${question.id}-${option.value}`}
-              >
-                {option.label}
-              </button>
-            ))}
+            {question.multiSelect ? (
+              <>
+                {question.options.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => toggleMultiSelect(option.value)}
+                    className={`w-full p-4 text-left rounded-xl border-2 transition-all font-medium active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/20 flex items-center gap-3 ${
+                      multiSelectAnswers.includes(option.value)
+                        ? 'border-primary bg-blue-50 text-primary'
+                        : 'border-border hover:border-primary hover:bg-blue-50/50 text-foreground'
+                    }`}
+                    data-testid={`option-${question.id}-${option.value}`}
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                      multiSelectAnswers.includes(option.value)
+                        ? 'border-primary bg-primary'
+                        : 'border-muted-foreground/50'
+                    }`}>
+                      {multiSelectAnswers.includes(option.value) && (
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      )}
+                    </div>
+                    {option.label}
+                  </button>
+                ))}
+                <Button
+                  className="w-full h-12 mt-2 bg-primary hover:bg-blue-600 text-white font-semibold"
+                  onClick={confirmMultiSelect}
+                  disabled={multiSelectAnswers.length === 0}
+                  data-testid="button-continue-multiselect"
+                >
+                  Continuar
+                  <ArrowRight className="ml-2" size={18} />
+                </Button>
+              </>
+            ) : (
+              question.options.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleAnswer(question.id, option.value, option.weight)}
+                  className="w-full p-4 text-left rounded-xl border-2 border-border hover:border-primary hover:bg-blue-50/50 transition-all font-medium text-foreground active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  data-testid={`option-${question.id}-${option.value}`}
+                >
+                  {option.label}
+                </button>
+              ))
+            )}
           </div>
         </div>
       </CardContent>

@@ -301,7 +301,7 @@ export async function registerRoutes(
 
       // Build context from answers
       const answerLabels: Record<string, Record<string, string>> = {
-        faturamento: { 'ate100k': 'Até R$ 100 mil', '100k-300k': 'R$ 100 mil a R$ 300 mil', '300k-1m': 'R$ 300 mil a R$ 1 milhão', 'acima1m': 'Acima de R$ 1 milhão' },
+        faturamento: { 'ate50k': 'Até R$ 50 mil', '50k-100k': 'R$ 50 mil a R$ 100 mil', '100k-200k': 'R$ 100 mil a R$ 200 mil', '200k-500k': 'R$ 200 mil a R$ 500 mil', '500k-1m': 'R$ 500 mil a R$ 1 milhão', 'acima1m': 'Acima de R$ 1 milhão' },
         compras: { 'ate20k': 'Até R$ 20 mil', '20k-40k': 'R$ 20 mil a R$ 40 mil', '40k-70k': 'R$ 40 mil a R$ 70 mil', 'acima70k': 'Acima de R$ 70 mil', 'naosei': 'Não sei informar' },
         margem: { 'ate5': 'Até 5%', '5-10': '5% a 10%', '10-15': '10% a 15%', 'acima15': 'Acima de 15%', 'naosei': 'Não sei informar' },
         solicitacao: { 'whatsapp': 'WhatsApp / verbal', 'email': 'E-mail', 'planilha': 'Planilha', 'sistema': 'Sistema' },
@@ -314,7 +314,12 @@ export async function registerRoutes(
       };
 
       const answersText = Object.entries(answers).map(([key, value]) => {
-        const label = answerLabels[key]?.[value as string] || value;
+        const valueStr = value as string;
+        if (valueStr.includes(',')) {
+          const labels = valueStr.split(',').map(v => answerLabels[key]?.[v] || v).join(', ');
+          return `- ${key}: ${labels}`;
+        }
+        const label = answerLabels[key]?.[valueStr] || valueStr;
         return `- ${key}: ${label}`;
       }).join('\n');
 
