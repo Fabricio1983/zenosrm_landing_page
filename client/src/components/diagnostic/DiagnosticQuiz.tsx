@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, Sparkles, Lightbulb } from 'lucide-react';
+import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, Lightbulb, RotateCcw } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -207,16 +207,22 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
     }
   };
 
+  const resetDiagnostic = () => {
+    setCurrentQuestion(0);
+    setAnswers({});
+    setShowResult(false);
+    setScore(0);
+    setAiDiagnostic(null);
+    setAiError(false);
+  };
+
   if (isAnalyzing) {
     return (
       <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
         <CardContent className="p-8 md:p-12 text-center">
-          <div className="relative">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-6" />
-            <Sparkles className="w-5 h-5 text-accent absolute top-0 right-1/3 animate-pulse" />
-          </div>
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-6" />
           <h3 className="text-xl font-bold text-foreground mb-2">Analisando seu cenário...</h3>
-          <p className="text-muted-foreground">Nossa IA está preparando seu diagnóstico personalizado</p>
+          <p className="text-muted-foreground">Preparando seu diagnóstico personalizado</p>
         </CardContent>
       </Card>
     );
@@ -235,13 +241,6 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
               <CheckCircle2 size={18} />
               Diagnóstico Concluído
             </div>
-            
-            {aiDiagnostic && (
-              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium mb-4 ml-2">
-                <Sparkles size={12} />
-                Gerado por IA
-              </div>
-            )}
             
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">
               {aiDiagnostic?.headline || (score >= 30 
@@ -295,15 +294,27 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
             <p className="text-muted-foreground text-sm">
               Quer validar esse cenário com uma compra real?
             </p>
-            <Button 
-              size="lg" 
-              className="w-full sm:w-auto min-w-[250px] h-14 text-lg font-bold bg-accent hover:bg-orange-600 shadow-lg shadow-orange-500/20"
-              onClick={scrollToEqualization}
-              data-testid="button-diagnostic-cta"
-            >
-              Validar com uma compra real
-              <ArrowRight className="ml-2" size={20} />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto min-w-[250px] h-14 text-lg font-bold bg-accent hover:bg-orange-600 shadow-lg shadow-orange-500/20"
+                onClick={scrollToEqualization}
+                data-testid="button-diagnostic-cta"
+              >
+                Validar com uma compra real
+                <ArrowRight className="ml-2" size={20} />
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="w-full sm:w-auto h-14 text-lg font-medium"
+                onClick={resetDiagnostic}
+                data-testid="button-reset-diagnostic"
+              >
+                <RotateCcw className="mr-2" size={18} />
+                Refazer Diagnóstico
+              </Button>
+            </div>
             <p className="text-xs text-muted-foreground">
               Leva menos de 3 minutos. Sem cadastro.
             </p>
