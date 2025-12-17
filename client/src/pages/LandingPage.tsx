@@ -122,7 +122,7 @@ export default function LandingPage() {
 
       <main className="flex-1 pt-16 sm:pt-20">
         {/* 2. Hero Section */}
-        <section className="relative overflow-hidden pt-12 pb-20 lg:pt-24 lg:pb-32 bg-gradient-to-b from-blue-50/50 to-white">
+        <section className="relative overflow-hidden pt-8 pb-16 lg:pt-12 lg:pb-20 bg-gradient-to-b from-blue-50/50 to-white">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
               {/* Left Column - Text */}
