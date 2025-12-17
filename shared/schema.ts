@@ -5,9 +5,11 @@ import { z } from "zod";
 
 export const leads = pgTable("leads", {
   id: serial("id").primaryKey(),
+  nome: text("nome"),
   email: text("email").notNull(),
   empresa: text("empresa").notNull(),
   telefone: text("telefone"),
+  source: text("source").default("waitlist"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

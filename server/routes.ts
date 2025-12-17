@@ -239,6 +239,30 @@ export async function registerRoutes(
     }
   });
 
+  // POST /api/waitlist - Add to waitlist
+  app.post("/api/waitlist", async (req, res) => {
+    try {
+      const { nome, empresa, email, telefone, source } = req.body;
+      
+      if (!empresa || !email) {
+        return res.status(400).json({ error: "Nome da empresa e e-mail são obrigatórios" });
+      }
+
+      const lead = await storage.createLead({
+        nome: nome || null,
+        empresa,
+        email,
+        telefone: telefone || null,
+        source: source || 'waitlist'
+      });
+
+      res.json({ success: true, leadId: lead.id });
+    } catch (error) {
+      console.error("Error adding to waitlist:", error);
+      res.status(500).json({ error: "Failed to add to waitlist" });
+    }
+  });
+
   // GET /api/config - Get app configuration
   app.get("/api/config", async (req, res) => {
     try {

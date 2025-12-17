@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, ArrowLeft, Lightbulb, RotateCcw, Wallet, Calendar, DollarSign, Target } from 'lucide-react';
+import { WaitlistForm } from '@/components/WaitlistForm';
 
 const FRASES_IMPACTO_DIAGNOSTICO = [
   "Empresas que equalizam cotações economizam em média 12% em cada compra.",
@@ -470,26 +471,24 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
 
             <div className="pt-4 border-t border-border">
               <p className="text-center text-muted-foreground text-sm mb-4">
-                Quer validar esse cenário com uma compra real?
+                Quer saber quando poderá testar o Zeno?
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <WaitlistForm 
+                source="diagnostic"
+                variant="inline"
+                title="Seja avisado quando liberarmos o acesso"
+                subtitle="Cadastre-se para testar o Zeno assim que estiver disponível"
+                buttonText="Entrar na Lista de Espera"
+              />
+              <div className="flex justify-center mt-4">
                 <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto min-w-[250px] h-14 text-lg font-bold bg-accent hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5"
-                  onClick={scrollToEqualization}
-                  data-testid="button-diagnostic-cta"
-                >
-                  Validar com uma compra real
-                  <ArrowRight className="ml-2" size={20} />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="w-full sm:w-auto h-14 text-lg font-medium border-2 hover:bg-slate-50 hover:border-primary transition-all"
+                  size="sm" 
+                  variant="ghost"
+                  className="text-muted-foreground hover:text-foreground"
                   onClick={resetDiagnostic}
                   data-testid="button-reset-diagnostic"
                 >
-                  <RotateCcw className="mr-2" size={18} />
+                  <RotateCcw className="mr-2" size={16} />
                   Refazer Diagnóstico
                 </Button>
               </div>

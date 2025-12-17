@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Fornecedor, Item, formatCurrency } from './types';
 import { ArrowLeft, Check, Trophy, TrendingDown, RefreshCw, BarChart3 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { WaitlistForm } from '@/components/WaitlistForm';
 
 interface ResultStepProps {
   fornecedores: Fornecedor[];
@@ -214,21 +215,26 @@ export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: 
         </div>
       </div>
 
-      {/* 4. Final CTA */}
-      <Card className="bg-primary text-white border-none shadow-xl">
-        <CardContent className="p-8 md:p-10 text-center space-y-6">
-          <h3 className="text-2xl md:text-3xl font-heading font-bold">Quer automatizar suas equalizações?</h3>
-          <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto text-left">
-            <div className="flex items-center gap-3"><div className="bg-white/20 p-1 rounded-full"><Check size={14} /></div> Envie RFQs por email automaticamente</div>
-            <div className="flex items-center gap-3"><div className="bg-white/20 p-1 rounded-full"><Check size={14} /></div> Equalize em segundos, não em horas</div>
-            <div className="flex items-center gap-3"><div className="bg-white/20 p-1 rounded-full"><Check size={14} /></div> Receba propostas padronizadas</div>
-            <div className="flex items-center gap-3"><div className="bg-white/20 p-1 rounded-full"><Check size={14} /></div> Gere pedidos com 1 clique</div>
+      {/* 4. Final CTA - Waitlist */}
+      <Card className="border-2 border-primary/20 shadow-xl bg-gradient-to-br from-blue-50 to-white">
+        <CardContent className="p-8 md:p-10 space-y-6">
+          <div className="text-center">
+            <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-2">Quer automatizar suas equalizações?</h3>
+            <p className="text-muted-foreground">Entre na lista de espera para testar o Zeno SRM</p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto text-left text-sm">
+            <div className="flex items-center gap-3 text-foreground"><div className="bg-primary/10 p-1 rounded-full"><Check size={14} className="text-primary" /></div> Envie RFQs por email automaticamente</div>
+            <div className="flex items-center gap-3 text-foreground"><div className="bg-primary/10 p-1 rounded-full"><Check size={14} className="text-primary" /></div> Equalize em segundos, não em horas</div>
+            <div className="flex items-center gap-3 text-foreground"><div className="bg-primary/10 p-1 rounded-full"><Check size={14} className="text-primary" /></div> Receba propostas padronizadas</div>
+            <div className="flex items-center gap-3 text-foreground"><div className="bg-primary/10 p-1 rounded-full"><Check size={14} className="text-primary" /></div> Gere pedidos com 1 clique</div>
           </div>
           
-          <div className="pt-4">
-            <Button size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-blue-50 text-lg h-14 px-8 font-bold shadow-lg">
-              Começar Agora - 7 dias Grátis
-            </Button>
+          <div className="pt-4 max-w-lg mx-auto">
+            <WaitlistForm 
+              source="equalization"
+              variant="compact"
+              buttonText="Entrar na Lista de Espera"
+            />
           </div>
         </CardContent>
       </Card>

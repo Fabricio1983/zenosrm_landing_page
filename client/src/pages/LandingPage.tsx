@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { EqualizacaoDemo } from "@/components/equalization/EqualizacaoDemo";
 import { DiagnosticQuiz } from "@/components/diagnostic/DiagnosticQuiz";
+import { WaitlistForm } from "@/components/WaitlistForm";
 import {
   Accordion,
   AccordionContent,
@@ -36,6 +37,7 @@ import {
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showWaitlistModal, setShowWaitlistModal] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -146,9 +148,9 @@ export default function LandingPage() {
                   <Button 
                     size="lg" 
                     className="w-full sm:w-auto text-lg h-14 px-8 bg-accent hover:bg-orange-600 text-white shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-0.5"
-                    onClick={() => scrollToSection("equalization")}
+                    onClick={() => scrollToSection("waitlist")}
                   >
-                    Equalizar Agora
+                    Entrar na Lista de Espera
                   </Button>
                   <Button 
                     size="lg" 
@@ -432,7 +434,7 @@ export default function LandingPage() {
                    <h3 className="text-xl font-bold mb-2">Start</h3>
                    <div className="text-3xl font-bold mb-6">R$ 497<span className="text-base font-normal text-muted-foreground">/mês</span></div>
                    <p className="text-sm text-muted-foreground mb-6">Ideal para pequenas empresas começando a organizar compras.</p>
-                   <Button className="w-full mb-8" variant="outline">Começar Teste</Button>
+                   <Button className="w-full mb-8" variant="outline" onClick={() => scrollToSection("waitlist")}>Entrar na Lista</Button>
                    <ul className="space-y-3 text-sm">
                      <li className="flex gap-2"><Check className="w-4 h-4 text-green-500" /> Até 3 usuários</li>
                      <li className="flex gap-2"><Check className="w-4 h-4 text-green-500" /> 50 Solicitações/mês</li>
@@ -450,7 +452,7 @@ export default function LandingPage() {
                    <h3 className="text-xl font-bold mb-2 text-primary">Pro</h3>
                    <div className="text-3xl font-bold mb-6">R$ 997<span className="text-base font-normal text-muted-foreground">/mês</span></div>
                    <p className="text-sm text-muted-foreground mb-6">Para empresas em crescimento que precisam de controle total.</p>
-                   <Button className="w-full mb-8 bg-primary hover:bg-blue-600">Começar Teste Grátis</Button>
+                   <Button className="w-full mb-8 bg-primary hover:bg-blue-600" onClick={() => scrollToSection("waitlist")}>Garantir minha Vaga</Button>
                    <ul className="space-y-3 text-sm font-medium">
                      <li className="flex gap-2"><Check className="w-4 h-4 text-primary" /> Até 10 usuários</li>
                      <li className="flex gap-2"><Check className="w-4 h-4 text-primary" /> Solicitações Ilimitadas</li>
@@ -466,7 +468,7 @@ export default function LandingPage() {
                    <h3 className="text-xl font-bold mb-2">Enterprise</h3>
                    <div className="text-3xl font-bold mb-6">Sob Consulta</div>
                    <p className="text-sm text-muted-foreground mb-6">Para grandes operações com necessidades customizadas.</p>
-                   <Button className="w-full mb-8" variant="outline">Falar com Consultor</Button>
+                   <Button className="w-full mb-8" variant="outline" onClick={() => scrollToSection("waitlist")}>Falar com Consultor</Button>
                    <ul className="space-y-3 text-sm">
                      <li className="flex gap-2"><Check className="w-4 h-4 text-green-500" /> Usuários Ilimitados</li>
                      <li className="flex gap-2"><Check className="w-4 h-4 text-green-500" /> Multi-CNPJ</li>
@@ -530,25 +532,30 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 11. CTA Footer */}
-        <section className="py-24 bg-gradient-to-b from-blue-50/50 to-white text-center border-t border-border">
+        {/* 11. Waitlist Section */}
+        <section id="waitlist" className="py-24 bg-gradient-to-b from-blue-50/50 to-white border-t border-border">
           <div className="container mx-auto px-4">
-             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6 text-foreground">
-               Teste a Equalização Grátis e veja a economia.
-             </h2>
-             <p className="text-muted-foreground text-lg mb-10 max-w-2xl mx-auto">
-               Não requer cartão de crédito. Comece a economizar hoje mesmo.
-             </p>
-             <Button 
-               size="lg" 
-               className="bg-primary hover:bg-blue-600 text-white text-lg px-8 h-14 font-bold shadow-xl shadow-blue-500/20"
-               onClick={() => scrollToSection("equalization")}
-             >
-               Equalize orçamentos grátis
-             </Button>
+            <div className="max-w-xl mx-auto">
+              <WaitlistForm 
+                source="hero"
+                title="Entre na Lista de Espera"
+                subtitle="Seja um dos primeiros a testar o Zeno SRM"
+                buttonText="Garantir minha vaga"
+              />
+            </div>
           </div>
         </section>
       </main>
+
+      {/* Sticky Mobile Banner */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] p-4">
+        <Button 
+          className="w-full h-12 text-base font-bold bg-accent hover:bg-orange-600"
+          onClick={() => scrollToSection("waitlist")}
+        >
+          Entrar na Lista de Espera
+        </Button>
+      </div>
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
