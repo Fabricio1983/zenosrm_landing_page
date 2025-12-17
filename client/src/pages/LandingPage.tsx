@@ -162,7 +162,7 @@ export default function LandingPage() {
               </div>
 
               {/* Right Column - Video */}
-              <div className="relative order-first lg:order-last">
+              <div className="relative">
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border bg-white">
                   {/* Video placeholder - replace src with your video file */}
                   <video 
