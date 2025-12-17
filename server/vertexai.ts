@@ -196,5 +196,8 @@ REGRAS IMPORTANTES:
 }
 
 export function isVertexAIConfigured(): boolean {
-  return findCredentialsFile() !== null;
+  // Temporarily disabled - Vertex AI project doesn't have model access
+  // Re-enable once Vertex AI API is properly configured in GCP console
+  return false;
+  // Original: return findCredentialsFile() !== null;
 }
