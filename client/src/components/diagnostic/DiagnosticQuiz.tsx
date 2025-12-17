@@ -125,6 +125,9 @@ interface AIDiagnostic {
   opportunities: string[];
   savings: number;
   annualSavings: number;
+  fiveYearSavings?: number;
+  currentProfit?: number;
+  profitIncrease?: number;
 }
 
 interface DiagnosticQuizProps {
@@ -222,16 +225,57 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
   };
 
   const calculateFallbackSavings = () => {
+    // Get monthly purchases value
+    let comprasValue = 30000;
     const comprasAnswer = answers['compras'];
-    let baseValue = 30000;
+    if (comprasAnswer === 'ate20k') comprasValue = 15000;
+    else if (comprasAnswer === '20k-40k') comprasValue = 30000;
+    else if (comprasAnswer === '40k-70k') comprasValue = 55000;
+    else if (comprasAnswer === 'acima70k') comprasValue = 85000;
     
-    if (comprasAnswer === 'ate20k') baseValue = 15000;
-    else if (comprasAnswer === '20k-40k') baseValue = 30000;
-    else if (comprasAnswer === '40k-70k') baseValue = 55000;
-    else if (comprasAnswer === 'acima70k') baseValue = 85000;
+    // Calculate savings rate based on process maturity (8% to 15%)
+    let baseSavingsRate = 0.10;
+    const comparacaoAnswer = answers['comparacao'];
+    const controleAnswer = answers['controle'];
+    const fornecedoresAnswer = answers['fornecedores'];
     
-    const savingsRate = Math.min(0.08 + (score / 100), 0.15);
-    return Math.round(baseValue * savingsRate);
+    if (comparacaoAnswer === 'olhometro') baseSavingsRate += 0.02;
+    else if (comparacaoAnswer === 'manual' || comparacaoAnswer === 'preco_final') baseSavingsRate += 0.01;
+    else if (comparacaoAnswer === 'sistema') baseSavingsRate -= 0.02;
+    
+    if (controleAnswer === 'nunca' || controleAnswer === 'naosei') baseSavingsRate += 0.015;
+    else if (controleAnswer === 'nocao') baseSavingsRate += 0.005;
+    else if (controleAnswer === 'sei') baseSavingsRate -= 0.02;
+    
+    if (fornecedoresAnswer === '1') baseSavingsRate += 0.02;
+    else if (fornecedoresAnswer === '2' || fornecedoresAnswer === 'depende') baseSavingsRate += 0.01;
+    else if (fornecedoresAnswer === '3+') baseSavingsRate -= 0.01;
+    
+    const savingsRate = Math.max(0.08, Math.min(0.15, baseSavingsRate));
+    return Math.round(comprasValue * savingsRate);
+  };
+  
+  const calculateFallbackProfitIncrease = (savings: number) => {
+    // Get monthly revenue
+    let faturamentoValue = 75000;
+    const faturamentoAnswer = answers['faturamento'];
+    if (faturamentoAnswer === 'ate50k') faturamentoValue = 40000;
+    else if (faturamentoAnswer === '50k-100k') faturamentoValue = 75000;
+    else if (faturamentoAnswer === '100k-200k') faturamentoValue = 150000;
+    else if (faturamentoAnswer === '200k-500k') faturamentoValue = 350000;
+    else if (faturamentoAnswer === '500k-1m') faturamentoValue = 750000;
+    else if (faturamentoAnswer === 'acima1m') faturamentoValue = 1500000;
+    
+    // Get net margin percentage
+    let margemPercent = 0.075;
+    const margemAnswer = answers['margem'];
+    if (margemAnswer === 'ate5') margemPercent = 0.04;
+    else if (margemAnswer === '5-10') margemPercent = 0.075;
+    else if (margemAnswer === '10-15') margemPercent = 0.125;
+    else if (margemAnswer === 'acima15') margemPercent = 0.18;
+    
+    const currentProfit = Math.round(faturamentoValue * margemPercent);
+    return currentProfit > 0 ? Math.round((savings / currentProfit) * 100) : 50;
   };
 
   const getScoreLevel = () => {
@@ -273,7 +317,8 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
     const { color, bg, border } = getScoreLevel();
     const savings = aiDiagnostic?.savings || calculateFallbackSavings();
     const annualSavings = aiDiagnostic?.annualSavings || (savings * 12);
-    const fiveYearSavings = annualSavings * 5;
+    const fiveYearSavings = aiDiagnostic?.fiveYearSavings || (annualSavings * 5);
+    const profitIncrease = aiDiagnostic?.profitIncrease || calculateFallbackProfitIncrease(savings);
 
     return (
       <Card className="border-none shadow-xl bg-white max-w-3xl mx-auto overflow-hidden">
@@ -295,29 +340,37 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
           </div>
 
           <div className="p-6 md:p-8 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-5 border border-red-200 relative overflow-hidden flex flex-col items-center justify-center">
-                <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Por Mês</div>
-                <div className="text-4xl md:text-5xl font-bold text-red-600">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-4 border border-red-200 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Por Mês</div>
+                <div className="text-3xl md:text-4xl font-bold text-red-600">
                   {savings.toLocaleString('pt-BR')}
                 </div>
-                <div className="text-xs text-red-500 mt-2">deixados na mesa</div>
+                <div className="text-xs text-red-500 mt-1">em economia</div>
               </div>
               
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-5 border border-orange-200 relative overflow-hidden flex flex-col items-center justify-center">
-                <div className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-2">Por Ano</div>
-                <div className="text-4xl md:text-5xl font-bold text-orange-600">
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-4 border border-orange-200 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Por Ano</div>
+                <div className="text-3xl md:text-4xl font-bold text-orange-600">
                   {annualSavings.toLocaleString('pt-BR')}
                 </div>
-                <div className="text-xs text-orange-500 mt-2">em economia perdida</div>
+                <div className="text-xs text-orange-500 mt-1">economia anual</div>
               </div>
               
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-5 border border-slate-200 relative overflow-hidden flex flex-col items-center justify-center">
-                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Em 5 Anos</div>
-                <div className="text-4xl md:text-5xl font-bold text-slate-700">
+              <div className="bg-gradient-to-br from-green-50 to-green-100/50 rounded-2xl p-4 border border-green-200 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">Aumento Lucro</div>
+                <div className="text-3xl md:text-4xl font-bold text-green-600">
+                  +{profitIncrease}%
+                </div>
+                <div className="text-xs text-green-500 mt-1">no lucro líquido</div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-4 border border-blue-200 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Em 5 Anos</div>
+                <div className="text-3xl md:text-4xl font-bold text-blue-600">
                   {fiveYearSavings.toLocaleString('pt-BR')}
                 </div>
-                <div className="text-xs text-slate-500 mt-2">impacto acumulado</div>
+                <div className="text-xs text-blue-500 mt-1">impacto acumulado</div>
               </div>
             </div>
 

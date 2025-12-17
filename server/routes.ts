@@ -323,17 +323,70 @@ export async function registerRoutes(
         return `- ${key}: ${label}`;
       }).join('\n');
 
-      // Calculate potential savings for context
-      let baseValue = 30000;
-      const comprasAnswer = answers['compras'];
-      if (comprasAnswer === 'ate20k') baseValue = 15000;
-      else if (comprasAnswer === '20k-40k') baseValue = 30000;
-      else if (comprasAnswer === '40k-70k') baseValue = 55000;
-      else if (comprasAnswer === 'acima70k') baseValue = 85000;
+      // Calculate potential savings based on actual quiz answers
       
-      const savingsRate = Math.min(0.08 + (score / 100), 0.15);
-      const monthlySavings = Math.round(baseValue * savingsRate);
+      // 1. Get monthly purchases value
+      let comprasValue = 30000;
+      const comprasAnswer = answers['compras'];
+      if (comprasAnswer === 'ate20k') comprasValue = 15000;
+      else if (comprasAnswer === '20k-40k') comprasValue = 30000;
+      else if (comprasAnswer === '40k-70k') comprasValue = 55000;
+      else if (comprasAnswer === 'acima70k') comprasValue = 85000;
+      
+      // 2. Get monthly revenue (faturamento)
+      let faturamentoValue = 75000;
+      const faturamentoAnswer = answers['faturamento'];
+      if (faturamentoAnswer === 'ate50k') faturamentoValue = 40000;
+      else if (faturamentoAnswer === '50k-100k') faturamentoValue = 75000;
+      else if (faturamentoAnswer === '100k-200k') faturamentoValue = 150000;
+      else if (faturamentoAnswer === '200k-500k') faturamentoValue = 350000;
+      else if (faturamentoAnswer === '500k-1m') faturamentoValue = 750000;
+      else if (faturamentoAnswer === 'acima1m') faturamentoValue = 1500000;
+      
+      // 3. Get net margin percentage
+      let margemPercent = 0.075;
+      const margemAnswer = answers['margem'];
+      if (margemAnswer === 'ate5') margemPercent = 0.04;
+      else if (margemAnswer === '5-10') margemPercent = 0.075;
+      else if (margemAnswer === '10-15') margemPercent = 0.125;
+      else if (margemAnswer === 'acima15') margemPercent = 0.18;
+      else if (margemAnswer === 'naosei') margemPercent = 0.075;
+      
+      // 4. Calculate savings rate based on process maturity (8% to 15% of purchases)
+      // Higher score = worse process = higher potential savings
+      const comparacaoAnswer = answers['comparacao'];
+      const controleAnswer = answers['controle'];
+      const fornecedoresAnswer = answers['fornecedores'];
+      
+      let baseSavingsRate = 0.10; // Average 10%
+      
+      // Adjust based on comparison method
+      if (comparacaoAnswer === 'olhometro') baseSavingsRate += 0.02;
+      else if (comparacaoAnswer === 'manual' || comparacaoAnswer === 'preco_final') baseSavingsRate += 0.01;
+      else if (comparacaoAnswer === 'sistema') baseSavingsRate -= 0.02;
+      
+      // Adjust based on control level
+      if (controleAnswer === 'nunca' || controleAnswer === 'naosei') baseSavingsRate += 0.015;
+      else if (controleAnswer === 'nocao') baseSavingsRate += 0.005;
+      else if (controleAnswer === 'sei') baseSavingsRate -= 0.02;
+      
+      // Adjust based on number of suppliers
+      if (fornecedoresAnswer === '1') baseSavingsRate += 0.02;
+      else if (fornecedoresAnswer === '2' || fornecedoresAnswer === 'depende') baseSavingsRate += 0.01;
+      else if (fornecedoresAnswer === '3+') baseSavingsRate -= 0.01;
+      
+      // Clamp between 8% and 15%
+      const savingsRate = Math.max(0.08, Math.min(0.15, baseSavingsRate));
+      
+      // 5. Calculate actual values
+      const monthlySavings = Math.round(comprasValue * savingsRate);
       const annualSavings = monthlySavings * 12;
+      const fiveYearSavings = annualSavings * 5;
+      
+      // 6. Calculate current profit and profit increase
+      const currentProfit = Math.round(faturamentoValue * margemPercent);
+      const newProfit = currentProfit + monthlySavings;
+      const profitIncrease = currentProfit > 0 ? Math.round((monthlySavings / currentProfit) * 100) : 0;
 
       const prompt = `Você é um consultor especializado em gestão de compras industriais. 
 Analise as respostas do diagnóstico abaixo e gere um parecer PERSONALIZADO e CONSULTIVO.
@@ -343,6 +396,8 @@ ${answersText}
 
 SCORE DE RISCO: ${score}/40 (quanto maior, mais oportunidade de melhoria)
 ECONOMIA POTENCIAL ESTIMADA: R$ ${monthlySavings.toLocaleString('pt-BR')}/mês (R$ ${annualSavings.toLocaleString('pt-BR')}/ano)
+LUCRO LÍQUIDO ATUAL ESTIMADO: R$ ${currentProfit.toLocaleString('pt-BR')}/mês
+AUMENTO NO LUCRO: +${profitIncrease}% (economia vai direto para o lucro)
 
 INSTRUÇÕES:
 1. Gere uma HEADLINE impactante (máximo 15 palavras) que reflita a situação específica do usuário
@@ -360,7 +415,10 @@ FORMATO DE RESPOSTA (JSON):
   "diagnostic": "seu diagnóstico personalizado aqui",
   "opportunities": ["oportunidade 1", "oportunidade 2", "oportunidade 3"],
   "savings": ${monthlySavings},
-  "annualSavings": ${annualSavings}
+  "annualSavings": ${annualSavings},
+  "fiveYearSavings": ${fiveYearSavings},
+  "currentProfit": ${currentProfit},
+  "profitIncrease": ${profitIncrease}
 }
 
 IMPORTANTE: Retorne APENAS o JSON válido, sem explicações adicionais.`;
