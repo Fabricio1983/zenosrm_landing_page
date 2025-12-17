@@ -167,7 +167,7 @@ export default function LandingPage() {
                   {/* Video 1:1 aspect ratio */}
                   <div className="aspect-square overflow-hidden">
                     <video 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover scale-[1.05]"
                       autoPlay 
                       loop 
                       muted 
