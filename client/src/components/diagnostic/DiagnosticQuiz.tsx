@@ -4,6 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, ArrowLeft, Lightbulb, RotateCcw, Wallet, Calendar, DollarSign, Target } from 'lucide-react';
 
+const FRASES_IMPACTO_DIAGNOSTICO = [
+  "Empresas que equalizam cotações economizam em média 12% em cada compra.",
+  "Você sabia? Pequenas diferenças de preço somam milhares de reais ao ano.",
+  "Comprar do fornecedor mais barato nem sempre é a melhor escolha. Equalizar é.",
+  "A cada 10 equalizações, empresas descobrem pelo menos 3 oportunidades de economia ocultas.",
+  "Tempo é dinheiro: equalizar manualmente leva horas. Com o Zeno, segundos.",
+  "Negociar com dados na mão aumenta seu poder de barganha em até 40%.",
+  "Uma única equalização bem feita pode pagar o Zeno por um ano inteiro.",
+  "Fornecedores respeitam quem conhece os preços do mercado.",
+  "Cada real economizado em compras vai direto para o lucro da empresa.",
+  "Gestão de compras profissional pode aumentar a margem líquida em até 3 pontos percentuais.",
+];
+
 interface Question {
   id: string;
   question: string;
@@ -146,6 +159,8 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
   const [aiError, setAiError] = useState(false);
   
   const resultRef = useRef<HTMLDivElement>(null);
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [shuffledPhrases, setShuffledPhrases] = useState<string[]>([]);
 
   const progress = ((currentQuestion) / QUESTIONS.length) * 100;
   
@@ -156,6 +171,20 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
       }, 100);
     }
   }, [showResult]);
+  
+  useEffect(() => {
+    if (isAnalyzing) {
+      const shuffled = [...FRASES_IMPACTO_DIAGNOSTICO].sort(() => Math.random() - 0.5);
+      setShuffledPhrases(shuffled);
+      setCurrentPhraseIndex(0);
+      
+      const interval = setInterval(() => {
+        setCurrentPhraseIndex(prev => (prev + 1) % shuffled.length);
+      }, 3000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isAnalyzing]);
 
   const toggleMultiSelect = (value: string) => {
     setMultiSelectAnswers(prev => 
@@ -322,12 +351,24 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
   };
 
   if (isAnalyzing) {
+    const currentPhrase = shuffledPhrases[currentPhraseIndex] || FRASES_IMPACTO_DIAGNOSTICO[0];
+    
     return (
       <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
         <CardContent className="p-8 md:p-12 text-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-6" />
-          <h3 className="text-xl font-bold text-foreground mb-2">Analisando seu cenário...</h3>
-          <p className="text-muted-foreground">Preparando seu diagnóstico personalizado</p>
+          <h3 className="text-xl font-bold text-foreground mb-4">Analisando seu cenário...</h3>
+          
+          <div className="bg-gradient-to-r from-blue-50 to-primary/10 rounded-xl p-5 border border-blue-100 min-h-[80px] flex items-center justify-center">
+            <p 
+              key={currentPhraseIndex}
+              className="text-primary font-medium text-sm md:text-base animate-in fade-in duration-500"
+            >
+              💡 {currentPhrase}
+            </p>
+          </div>
+          
+          <p className="text-muted-foreground text-sm mt-4">Preparando seu diagnóstico personalizado</p>
         </CardContent>
       </Card>
     );
