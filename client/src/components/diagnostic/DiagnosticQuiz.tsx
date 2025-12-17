@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, Lightbulb, RotateCcw } from 'lucide-react';
+import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, Lightbulb, RotateCcw, Wallet, Calendar, DollarSign, Target } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -232,17 +232,18 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
     const { color, bg, border } = getScoreLevel();
     const savings = aiDiagnostic?.savings || calculateFallbackSavings();
     const annualSavings = aiDiagnostic?.annualSavings || (savings * 12);
+    const fiveYearSavings = annualSavings * 5;
 
     return (
-      <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
-        <CardContent className="p-8 md:p-12 space-y-8">
-          <div className="text-center">
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${bg} ${color} font-semibold text-sm mb-4 border ${border}`}>
+      <Card className="border-none shadow-xl bg-white max-w-3xl mx-auto overflow-hidden">
+        <CardContent className="p-0">
+          <div className={`${bg} border-b ${border} p-6 md:p-8 text-center`}>
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 ${color} font-semibold text-sm mb-4 border ${border}`}>
               <CheckCircle2 size={18} />
               Diagnóstico Concluído
             </div>
             
-            <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">
+            <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
               {aiDiagnostic?.headline || (score >= 30 
                 ? 'Alerta: Você pode estar deixando muito dinheiro na mesa.'
                 : score >= 20 
@@ -252,72 +253,93 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
             </h3>
           </div>
 
-          <div className={`p-6 rounded-xl ${bg} border ${border}`}>
-            <div className="flex items-center gap-4 mb-4">
-              {score >= 25 ? (
-                <AlertTriangle className={`w-10 h-10 ${color} shrink-0`} />
-              ) : (
-                <TrendingDown className={`w-10 h-10 ${color} shrink-0`} />
-              )}
-              <div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Economia potencial mensal</div>
-                <div className={`text-3xl font-bold ${color}`}>
+          <div className="p-6 md:p-8 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-5 text-center border border-red-200 relative overflow-hidden">
+                <div className="absolute top-2 right-2">
+                  <Wallet className="w-8 h-8 text-red-200" />
+                </div>
+                <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Por Mês</div>
+                <div className="text-3xl md:text-4xl font-bold text-red-600">
                   R$ {savings.toLocaleString('pt-BR')}
                 </div>
+                <div className="text-xs text-red-500 mt-1">deixados na mesa</div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-5 text-center border border-orange-200 relative overflow-hidden">
+                <div className="absolute top-2 right-2">
+                  <Calendar className="w-8 h-8 text-orange-200" />
+                </div>
+                <div className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Por Ano</div>
+                <div className="text-3xl md:text-4xl font-bold text-orange-600">
+                  R$ {annualSavings.toLocaleString('pt-BR')}
+                </div>
+                <div className="text-xs text-orange-500 mt-1">em economia perdida</div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-5 text-center border border-slate-200 relative overflow-hidden">
+                <div className="absolute top-2 right-2">
+                  <TrendingDown className="w-8 h-8 text-slate-200" />
+                </div>
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Em 5 Anos</div>
+                <div className="text-3xl md:text-4xl font-bold text-slate-700">
+                  R$ {fiveYearSavings.toLocaleString('pt-BR')}
+                </div>
+                <div className="text-xs text-slate-500 mt-1">impacto acumulado</div>
               </div>
             </div>
-            <p className="text-slate-700 leading-relaxed">
-              {aiDiagnostic?.diagnostic || `Com base nas suas respostas, identificamos oportunidades de economia de aproximadamente R$ ${savings.toLocaleString('pt-BR')} por mês em suas compras. Isso significa R$ ${annualSavings.toLocaleString('pt-BR')} por ano que poderiam estar no seu caixa.`}
-            </p>
-          </div>
 
-          {aiDiagnostic?.opportunities && aiDiagnostic.opportunities.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Lightbulb size={18} className="text-accent" />
-                Oportunidades identificadas:
+            <div className="bg-blue-50/50 rounded-xl p-5 border border-blue-100">
+              <p className="text-slate-700 leading-relaxed text-sm md:text-base">
+                {aiDiagnostic?.diagnostic || `Com base nas suas respostas, identificamos oportunidades de economia de aproximadamente R$ ${savings.toLocaleString('pt-BR')} por mês em suas compras. Isso significa R$ ${annualSavings.toLocaleString('pt-BR')} por ano que poderiam estar no seu caixa.`}
+              </p>
+            </div>
+
+            {aiDiagnostic?.opportunities && aiDiagnostic.opportunities.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 font-bold text-foreground">
+                  <Target size={20} className="text-primary" />
+                  Oportunidades identificadas
+                </div>
+                <div className="grid gap-3">
+                  {aiDiagnostic.opportunities.map((opportunity, index) => (
+                    <div key={index} className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-white to-green-50/30 border border-green-100 hover:border-green-200 hover:shadow-sm transition-all">
+                      <span className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-sm font-bold shrink-0">
+                        {index + 1}
+                      </span>
+                      <span className="text-slate-700 pt-1">{opportunity}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <ul className="space-y-2">
-                {aiDiagnostic.opportunities.map((opportunity, index) => (
-                  <li key={index} className="flex items-start gap-3 text-slate-700">
-                    <span className="w-6 h-6 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-bold shrink-0">
-                      {index + 1}
-                    </span>
-                    <span>{opportunity}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            )}
 
-          <div className="text-center space-y-4">
-            <p className="text-muted-foreground text-sm">
-              Quer validar esse cenário com uma compra real?
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto min-w-[250px] h-14 text-lg font-bold bg-accent hover:bg-orange-600 shadow-lg shadow-orange-500/20"
-                onClick={scrollToEqualization}
-                data-testid="button-diagnostic-cta"
-              >
-                Validar com uma compra real
-                <ArrowRight className="ml-2" size={20} />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="w-full sm:w-auto h-14 text-lg font-medium"
-                onClick={resetDiagnostic}
-                data-testid="button-reset-diagnostic"
-              >
-                <RotateCcw className="mr-2" size={18} />
-                Refazer Diagnóstico
-              </Button>
+            <div className="pt-4 border-t border-border">
+              <p className="text-center text-muted-foreground text-sm mb-4">
+                Quer validar esse cenário com uma compra real?
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto min-w-[250px] h-14 text-lg font-bold bg-accent hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5"
+                  onClick={scrollToEqualization}
+                  data-testid="button-diagnostic-cta"
+                >
+                  Validar com uma compra real
+                  <ArrowRight className="ml-2" size={20} />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="w-full sm:w-auto h-14 text-lg font-medium border-2 hover:bg-slate-50 hover:border-primary transition-all"
+                  onClick={resetDiagnostic}
+                  data-testid="button-reset-diagnostic"
+                >
+                  <RotateCcw className="mr-2" size={18} />
+                  Refazer Diagnóstico
+                </Button>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Leva menos de 3 minutos. Sem cadastro.
-            </p>
           </div>
         </CardContent>
       </Card>
