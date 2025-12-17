@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -144,8 +144,18 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
   const [score, setScore] = useState(0);
   const [aiDiagnostic, setAiDiagnostic] = useState<AIDiagnostic | null>(null);
   const [aiError, setAiError] = useState(false);
+  
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const progress = ((currentQuestion) / QUESTIONS.length) * 100;
+  
+  useEffect(() => {
+    if (showResult && resultRef.current) {
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [showResult]);
 
   const toggleMultiSelect = (value: string) => {
     setMultiSelectAnswers(prev => 
@@ -331,13 +341,14 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
     const profitIncrease = aiDiagnostic?.profitIncrease || calculateFallbackProfitIncrease(savings);
 
     return (
-      <Card className="border-none shadow-xl bg-white max-w-3xl mx-auto overflow-hidden">
-        <CardContent className="p-0">
-          <div className={`${bg} border-b ${border} p-6 md:p-8 text-center`}>
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 ${color} font-semibold text-sm mb-4 border ${border}`}>
-              <CheckCircle2 size={18} />
-              Diagnóstico Concluído
-            </div>
+      <div ref={resultRef} className="scroll-mt-4">
+        <Card className="border-none shadow-xl bg-white max-w-3xl mx-auto overflow-hidden">
+          <CardContent className="p-0">
+            <div className={`${bg} border-b ${border} p-6 md:p-8 text-center`}>
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 ${color} font-semibold text-sm mb-4 border ${border}`}>
+                <CheckCircle2 size={18} />
+                Diagnóstico Concluído
+              </div>
             
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
               {aiDiagnostic?.headline || (score >= 30 
@@ -438,6 +449,7 @@ export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuiz
           </div>
         </CardContent>
       </Card>
+      </div>
     );
   }
 
