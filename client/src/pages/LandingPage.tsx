@@ -572,9 +572,9 @@ export default function LandingPage() {
           <div>
             <h4 className="text-white font-bold mb-4">Produto</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#features" className="hover:text-primary">Funcionalidades</a></li>
-              <li><a href="#pricing" className="hover:text-primary">Preços</a></li>
-              <li><a href="#cases" className="hover:text-primary">Cases</a></li>
+              <li><button onClick={() => scrollToSection("features")} className="hover:text-primary cursor-pointer">Funcionalidades</button></li>
+              <li><button onClick={() => scrollToSection("pricing")} className="hover:text-primary cursor-pointer">Preços</button></li>
+              <li><button onClick={() => scrollToSection("cases")} className="hover:text-primary cursor-pointer">Cases</button></li>
             </ul>
           </div>
           <div>
