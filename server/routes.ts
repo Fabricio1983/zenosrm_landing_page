@@ -3,6 +3,7 @@ import { type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
 import { extractQuoteFromFile } from "./gemini";
+import { extractQuoteWithVertexAI, isVertexAIConfigured } from "./vertexai";
 import { insertLeadSchema, insertAppConfigSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -56,6 +57,14 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Maximum 3 files allowed" });
       }
 
+      // Check if Vertex AI is configured (service account credentials)
+      const useVertexAI = isVertexAIConfigured();
+      if (useVertexAI) {
+        console.log("[API] Using Vertex AI (Gemini 2.5 Pro) for extraction");
+      } else {
+        console.log("[API] Using Gemini API (Flash Lite) for extraction");
+      }
+
       // Process files sequentially with small delay to avoid rate limiting
       const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
       const results: PromiseSettledResult<Awaited<ReturnType<typeof extractQuoteFromFile>>>[] = [];
@@ -63,14 +72,16 @@ export async function registerRoutes(
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         try {
-          const quote = await extractQuoteFromFile(file.buffer, file.mimetype, file.originalname);
+          const quote = useVertexAI 
+            ? await extractQuoteWithVertexAI(file.buffer, file.mimetype, file.originalname)
+            : await extractQuoteFromFile(file.buffer, file.mimetype, file.originalname);
           results.push({ status: 'fulfilled', value: quote });
         } catch (error) {
           results.push({ status: 'rejected', reason: error });
         }
         // Shorter delay between files now that frontend has cooldown buffer
         if (i < files.length - 1) {
-          await delay(1000);
+          await delay(useVertexAI ? 500 : 1000);
         }
       }
 
