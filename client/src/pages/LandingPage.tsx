@@ -287,7 +287,7 @@ export default function LandingPage() {
         </section>
 
         {/* 4. Social Proof */}
-        <section className="py-20 bg-white">
+        <section id="cases" className="py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-heading font-bold mb-4">
@@ -354,7 +354,7 @@ export default function LandingPage() {
         </section>
 
         {/* 6. Solutions / Features */}
-        <section id="solutions" className="py-20 bg-white">
+        <section id="features" className="py-20 bg-white">
           <div className="container mx-auto px-4">
              <div className="text-center mb-16">
                <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Funcionalidades</span>
@@ -572,9 +572,9 @@ export default function LandingPage() {
           <div>
             <h4 className="text-white font-bold mb-4">Produto</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary">Funcionalidades</a></li>
-              <li><a href="#" className="hover:text-primary">Preços</a></li>
-              <li><a href="#" className="hover:text-primary">Cases</a></li>
+              <li><a href="#features" className="hover:text-primary">Funcionalidades</a></li>
+              <li><a href="#pricing" className="hover:text-primary">Preços</a></li>
+              <li><a href="#cases" className="hover:text-primary">Cases</a></li>
             </ul>
           </div>
           <div>
