@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Loader2, TrendingDown, AlertTriangle, CheckCircle2, ArrowRight, Sparkles, Lightbulb } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -115,6 +115,14 @@ const QUESTIONS: Question[] = [
   },
 ];
 
+interface AIDiagnostic {
+  headline: string;
+  diagnostic: string;
+  opportunities: string[];
+  savings: number;
+  annualSavings: number;
+}
+
 interface DiagnosticQuizProps {
   onComplete?: (answers: Record<string, string>, score: number) => void;
 }
@@ -125,10 +133,12 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
+  const [aiDiagnostic, setAiDiagnostic] = useState<AIDiagnostic | null>(null);
+  const [aiError, setAiError] = useState(false);
 
   const progress = ((currentQuestion) / QUESTIONS.length) * 100;
 
-  const handleAnswer = (questionId: string, value: string, weight: number = 1) => {
+  const handleAnswer = async (questionId: string, value: string, weight: number = 1) => {
     const newAnswers = { ...answers, [questionId]: value };
     setAnswers(newAnswers);
 
@@ -145,15 +155,33 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
       }, 0);
       setScore(totalScore);
       
-      setTimeout(() => {
-        setIsAnalyzing(false);
-        setShowResult(true);
-        onComplete?.(newAnswers, totalScore);
-      }, 2000);
+      // Call AI to generate personalized diagnostic
+      try {
+        const response = await fetch('/api/generate-diagnostic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers: newAnswers, score: totalScore })
+        });
+        
+        if (response.ok) {
+          const diagnostic = await response.json();
+          setAiDiagnostic(diagnostic);
+        } else {
+          console.error('Failed to generate AI diagnostic');
+          setAiError(true);
+        }
+      } catch (error) {
+        console.error('Error calling AI:', error);
+        setAiError(true);
+      }
+      
+      setIsAnalyzing(false);
+      setShowResult(true);
+      onComplete?.(newAnswers, totalScore);
     }
   };
 
-  const calculatePotentialSavings = () => {
+  const calculateFallbackSavings = () => {
     const comprasAnswer = answers['compras'];
     let baseValue = 30000;
     
@@ -172,31 +200,6 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
     return { level: 'baixo', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' };
   };
 
-  const getDiagnosticMessage = () => {
-    const { level } = getScoreLevel();
-    const savings = calculatePotentialSavings();
-    const annualSavings = savings * 12;
-    
-    if (level === 'alto') {
-      return {
-        headline: 'Alerta: Você pode estar deixando muito dinheiro na mesa.',
-        message: `Com base nas suas respostas, identificamos oportunidades de economia de aproximadamente R$ ${savings.toLocaleString('pt-BR')} por mês em suas compras. Isso significa R$ ${annualSavings.toLocaleString('pt-BR')} por ano que poderiam estar no seu caixa.`,
-        cta: 'Validar com uma compra real'
-      };
-    } else if (level === 'medio') {
-      return {
-        headline: 'Há espaço para melhorar seu processo de compras.',
-        message: `Você já tem alguns controles, mas ainda pode economizar cerca de R$ ${savings.toLocaleString('pt-BR')} por mês otimizando suas cotações. Em um ano, são R$ ${annualSavings.toLocaleString('pt-BR')} a mais no caixa.`,
-        cta: 'Testar a equalização agora'
-      };
-    }
-    return {
-      headline: 'Seu processo de compras parece bem estruturado!',
-      message: `Mesmo assim, sempre há espaço para melhorar. Veja se consegue economizar ainda mais com nossa ferramenta de equalização.`,
-      cta: 'Experimentar a equalização'
-    };
-  };
-
   const scrollToEqualization = () => {
     const element = document.getElementById('equalization');
     if (element) {
@@ -208,9 +211,12 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
     return (
       <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
         <CardContent className="p-8 md:p-12 text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-6" />
+          <div className="relative">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-6" />
+            <Sparkles className="w-5 h-5 text-accent absolute top-0 right-1/3 animate-pulse" />
+          </div>
           <h3 className="text-xl font-bold text-foreground mb-2">Analisando seu cenário...</h3>
-          <p className="text-muted-foreground">Preparando seu diagnóstico personalizado</p>
+          <p className="text-muted-foreground">Nossa IA está preparando seu diagnóstico personalizado</p>
         </CardContent>
       </Card>
     );
@@ -218,8 +224,8 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
 
   if (showResult) {
     const { color, bg, border } = getScoreLevel();
-    const diagnostic = getDiagnosticMessage();
-    const savings = calculatePotentialSavings();
+    const savings = aiDiagnostic?.savings || calculateFallbackSavings();
+    const annualSavings = aiDiagnostic?.annualSavings || (savings * 12);
 
     return (
       <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
@@ -229,8 +235,21 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
               <CheckCircle2 size={18} />
               Diagnóstico Concluído
             </div>
+            
+            {aiDiagnostic && (
+              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium mb-4 ml-2">
+                <Sparkles size={12} />
+                Gerado por IA
+              </div>
+            )}
+            
             <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">
-              {diagnostic.headline}
+              {aiDiagnostic?.headline || (score >= 30 
+                ? 'Alerta: Você pode estar deixando muito dinheiro na mesa.'
+                : score >= 20 
+                  ? 'Há espaço para melhorar seu processo de compras.'
+                  : 'Seu processo de compras parece bem estruturado!'
+              )}
             </h3>
           </div>
 
@@ -249,9 +268,28 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
               </div>
             </div>
             <p className="text-slate-700 leading-relaxed">
-              {diagnostic.message}
+              {aiDiagnostic?.diagnostic || `Com base nas suas respostas, identificamos oportunidades de economia de aproximadamente R$ ${savings.toLocaleString('pt-BR')} por mês em suas compras. Isso significa R$ ${annualSavings.toLocaleString('pt-BR')} por ano que poderiam estar no seu caixa.`}
             </p>
           </div>
+
+          {aiDiagnostic?.opportunities && aiDiagnostic.opportunities.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Lightbulb size={18} className="text-accent" />
+                Oportunidades identificadas:
+              </div>
+              <ul className="space-y-2">
+                {aiDiagnostic.opportunities.map((opportunity, index) => (
+                  <li key={index} className="flex items-start gap-3 text-slate-700">
+                    <span className="w-6 h-6 rounded-full bg-accent/10 text-accent flex items-center justify-center text-sm font-bold shrink-0">
+                      {index + 1}
+                    </span>
+                    <span>{opportunity}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="text-center space-y-4">
             <p className="text-muted-foreground text-sm">
@@ -263,7 +301,7 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
               onClick={scrollToEqualization}
               data-testid="button-diagnostic-cta"
             >
-              {diagnostic.cta}
+              Validar com uma compra real
               <ArrowRight className="ml-2" size={20} />
             </Button>
             <p className="text-xs text-muted-foreground">

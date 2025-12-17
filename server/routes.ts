@@ -255,6 +255,138 @@ export async function registerRoutes(
     }
   });
 
+  // POST /api/generate-diagnostic - Generate AI-powered diagnostic from quiz answers
+  app.post("/api/generate-diagnostic", async (req, res) => {
+    try {
+      const { answers, score } = req.body;
+      
+      if (!answers || typeof score !== 'number') {
+        return res.status(400).json({ error: "Missing answers or score" });
+      }
+
+      // Check if Vertex AI is configured
+      const useVertexAI = isVertexAIConfigured();
+      if (!useVertexAI) {
+        return res.status(503).json({ error: "AI service not configured" });
+      }
+
+      // Import Vertex AI for diagnostic generation
+      const { VertexAI } = await import("@google-cloud/vertexai");
+      const fs = await import("fs");
+      const path = await import("path");
+      
+      // Find credentials
+      const possiblePaths = [
+        process.env.GOOGLE_APPLICATION_CREDENTIALS,
+        "./google-credentials.json",
+        "./script/google-credentials.json",
+      ].filter(Boolean) as string[];
+      
+      let credPath = null;
+      for (const p of possiblePaths) {
+        const resolved = path.resolve(p);
+        if (fs.existsSync(resolved)) {
+          credPath = resolved;
+          break;
+        }
+      }
+      
+      if (credPath) {
+        process.env.GOOGLE_APPLICATION_CREDENTIALS = credPath;
+      }
+
+      const PROJECT_ID = process.env.GCP_PROJECT_ID || "gen-lang-client-0316098340";
+      const vertexAI = new VertexAI({ project: PROJECT_ID, location: "us-central1" });
+      const model = vertexAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+      // Build context from answers
+      const answerLabels: Record<string, Record<string, string>> = {
+        faturamento: { 'ate100k': 'Até R$ 100 mil', '100k-300k': 'R$ 100 mil a R$ 300 mil', '300k-1m': 'R$ 300 mil a R$ 1 milhão', 'acima1m': 'Acima de R$ 1 milhão' },
+        compras: { 'ate20k': 'Até R$ 20 mil', '20k-40k': 'R$ 20 mil a R$ 40 mil', '40k-70k': 'R$ 40 mil a R$ 70 mil', 'acima70k': 'Acima de R$ 70 mil', 'naosei': 'Não sei informar' },
+        margem: { 'ate5': 'Até 5%', '5-10': '5% a 10%', '10-15': '10% a 15%', 'acima15': 'Acima de 15%', 'naosei': 'Não sei informar' },
+        solicitacao: { 'whatsapp': 'WhatsApp / verbal', 'email': 'E-mail', 'planilha': 'Planilha', 'sistema': 'Sistema' },
+        fornecedores: { '1': 'Apenas 1', '2': '2 fornecedores', '3+': '3 ou mais', 'depende': 'Depende da urgência' },
+        comparacao: { 'olhometro': 'No "olhômetro"', 'manual': 'Comparação manual', 'preco_final': 'Só preço final', 'sistema': 'Uso algum sistema' },
+        controle: { 'sei': 'Sei exatamente quanto economizo', 'nocao': 'Tenho uma noção', 'naosei': 'Não sei informar', 'nunca': 'Nunca medi' },
+        urgencia: { 'frequente': 'Acontece com frequência', 'as_vezes': 'Às vezes', 'raramente': 'Raramente', 'nunca': 'Nunca' },
+        caixa: { 'apertado': 'Sempre apertado', 'justo': 'Controlado, mas justo', 'estavel': 'Estável', 'confortavel': 'Confortável' },
+        desejo: { 'tranquilidade': 'Mais tranquilidade no dia a dia', 'investir': 'Investir na empresa', 'retirada': 'Melhorar retirada mensal', 'vendas': 'Facilitar vendas (preço / prazo)' }
+      };
+
+      const answersText = Object.entries(answers).map(([key, value]) => {
+        const label = answerLabels[key]?.[value as string] || value;
+        return `- ${key}: ${label}`;
+      }).join('\n');
+
+      // Calculate potential savings for context
+      let baseValue = 30000;
+      const comprasAnswer = answers['compras'];
+      if (comprasAnswer === 'ate20k') baseValue = 15000;
+      else if (comprasAnswer === '20k-40k') baseValue = 30000;
+      else if (comprasAnswer === '40k-70k') baseValue = 55000;
+      else if (comprasAnswer === 'acima70k') baseValue = 85000;
+      
+      const savingsRate = Math.min(0.08 + (score / 100), 0.15);
+      const monthlySavings = Math.round(baseValue * savingsRate);
+      const annualSavings = monthlySavings * 12;
+
+      const prompt = `Você é um consultor especializado em gestão de compras industriais. 
+Analise as respostas do diagnóstico abaixo e gere um parecer PERSONALIZADO e CONSULTIVO.
+
+RESPOSTAS DO DIAGNÓSTICO:
+${answersText}
+
+SCORE DE RISCO: ${score}/40 (quanto maior, mais oportunidade de melhoria)
+ECONOMIA POTENCIAL ESTIMADA: R$ ${monthlySavings.toLocaleString('pt-BR')}/mês (R$ ${annualSavings.toLocaleString('pt-BR')}/ano)
+
+INSTRUÇÕES:
+1. Gere uma HEADLINE impactante (máximo 15 palavras) que reflita a situação específica do usuário
+2. Gere um DIAGNÓSTICO personalizado (3-4 frases) que:
+   - Reconheça os pontos específicos mencionados nas respostas
+   - Explique o impacto financeiro de forma clara
+   - Use linguagem de consultor, não de vendedor
+   - Seja direto e profissional
+
+3. Liste 2-3 OPORTUNIDADES específicas baseadas nas respostas (cada uma com 1 frase curta)
+
+FORMATO DE RESPOSTA (JSON):
+{
+  "headline": "sua headline aqui",
+  "diagnostic": "seu diagnóstico personalizado aqui",
+  "opportunities": ["oportunidade 1", "oportunidade 2", "oportunidade 3"],
+  "savings": ${monthlySavings},
+  "annualSavings": ${annualSavings}
+}
+
+IMPORTANTE: Retorne APENAS o JSON válido, sem explicações adicionais.`;
+
+      console.log("[API] Generating AI diagnostic...");
+      const startTime = Date.now();
+      
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json" }
+      });
+
+      const response = result.response;
+      if (!response.candidates || response.candidates.length === 0) {
+        throw new Error("No response from AI");
+      }
+
+      const text = response.candidates[0].content.parts[0].text || "";
+      const cleanText = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+      const diagnostic = JSON.parse(cleanText);
+
+      console.log(`[API] AI diagnostic generated in ${Date.now() - startTime}ms`);
+      
+      res.json(diagnostic);
+    } catch (error) {
+      console.error("Error generating diagnostic:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      res.status(500).json({ error: "Failed to generate diagnostic", details: errorMessage });
+    }
+  });
+
   // PUT /api/config - Update app configuration (admin)
   app.put("/api/config", async (req, res) => {
     try {
