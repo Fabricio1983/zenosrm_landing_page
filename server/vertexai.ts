@@ -5,7 +5,7 @@ import * as path from "path";
 
 const PROJECT_ID = process.env.GCP_PROJECT_ID || "gen-lang-client-0316098340";
 const LOCATION = "us-central1";
-const MODEL_ID = "gemini-2.5-pro-preview-05-06";
+const MODEL_ID = "gemini-1.5-pro";
 
 let vertexAI: VertexAI | null = null;
 let credentialsConfigured = false;
