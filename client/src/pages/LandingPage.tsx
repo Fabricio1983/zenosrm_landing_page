@@ -164,10 +164,10 @@ export default function LandingPage() {
               {/* Right Column - Video */}
               <div className="relative">
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border bg-gradient-to-br from-blue-50 to-slate-100">
-                  {/* Video with zoom to hide black bars */}
-                  <div className="aspect-video overflow-hidden">
+                  {/* Video 1:1 aspect ratio */}
+                  <div className="aspect-square overflow-hidden">
                     <video 
-                      className="w-full h-full object-cover scale-[1.35]"
+                      className="w-full h-full object-cover"
                       autoPlay 
                       loop 
                       muted 
