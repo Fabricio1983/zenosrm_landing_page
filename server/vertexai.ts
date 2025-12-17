@@ -1,14 +1,56 @@
 import { VertexAI } from "@google-cloud/vertexai";
 import * as XLSX from "xlsx";
+import * as fs from "fs";
+import * as path from "path";
 
-const PROJECT_ID = "gen-lang-client-0316098340";
+const PROJECT_ID = process.env.GCP_PROJECT_ID || "gen-lang-client-0316098340";
 const LOCATION = "us-central1";
 const MODEL_ID = "gemini-2.5-pro-preview-05-06";
 
 let vertexAI: VertexAI | null = null;
+let credentialsConfigured = false;
+
+function findCredentialsFile(): string | null {
+  const possiblePaths = [
+    process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    "./google-credentials.json",
+    "./script/google-credentials.json",
+    "/home/runner/workspace/google-credentials.json",
+    "/home/runner/workspace/script/google-credentials.json",
+  ].filter(Boolean) as string[];
+
+  for (const filePath of possiblePaths) {
+    try {
+      const resolvedPath = path.resolve(filePath);
+      if (fs.existsSync(resolvedPath)) {
+        console.log(`[Vertex AI] Found credentials at: ${resolvedPath}`);
+        return resolvedPath;
+      }
+    } catch (e) {
+      continue;
+    }
+  }
+  return null;
+}
+
+function setupCredentials(): boolean {
+  if (credentialsConfigured) return true;
+  
+  const credPath = findCredentialsFile();
+  if (credPath) {
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = credPath;
+    credentialsConfigured = true;
+    console.log(`[Vertex AI] Credentials configured: ${credPath}`);
+    return true;
+  }
+  
+  console.log("[Vertex AI] No credentials file found");
+  return false;
+}
 
 function getVertexAI(): VertexAI {
   if (!vertexAI) {
+    setupCredentials();
     vertexAI = new VertexAI({
       project: PROJECT_ID,
       location: LOCATION,
@@ -154,5 +196,5 @@ REGRAS IMPORTANTES:
 }
 
 export function isVertexAIConfigured(): boolean {
-  return !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  return findCredentialsFile() !== null;
 }
