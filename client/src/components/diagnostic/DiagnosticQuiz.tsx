@@ -129,9 +129,10 @@ interface AIDiagnostic {
 
 interface DiagnosticQuizProps {
   onComplete?: (answers: Record<string, string>, score: number) => void;
+  showHeader?: boolean;
 }
 
-export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
+export function DiagnosticQuiz({ onComplete, showHeader = true }: DiagnosticQuizProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [multiSelectAnswers, setMultiSelectAnswers] = useState<string[]>([]);
@@ -295,37 +296,28 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
 
           <div className="p-6 md:p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-5 text-center border border-red-200 relative overflow-hidden">
-                <div className="absolute top-2 right-2">
-                  <Wallet className="w-8 h-8 text-red-200" />
+              <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-2xl p-5 border border-red-200 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Por Mês</div>
+                <div className="text-4xl md:text-5xl font-bold text-red-600">
+                  {savings.toLocaleString('pt-BR')}
                 </div>
-                <div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Por Mês</div>
-                <div className="text-3xl md:text-4xl font-bold text-red-600">
-                  R$ {savings.toLocaleString('pt-BR')}
-                </div>
-                <div className="text-xs text-red-500 mt-1">deixados na mesa</div>
+                <div className="text-xs text-red-500 mt-2">deixados na mesa</div>
               </div>
               
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-5 text-center border border-orange-200 relative overflow-hidden">
-                <div className="absolute top-2 right-2">
-                  <Calendar className="w-8 h-8 text-orange-200" />
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-5 border border-orange-200 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-2">Por Ano</div>
+                <div className="text-4xl md:text-5xl font-bold text-orange-600">
+                  {annualSavings.toLocaleString('pt-BR')}
                 </div>
-                <div className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Por Ano</div>
-                <div className="text-3xl md:text-4xl font-bold text-orange-600">
-                  R$ {annualSavings.toLocaleString('pt-BR')}
-                </div>
-                <div className="text-xs text-orange-500 mt-1">em economia perdida</div>
+                <div className="text-xs text-orange-500 mt-2">em economia perdida</div>
               </div>
               
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-5 text-center border border-slate-200 relative overflow-hidden">
-                <div className="absolute top-2 right-2">
-                  <TrendingDown className="w-8 h-8 text-slate-200" />
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-5 border border-slate-200 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Em 5 Anos</div>
+                <div className="text-4xl md:text-5xl font-bold text-slate-700">
+                  {fiveYearSavings.toLocaleString('pt-BR')}
                 </div>
-                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Em 5 Anos</div>
-                <div className="text-3xl md:text-4xl font-bold text-slate-700">
-                  R$ {fiveYearSavings.toLocaleString('pt-BR')}
-                </div>
-                <div className="text-xs text-slate-500 mt-1">impacto acumulado</div>
+                <div className="text-xs text-slate-500 mt-2">impacto acumulado</div>
               </div>
             </div>
 
@@ -389,8 +381,19 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
   const question = QUESTIONS[currentQuestion];
 
   return (
-    <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
-      <CardContent className="p-6 md:p-10 space-y-8">
+    <>
+      {showHeader && (
+        <div className="text-center mb-10 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+            Diagnóstico rápido de compras industriais
+          </h2>
+          <p className="text-lg text-muted-foreground">
+            Responda em menos de 3 minutos e veja o impacto no seu caixa
+          </p>
+        </div>
+      )}
+      <Card className="border-none shadow-xl bg-white max-w-2xl mx-auto">
+        <CardContent className="p-6 md:p-10 space-y-8">
         <div className="space-y-3">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>Pergunta {currentQuestion + 1} de {QUESTIONS.length}</span>
@@ -462,5 +465,6 @@ export function DiagnosticQuiz({ onComplete }: DiagnosticQuizProps) {
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }
