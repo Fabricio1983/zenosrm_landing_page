@@ -18,7 +18,7 @@ import { Lock, Phone, Unlock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-const MIN_INTERVAL_MS = 10000; // Minimum 10 seconds between API calls
+const MIN_INTERVAL_MS = 0; // Vertex AI has no rate limiting, process immediately
 
 export function EqualizacaoDemo() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);

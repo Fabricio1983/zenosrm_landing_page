@@ -60,28 +60,38 @@ export async function registerRoutes(
       // Check if Vertex AI is configured (service account credentials)
       const useVertexAI = isVertexAIConfigured();
       if (useVertexAI) {
-        console.log("[API] Using Vertex AI (Gemini 2.5 Pro) for extraction");
+        console.log("[API] Using Vertex AI (Gemini 2.0 Flash) - parallel processing enabled");
       } else {
-        console.log("[API] Using Gemini API (Flash Lite) for extraction");
+        console.log("[API] Using Gemini API (Flash Lite) - sequential processing");
       }
 
-      // Process files sequentially with small delay to avoid rate limiting
-      const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-      const results: PromiseSettledResult<Awaited<ReturnType<typeof extractQuoteFromFile>>>[] = [];
+      let results: PromiseSettledResult<Awaited<ReturnType<typeof extractQuoteFromFile>>>[];
       
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        try {
-          const quote = useVertexAI 
-            ? await extractQuoteWithVertexAI(file.buffer, file.mimetype, file.originalname)
-            : await extractQuoteFromFile(file.buffer, file.mimetype, file.originalname);
-          results.push({ status: 'fulfilled', value: quote });
-        } catch (error) {
-          results.push({ status: 'rejected', reason: error });
-        }
-        // Shorter delay between files now that frontend has cooldown buffer
-        if (i < files.length - 1) {
-          await delay(useVertexAI ? 500 : 1000);
+      if (useVertexAI) {
+        // Vertex AI: Process all files in PARALLEL for maximum speed
+        const startTime = Date.now();
+        results = await Promise.allSettled(
+          files.map(file => 
+            extractQuoteWithVertexAI(file.buffer, file.mimetype, file.originalname)
+          )
+        );
+        console.log(`[API] Parallel processing completed in ${Date.now() - startTime}ms`);
+      } else {
+        // Fallback Gemini API: Process sequentially with delays to avoid rate limiting
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        results = [];
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          try {
+            const quote = await extractQuoteFromFile(file.buffer, file.mimetype, file.originalname);
+            results.push({ status: 'fulfilled', value: quote });
+          } catch (error) {
+            results.push({ status: 'rejected', reason: error });
+          }
+          if (i < files.length - 1) {
+            await delay(1000);
+          }
         }
       }
 

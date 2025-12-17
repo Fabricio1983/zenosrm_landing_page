@@ -23,7 +23,7 @@ const FRASES_IMPACTO = [
   "Cada real economizado em compras vai direto para o lucro da empresa.",
 ];
 
-const COOLDOWN_SECONDS = 5;
+const COOLDOWN_SECONDS = 0; // Vertex AI has no rate limiting
 
 export function UploadStep({ onComplete, initialFiles = [] }: UploadStepProps) {
   const [files, setFiles] = useState<File[]>(initialFiles);
