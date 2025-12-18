@@ -64,7 +64,7 @@ export default function LandingPage() {
           <nav className="hidden md:flex items-center gap-8">
             <button onClick={() => scrollToSection("diagnostic")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Diagnóstico</button>
             <button onClick={() => scrollToSection("solutions")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Soluções</button>
-            <button onClick={() => scrollToSection("pricing")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Preços</button>
+{/* <button onClick={() => scrollToSection("pricing")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Preços</button> */}
             <button onClick={() => scrollToSection("faq")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Para quem é</button>
             <Button 
               variant="ghost" 
@@ -99,7 +99,7 @@ export default function LandingPage() {
           <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-border p-4 flex flex-col gap-4 shadow-xl animate-in slide-in-from-top-5">
             <button onClick={() => scrollToSection("diagnostic")} className="text-left py-2 font-medium text-muted-foreground">Diagnóstico</button>
             <button onClick={() => scrollToSection("solutions")} className="text-left py-2 font-medium text-muted-foreground">Soluções</button>
-            <button onClick={() => scrollToSection("pricing")} className="text-left py-2 font-medium text-muted-foreground">Preços</button>
+{/* <button onClick={() => scrollToSection("pricing")} className="text-left py-2 font-medium text-muted-foreground">Preços</button> */}
             <button onClick={() => scrollToSection("faq")} className="text-left py-2 font-medium text-muted-foreground">Para quem é</button>
             <div className="flex flex-col gap-3 mt-2">
               <Button 
@@ -417,7 +417,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 8. Pricing */}
+{/* 8. Pricing - HIDDEN FOR NOW
         <section id="pricing" className="py-20 bg-white">
           <div className="container mx-auto px-4">
              <div className="text-center mb-16">
@@ -428,7 +428,6 @@ export default function LandingPage() {
              </div>
 
              <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-               {/* Basic */}
                <Card className="border border-border shadow-sm hover:shadow-md transition-all relative">
                  <CardContent className="p-8">
                    <h3 className="text-xl font-bold mb-2">Start</h3>
@@ -443,7 +442,6 @@ export default function LandingPage() {
                  </CardContent>
                </Card>
 
-               {/* Pro */}
                <Card className="border-2 border-primary shadow-xl scale-105 relative z-10 bg-white">
                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-full text-sm font-bold shadow-sm">
                    Mais Popular
@@ -462,7 +460,6 @@ export default function LandingPage() {
                  </CardContent>
                </Card>
 
-               {/* Enterprise */}
                <Card className="border border-border shadow-sm hover:shadow-md transition-all relative">
                  <CardContent className="p-8">
                    <h3 className="text-xl font-bold mb-2">Enterprise</h3>
@@ -480,6 +477,7 @@ export default function LandingPage() {
              </div>
           </div>
         </section>
+        */}
 
         {/* 9. Comparison */}
         <section className="py-20 bg-slate-50">
@@ -573,7 +571,7 @@ export default function LandingPage() {
             <h4 className="text-white font-bold mb-4">Produto</h4>
             <ul className="space-y-2 text-sm">
               <li><button onClick={() => scrollToSection("features")} className="hover:text-primary cursor-pointer">Funcionalidades</button></li>
-              <li><button onClick={() => scrollToSection("pricing")} className="hover:text-primary cursor-pointer">Preços</button></li>
+{/* <li><button onClick={() => scrollToSection("pricing")} className="hover:text-primary cursor-pointer">Preços</button></li> */}
               <li><button onClick={() => scrollToSection("cases")} className="hover:text-primary cursor-pointer">Cases</button></li>
             </ul>
           </div>
