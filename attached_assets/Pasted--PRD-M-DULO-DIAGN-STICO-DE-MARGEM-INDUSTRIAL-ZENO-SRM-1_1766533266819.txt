@@ -1,0 +1,217 @@
+# PRD — MÓDULO: DIAGNÓSTICO DE MARGEM INDUSTRIAL (ZENO SRM)
+
+## 1. OBJETIVO DO MÓDULO
+Criar um módulo de Diagnóstico Financeiro/Margem Industrial que funcione:
+- Publicamente no site do Zeno SRM como captador de leads qualificados
+- Internamente no Zeno SRM como ferramenta contínua para usuários pagantes
+
+O módulo deve:
+- Calcular indicadores financeiros industriais
+- Interpretar resultados por segmento
+- Sugerir ações práticas via agente
+- Manter 100% da identidade visual, UX e UI já existente do site e do app Zeno SRM
+
+⚠️ REGRA ABSOLUTA:
+NÃO criar nova identidade visual.
+NÃO criar novos padrões de UI.
+REUTILIZAR componentes, cores, tipografia, espaçamentos, botões, inputs, cards e layout já existentes no Zeno SRM.
+
+---
+
+## 2. IDENTIDADE VISUAL (OBRIGATÓRIO)
+- Usar exatamente a mesma:
+  - Paleta de cores
+  - Tipografia
+  - Grid
+  - Componentes de formulário
+  - Botões
+  - Cards
+  - Ícones
+  - Padrões de dashboard
+já existentes no site e no app Zeno SRM.
+
+Qualquer tela nova deve parecer que “sempre existiu” no Zeno.
+
+---
+
+## 3. CONTEXTOS DE USO
+
+### 3.1 SITE PÚBLICO (VISITANTE / LEAD)
+- Acesso sem login
+- Função: diagnóstico inicial + conscientização
+- Profundidade limitada
+
+### 3.2 ZENO LOGADO (USUÁRIO PAGANTE)
+- Acesso completo
+- Histórico
+- Simulações
+- Agente com ações
+- Integração com compras
+
+---
+
+## 4. FLUXO — SITE PÚBLICO
+
+### 4.1 Entrada
+Página/Seção chamada:
+"Diagnóstico de Margem Industrial"
+
+Texto curto:
+"Descubra onde sua indústria está perdendo margem e caixa."
+
+### 4.2 Formulário (campos com ℹ️ tooltip)
+- Segmento:
+  - Máquinas de Musculação
+  - Ventiladores HVLS
+- Quantidade vendida
+- Preço médio unitário
+- Custos diretos (CMV):
+  - Matéria-prima
+  - Componentes comprados
+  - Mão de obra direta
+  - Energia / fábrica
+- Custos variáveis:
+  - Impostos sobre venda
+  - Comissão
+  - Frete
+- Custos fixos:
+  - Administrativo
+  - Comercial
+  - Marketing
+  - Engenharia / P&D
+
+Cada campo deve ter ícone ℹ️ com:
+- O que é
+- Exemplo simples
+- Regra prática (linguagem de empresário industrial)
+
+### 4.3 Resultado Público (limitado)
+Mostrar:
+- Margem Bruta (% + 🟢🟡🔴)
+- EBITDA (% + 🟢🟡🔴)
+- Ponto de Equilíbrio (R$)
+
+Mostrar apenas:
+- 1 insight principal
+- Sem plano de ação detalhado
+
+CTA:
+"Desbloquear análise completa no Zeno"
+
+Capturar:
+- Nome
+- Email
+- Empresa
+- Segmento
+
+---
+
+## 5. FLUXO — ZENO LOGADO (PAGANTE)
+
+### 5.1 Funcionalidades completas
+- Histórico mensal dos indicadores
+- Comparação entre empresas (ex: Musculação x HVLS)
+- Simulações (“E se eu reduzir CMV em X%?”)
+- Exportação de PDF executivo
+- Agente ativo com sugestões
+
+### 5.2 Indicadores calculados
+- Receita
+- CMV
+- Margem Bruta
+- Markup
+- Margem de Contribuição
+- EBITDA
+- Margem EBITDA
+- Lucro Líquido
+- Ponto de Equilíbrio
+
+---
+
+## 6. BENCHMARK POR SEGMENTO
+
+### Máquinas de Musculação
+- Margem Bruta saudável: > 40%
+- Markup saudável: > 1,8
+- Margem EBITDA saudável: > 12%
+- Ponto de equilíbrio ideal: ≤ 65% da capacidade
+
+### Ventiladores HVLS
+- Margem Bruta saudável: > 45%
+- Markup saudável: > 2,2
+- Margem EBITDA saudável: > 18%
+- Ponto de equilíbrio ideal: ≤ 50% da capacidade
+
+Indicadores devem ser classificados automaticamente:
+🟢 Saudável | 🟡 Atenção | 🔴 Crítico
+
+---
+
+## 7. AGENTE DE RECOMENDAÇÕES (ZENO PAGO)
+
+Formato fixo da resposta do agente:
+1. Status do indicador
+2. Diagnóstico (por que está assim)
+3. Ações sugeridas (priorizadas)
+
+Exemplo:
+- Ação rápida (impacto imediato)
+- Ação estrutural (médio prazo)
+- Ação estratégica (decisão)
+
+O agente deve:
+- Usar apenas dados do usuário
+- Usar benchmarks do segmento
+- Não usar linguagem contábil
+- Falar como conselheiro industrial
+
+---
+
+## 8. CONEXÃO COM O ZENO
+Quando identificar problemas de CMV, o módulo deve:
+- Indicar que a causa está em compras
+- Sugerir uso de:
+  - Equalização
+  - Fornecedores
+  - Histórico de compras
+  - Processos do Zeno
+
+O diagnóstico mostra o “porquê”.
+O Zeno resolve o “como”.
+
+---
+
+## 9. REGRAS TÉCNICAS
+- Reutilizar stack já existente no Zeno SRM
+- Não criar novos sistemas de autenticação
+- Armazenar diagnósticos por empresa
+- Garantir performance mobile-first
+- UX simples, direto, sem telas longas
+
+---
+
+## 10. MÉTRICAS DE SUCESSO
+- Conversão visitante → lead
+- Conversão lead → conta Zeno
+- Uso recorrente do módulo
+- Cliques em ações do agente
+- Redução de churn (valor percebido)
+
+---
+
+## 11. ROADMAP
+Sprint 1:
+- Diagnóstico público
+- Cálculos
+- Resultado limitado
+- Captura de lead
+
+Sprint 2:
+- Versão completa no Zeno
+- Histórico
+- Simulações
+
+Sprint 3:
+- Agente inteligente
+- PDF executivo
+- Integração profunda com compras
