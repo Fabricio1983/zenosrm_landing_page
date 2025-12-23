@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { EqualizacaoDemo } from "@/components/equalization/EqualizacaoDemo";
 import { DiagnosticQuiz } from "@/components/diagnostic/DiagnosticQuiz";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { MarginCalculator } from "@/components/margin-calculator/MarginCalculator";
 import {
   Accordion,
   AccordionContent,
@@ -189,8 +190,15 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 2.5. Diagnostic Quiz Section */}
-        <section id="diagnostic" className="py-16 md:py-20 bg-white">
+        {/* 2.5. Margin Calculator Section */}
+        <section id="margin-calculator" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <MarginCalculator onWaitlist={() => scrollToSection("waitlist")} />
+          </div>
+        </section>
+
+        {/* 2.6. Diagnostic Quiz Section */}
+        <section id="diagnostic" className="py-16 md:py-20 bg-slate-50">
           <div className="container mx-auto px-4">
             <DiagnosticQuiz showHeader={true} />
           </div>
