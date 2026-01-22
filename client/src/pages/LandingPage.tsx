@@ -189,17 +189,17 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 2.5. Diagnostic Quiz Section */}
-        <section id="diagnostic" className="py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <DiagnosticQuiz showHeader={true} />
-          </div>
-        </section>
-
-        {/* 3. Equalization Widget Section */}
+        {/* 2.5. Equalization Widget Section */}
         <section id="equalization" className="py-20 bg-slate-50 relative border-y border-border">
           <div className="container mx-auto px-4">
             <EqualizacaoDemo />
+          </div>
+        </section>
+
+        {/* 3. Diagnostic Quiz Section */}
+        <section id="diagnostic" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <DiagnosticQuiz showHeader={true} />
           </div>
         </section>
 
