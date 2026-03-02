@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Fornecedor, Item, formatCurrency } from './types';
-import { ArrowLeft, Check, Trophy, TrendingDown, RefreshCw, BarChart3 } from 'lucide-react';
+import { ArrowLeft, ArrowDown, Check, Trophy, TrendingDown, RefreshCw, BarChart3, Award } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { WaitlistForm } from '@/components/WaitlistForm';
 
@@ -77,8 +77,11 @@ export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: 
         </div>
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
           <TrendingDown size={16} />
-          <span>{savingsPercent.toFixed(1)}% de redução de custo</span>
+          <span>{savingsPercent.toFixed(1)}% de redução sobre o fornecedor mais barato</span>
         </div>
+        <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+          Mesmo comparado ao fornecedor com menor preço total (<strong>{bestSingle.nome}</strong>), o Zeno ainda encontrou <strong>{savingsPercent.toFixed(1)}%</strong> de economia combinando os melhores preços de cada item.
+        </p>
         
         <div className={`max-w-2xl mx-auto mt-6 p-6 border rounded-xl text-sm shadow-sm transition-all ${
           isHighSavings ? "bg-green-50 border-green-200 text-green-900" : "bg-yellow-50 border-yellow-200 text-yellow-900"
@@ -91,7 +94,7 @@ export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: 
               <strong className="block text-lg mb-1">Impacto Imediato:</strong>
               {isHighSavings ? (
                 <span>
-                   Uau! Com a economia de apenas <strong>UMA equalização</strong>, você paga praticamente <strong>o mês inteiro</strong> do Zeno e ainda sobra dinheiro. Imagine esse impacto multiplicado por todas as suas compras do ano.
+                   Com a economia de apenas <strong>UMA equalização</strong>, você paga praticamente <strong>o mês inteiro</strong> do Zeno e ainda sobra dinheiro. Imagine esse impacto multiplicado por todas as suas compras do ano.
                 </span>
               ) : (
                 <span>
@@ -104,43 +107,53 @@ export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: 
       </div>
 
       {/* 2. Strategies Comparison */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Single Source */}
-        <Card className="border-border shadow-sm hover:shadow-md transition-all">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium text-muted-foreground flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-slate-100"><Trophy size={16} className="text-slate-500" /></div>
-              Melhor Pacote (Fornecedor Único)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold mb-1">{formatCurrency(bestSingle.total)}</div>
-            <div className="text-sm font-medium text-primary">{bestSingle.nome}</div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Ideal se você quiser emitir apenas um pedido e economizar no frete/logística.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="relative">
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Single Source */}
+          <Card className="border-border shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-medium text-muted-foreground flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-slate-100"><Trophy size={16} className="text-slate-500" /></div>
+                Se comprar tudo de um só fornecedor
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold mb-1 text-slate-700">{formatCurrency(bestSingle.total)}</div>
+              <div className="text-sm font-medium text-primary">{bestSingle.nome}</div>
+              <p className="text-xs text-muted-foreground mt-2">
+                O fornecedor mais barato no total. Ideal para um único pedido, mas você paga mais caro em vários itens.
+              </p>
+            </CardContent>
+          </Card>
 
-        {/* Multi Source */}
-        <Card className="border-primary shadow-lg relative overflow-hidden bg-white">
-          <div className="absolute top-0 right-0 p-3">
-            <div className="text-xs font-bold text-white bg-accent px-2 py-1 rounded-full shadow-sm">RECOMENDADO</div>
+          {/* Multi Source */}
+          <Card className="border-2 border-green-500 shadow-lg relative overflow-hidden bg-white">
+            <div className="absolute top-0 right-0 p-3">
+              <div className="text-xs font-bold text-white bg-green-600 px-2 py-1 rounded-full shadow-sm">RECOMENDADO</div>
+            </div>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-bold text-green-700 flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-green-100"><TrendingDown size={16} className="text-green-600" /></div>
+                Se o Zeno escolher o melhor preço de cada item
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold mb-1 text-green-600">{formatCurrency(bestCombo.total)}</div>
+              <div className="text-sm font-medium text-muted-foreground">Mix otimizado de fornecedores</div>
+              <p className="text-xs text-muted-foreground mt-2">
+                O Zeno analisa cada item e escolhe quem tem o menor preço, gerando a melhor combinação possível.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Savings Bridge between cards */}
+        <div className="flex justify-center -mt-3 mb-0 md:absolute md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:mt-0 md:mb-0 z-10">
+          <div className="bg-green-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm font-bold">
+            <ArrowDown size={16} className="md:-rotate-90" />
+            <span>Economia: {formatCurrency(savings)} ({savingsPercent.toFixed(1)}%)</span>
           </div>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-bold text-primary flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary/10"><TrendingDown size={16} className="text-primary" /></div>
-              Melhor Combinação (Equalização)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-1 text-green-600">{formatCurrency(bestCombo.total)}</div>
-            <div className="text-sm font-medium text-muted-foreground">Mix de fornecedores</div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Comprando cada item de quem tem o melhor preço.
-            </p>
-          </CardContent>
-        </Card>
+        </div>
       </div>
 
       {/* 2.5 Supplier Comparison List */}
@@ -149,6 +162,9 @@ export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: 
           <BarChart3 size={20} className="text-primary" />
           Comparativo por Fornecedor
         </h3>
+        <p className="text-sm text-muted-foreground">
+          Veja quanto você economiza com a equalização do Zeno em relação a cada fornecedor — inclusive o mais barato.
+        </p>
         <div className="grid gap-4">
           {fornecedores.map(f => {
             const savingsValue = f.total - bestCombo.total;
@@ -156,10 +172,18 @@ export function ResultStep({ fornecedores, items: propItems, onReset, onBack }: 
             const isBestSingle = f.id === bestSingle.id;
 
             return (
-              <Card key={f.id} className={`border border-border shadow-sm ${isBestSingle ? "bg-slate-50" : "bg-white"}`}>
+              <Card key={f.id} className={`border shadow-sm ${isBestSingle ? "border-blue-200 bg-blue-50/30" : "border-border bg-white"}`}>
                 <CardContent className="p-4 flex items-center justify-between flex-wrap gap-4">
                   <div className="min-w-[150px]">
-                    <div className="font-bold text-foreground">{f.nome}</div>
+                    <div className="font-bold text-foreground flex items-center gap-2">
+                      {f.nome}
+                      {isBestSingle && (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
+                          <Award size={12} />
+                          Mais barato
+                        </span>
+                      )}
+                    </div>
                     <div className="text-sm text-muted-foreground">Total da Proposta: {formatCurrency(f.total)}</div>
                   </div>
                   
