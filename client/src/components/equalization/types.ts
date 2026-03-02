@@ -42,10 +42,10 @@ export interface AppConfig {
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
-  dailyLimit: 999,
+  dailyLimit: 5,
   sessionLimit: 999,
   trialDays: 9999,
-  enableLimits: false
+  enableLimits: true
 };
 
 export const MOCK_ITENS: Item[] = [

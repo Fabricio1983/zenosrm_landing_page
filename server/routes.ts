@@ -268,10 +268,10 @@ export async function registerRoutes(
     try {
       const config = await storage.getAppConfig();
       res.json(config || {
-        dailyLimit: 999,
+        dailyLimit: 5,
         sessionLimit: 999,
         trialDays: 9999,
-        enableLimits: false,
+        enableLimits: true,
       });
     } catch (error) {
       console.error("Error fetching config:", error);
