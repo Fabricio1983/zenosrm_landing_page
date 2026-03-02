@@ -32,7 +32,25 @@ import {
   LayoutDashboard,
   Factory,
   ChevronRight,
-  Star
+  Star,
+  Smartphone,
+  BookOpen,
+  MessageSquare,
+  DollarSign,
+  Brain,
+  Target,
+  Zap,
+  Eye,
+  HelpCircle,
+  Clipboard,
+  RefreshCw,
+  Flame,
+  PackageX,
+  Timer,
+  CircleDollarSign,
+  UserCheck,
+  LineChart,
+  Sparkles
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -136,12 +154,11 @@ export default function LandingPage() {
                 </div>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 leading-[1.1]">
-                  Organize suas compras e <span className="text-primary">economize dinheiro</span> sem planilhas complicadas.
+                  Pare de perder dinheiro em compras. <span className="text-primary">Comece a controlar sua margem.</span>
                 </h1>
                 
                 <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                  Envie cotações, equalize em segundos e veja a economia real.
-                  Otimize seu processo de compras do início ao fim com o Zeno.
+                  Você já faz gestão de fornecedores — no Excel, no email, no WhatsApp. O custo oculto disso é lucro evaporando. O Zeno profissionaliza suas compras e devolve dinheiro para sua empresa.
                 </p>
                 
                 <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
@@ -184,6 +201,56 @@ export default function LandingPage() {
                 {/* Decorative elements */}
                 <div className="absolute -z-10 -top-4 -right-4 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
                 <div className="absolute -z-10 -bottom-4 -left-4 w-48 h-48 bg-accent/5 rounded-full blur-2xl" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2.3. A Verdade Incomoda */}
+        <section className="py-16 md:py-20 bg-white border-b border-border">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                Você já faz SRM. <span className="text-primary">Só faz mal feito.</span>
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                SRM não é luxo de multinacional. Toda empresa que compra já faz gestão de fornecedores — a questão é como.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+              {[
+                { icon: FileText, label: "No Excel" },
+                { icon: BookOpen, label: "No caderno" },
+                { icon: Smartphone, label: "No WhatsApp" },
+                { icon: Mail, label: "No email" },
+              ].map((item, i) => (
+                <div key={i} className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-slate-50 border border-border text-center">
+                  <item.icon className="w-8 h-8 text-muted-foreground" />
+                  <span className="font-semibold text-foreground">{item.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-red-50/50 border border-red-200/50 rounded-2xl p-8 md:p-10">
+              <h3 className="font-heading font-bold text-xl mb-6 text-red-800 text-center">
+                O custo oculto disso:
+              </h3>
+              <div className="grid md:grid-cols-5 gap-4">
+                {[
+                  { icon: Clock, text: "Tempo perdido" },
+                  { icon: PackageX, text: "Compras atrasadas" },
+                  { icon: Users, text: "Fornecedor desorganizado" },
+                  { icon: Brain, text: "Decisão baseada em memória" },
+                  { icon: DollarSign, text: "Lucro evaporando" },
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center gap-2 text-center">
+                    <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-medium text-red-800">{item.text}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -323,30 +390,32 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 5. Pain Points */}
+        {/* 5. Pain Points - Prejuizo Invisivel */}
         <section className="py-20 bg-slate-50 border-y border-border/50">
           <div className="container mx-auto px-4">
              <div className="text-center mb-16 max-w-3xl mx-auto">
                <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
-                 Se você usa planilha, você já viveu isso:
+                 Compras mal gerenciadas não geram bagunça. <span className="text-red-600">Geram prejuízo invisível.</span>
                </h2>
                <p className="text-muted-foreground text-lg">
-                 Deixe o caos manual para trás e assuma o controle estratégico.
+                 Cada falha no processo de compras custa dinheiro real para sua empresa.
                </p>
              </div>
 
-             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                {[
-                 { icon: FileText, label: "Perder orçamentos" },
-                 { icon: Clock, label: "Demora no processo" },
-                 { icon: TrendingDown, label: "Falta de histórico" },
-                 { icon: AlertTriangle, label: "Erro de compra" },
-                 { icon: Factory, label: "Produção parada" },
-                 { icon: Users, label: "Negociação ruim" },
+                 { icon: Calculator, cause: "Equalização ruim", effect: "Paga mais caro", desc: "Sem comparativo estruturado, você aceita preços acima do mercado sem perceber." },
+                 { icon: Timer, cause: "Aprovação lenta", effect: "Perde preço", desc: "Enquanto o processo trava, o fornecedor vende para o concorrente ou reajusta." },
+                 { icon: PackageX, cause: "Falta de material", effect: "Produção parada", desc: "Compras reativas geram paradas que custam milhares por hora." },
+                 { icon: Brain, cause: "Informação espalhada", effect: "Decisão errada", desc: "Dados em emails, planilhas e cadernos levam a escolhas baseadas em achismo." },
                ].map((pain, i) => (
-                 <div key={i} className="flex flex-col items-center text-center gap-4 p-6 rounded-2xl bg-white hover:shadow-md transition-all border border-border group">
-                   <pain.icon className="w-8 h-8 text-red-500/80 group-hover:text-red-500 transition-colors" />
-                   <span className="font-medium text-slate-700 group-hover:text-slate-900">{pain.label}</span>
+                 <div key={i} className="flex flex-col p-6 rounded-2xl bg-white hover:shadow-lg transition-all border border-border group">
+                   <div className="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                     <pain.icon className="w-6 h-6" />
+                   </div>
+                   <div className="font-bold text-foreground mb-1">{pain.cause}</div>
+                   <div className="text-red-600 font-semibold text-sm mb-3">= {pain.effect}</div>
+                   <p className="text-muted-foreground text-sm leading-relaxed">{pain.desc}</p>
                  </div>
                ))}
              </div>
@@ -361,6 +430,9 @@ export default function LandingPage() {
                <h2 className="text-4xl font-heading font-bold mb-4 text-foreground">
                  Tudo o que você precisa em um só lugar
                </h2>
+               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                 O Zeno foi feito para quem não sabe estruturar um SRM bem feito. O fluxo já vem pronto — você só segue as etapas.
+               </p>
              </div>
 
              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -479,28 +551,109 @@ export default function LandingPage() {
         </section>
         */}
 
-        {/* 9. Comparison */}
+        {/* 9. Antes vs Depois - Concreto com tempo */}
         <section className="py-20 bg-slate-50">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div className="grid md:grid-cols-2 gap-8 items-center rounded-3xl overflow-hidden shadow-sm border border-border bg-white">
-              <div className="p-10 bg-slate-100 text-slate-500">
-                <h3 className="text-2xl font-bold mb-6 text-slate-700">Antes do Zeno</h3>
-                <ul className="space-y-4">
-                  <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-400" /> Planilhas desconectadas</li>
-                  <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-400" /> E-mails perdidos</li>
-                  <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-400" /> Compras emergenciais caras</li>
-                  <li className="flex items-center gap-3"><X className="w-5 h-5 text-red-400" /> Sem histórico de preços</li>
-                </ul>
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                A transformação é real.
+              </h2>
+              <p className="text-lg text-muted-foreground">Veja como o Zeno muda cada etapa do seu processo de compras.</p>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                { before: "Equalizar 5 fornecedores com 10 itens leva uma manhã inteira", after: "Leva minutos. Com IA." },
+                { before: "15 emails manuais para pedir cotação", after: "1 clique. Todos recebem ao mesmo tempo." },
+                { before: "Relatório manual no fim do mês", after: "Dashboard em tempo real, atualizado automaticamente." },
+                { before: "Compras reativas. Correria. Apagar incêndio.", after: "Compras estratégicas. Fluxo previsível. Produção segura." },
+                { before: "Decisão baseada na memória do comprador", after: "Decisão baseada em dados, histórico e comparativos." },
+                { before: "Diretoria sem visibilidade sobre gastos", after: "Diretoria confiante com relatórios claros de economia." },
+              ].map((item, i) => (
+                <div key={i} className="grid md:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-border bg-white">
+                  <div className="p-5 md:p-6 bg-slate-100 flex items-start gap-3">
+                    <X className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                    <span className="text-slate-600">{item.before}</span>
+                  </div>
+                  <div className="p-5 md:p-6 flex items-start gap-3">
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                    <span className="font-medium text-foreground">{item.after}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 9.5. O Comprador é o Herói Invisível */}
+        <section className="py-20 bg-white border-y border-border">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <span className="text-primary font-bold tracking-wider uppercase text-sm mb-3 block">Para o comprador</span>
+                <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                  O Zeno devolve horas do seu dia.
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8">
+                  O que você faz manualmente no Excel e no email, o Zeno faz sozinho. Você merece focar em negociação e estratégia — não em copiar e colar dados.
+                </p>
+                <Button 
+                  className="bg-accent hover:bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/20"
+                  onClick={() => scrollToSection("equalization")}
+                >
+                  Testar equalização grátis
+                </Button>
               </div>
-              <div className="p-10 text-foreground">
-                <h3 className="text-2xl font-bold mb-6 text-primary">Com Zeno</h3>
-                <ul className="space-y-4 font-medium">
-                  <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500" /> Processo 100% digital</li>
-                  <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500" /> Centralização total</li>
-                  <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500" /> Economia média de 15%</li>
-                  <li className="flex items-center gap-3"><Check className="w-5 h-5 text-green-500" /> Auditoria completa</li>
-                </ul>
+              <div className="space-y-3">
+                {[
+                  { icon: Mail, text: "Abre 40+ emails por dia buscando cotações" },
+                  { icon: Clipboard, text: "Copia e cola dados entre planilhas" },
+                  { icon: FileText, text: "Digita item por item manualmente" },
+                  { icon: MessageSquare, text: "Responde \"e aí, já chegou?\" o dia inteiro" },
+                  { icon: RefreshCw, text: "Vira tradutor de pedido mal feito" },
+                  { icon: BarChart3, text: "Faz relatório manual no fim do mês" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-border">
+                    <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-foreground font-medium">{item.text}</span>
+                  </div>
+                ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 9.7. Segurança para o Empresário */}
+        <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800 text-white">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <span className="text-primary font-bold tracking-wider uppercase text-sm mb-3 block opacity-80">Para o empresário</span>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-8">
+              Se seu processo de compras depende da memória do comprador, sua empresa está vulnerável.
+            </h2>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {[
+                "Você sabe quanto compra por mês?",
+                "Sabe quanto economizou?",
+                "Sabe qual fornecedor é mais eficiente?",
+                "Sabe onde está vazando dinheiro?",
+              ].map((question, i) => (
+                <div key={i} className="p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur">
+                  <HelpCircle className="w-6 h-6 text-orange-400 mx-auto mb-3" />
+                  <p className="text-sm text-slate-200 font-medium">{question}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-white/10 backdrop-blur rounded-2xl p-8 border border-white/10 max-w-2xl mx-auto">
+              <p className="text-xl font-heading font-semibold mb-2">
+                Com o Zeno, o controle deixa de estar na cabeça das pessoas e passa a estar no sistema.
+              </p>
+              <p className="text-slate-400 text-sm">
+                Previsibilidade para o dono. Produtividade para o comprador. Margem para a empresa.
+              </p>
             </div>
           </div>
         </section>
@@ -512,10 +665,12 @@ export default function LandingPage() {
             
             <div className="grid md:grid-cols-2 gap-6">
               {[
-                { q: "Preciso saber usar Excel?", a: "Não! O Zeno substitui as planilhas complexas por uma interface visual e intuitiva." },
-                { q: "Posso usar sozinho?", a: "Sim, o plano Start é perfeito para compradores individuais ou equipes pequenas." },
-                { q: "O teste salva meus dados?", a: "Sim. Se você criar uma conta após o teste, todos os dados da equalização são salvos no seu histórico." },
-                { q: "Tem suporte?", a: "Sim, oferecemos suporte via chat e email em todos os planos, com gerente de conta no Enterprise." }
+                { q: "Isso não é só para empresa grande?", a: "Não. Mais de 70% dos nossos clientes são PMEs. O Zeno foi feito justamente para quem não tem equipe grande de compras mas quer parar de perder dinheiro." },
+                { q: "Já uso Excel, por que mudar?", a: "Pode continuar no Excel — mas o custo oculto é alto: tempo perdido, erros de digitação, falta de histórico e decisões baseadas em achismo. O Zeno elimina tudo isso." },
+                { q: "Quanto tempo leva para implantar?", a: "O fluxo já vem estruturado. Não precisa inventar processo, mapear etapas ou contratar consultoria. Você cadastra a empresa e já começa a usar." },
+                { q: "E se meu comprador não se adaptar?", a: "Se ele sabe usar WhatsApp, sabe usar o Zeno. A interface é visual e intuitiva — sem treinamentos longos ou manuais complicados." },
+                { q: "O Zeno é só um sistema de compras?", a: "Não. O Zeno é um método embutido. Ele estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa. Você ganha processo, controle e economia." },
+                { q: "Tem suporte?", a: "Sim, oferecemos suporte via chat e email em todos os planos, com acompanhamento dedicado para operações maiores." }
               ].map((item, i) => (
                 <Card key={i} className="border border-border shadow-sm hover:shadow-md transition-all bg-white h-full">
                   <CardContent className="p-6 flex flex-col justify-center h-full">
@@ -527,6 +682,26 @@ export default function LandingPage() {
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* 10.5. Frase-Promessa */}
+        <section className="py-16 bg-primary text-white">
+          <div className="container mx-auto px-4 text-center max-w-3xl">
+            <Sparkles className="w-10 h-10 mx-auto mb-6 opacity-80" />
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 leading-tight">
+              Transforme compras operacionais em compras estratégicas.
+            </h2>
+            <p className="text-lg opacity-80 mb-8">
+              Pare de apagar incêndio. Comece a controlar margem. Organize. Automatize. Lucre mais.
+            </p>
+            <Button 
+              size="lg"
+              className="bg-white text-primary hover:bg-slate-100 font-bold text-lg h-14 px-10 shadow-xl"
+              onClick={() => scrollToSection("waitlist")}
+            >
+              Quero transformar meu setor de compras
+            </Button>
           </div>
         </section>
 
@@ -563,8 +738,7 @@ export default function LandingPage() {
               <span className="font-heading font-bold text-xl">Zeno</span>
             </div>
             <p className="text-sm leading-relaxed">
-              Sistema completo de gestão de fornecedores e compras.
-              Simplifique, economize e cresça.
+              O sistema que estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa.
             </p>
           </div>
           <div>
