@@ -526,7 +526,7 @@ export default function LandingPage() {
                    <ul className="space-y-3 text-sm font-medium">
                      <li className="flex gap-2"><Check className="w-4 h-4 text-primary" /> Até 10 usuários</li>
                      <li className="flex gap-2"><Check className="w-4 h-4 text-primary" /> Solicitações Ilimitadas</li>
-                     <li className="flex gap-2"><Check className="w-4 h-4 text-primary" /> Equalização Avançada (IA)</li>
+                     <li className="flex gap-2"><Check className="w-4 h-4 text-primary" /> Equalização Avançada</li>
                      <li className="flex gap-2"><Check className="w-4 h-4 text-primary" /> Controle de Estoque</li>
                    </ul>
                  </CardContent>
@@ -563,7 +563,7 @@ export default function LandingPage() {
 
             <div className="space-y-4">
               {[
-                { before: "Equalizar 5 fornecedores com 10 itens leva uma manhã inteira", after: "Leva minutos. Com IA." },
+                { before: "Equalizar 5 fornecedores com 10 itens leva uma manhã inteira", after: "Leva minutos. Com o Zeno." },
                 { before: "15 emails manuais para pedir cotação", after: "1 clique. Todos recebem ao mesmo tempo." },
                 { before: "Relatório manual no fim do mês", after: "Dashboard em tempo real, atualizado automaticamente." },
                 { before: "Compras reativas. Correria. Apagar incêndio.", after: "Compras estratégicas. Fluxo previsível. Produção segura." },

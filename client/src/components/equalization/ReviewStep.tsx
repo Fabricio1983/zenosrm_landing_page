@@ -104,7 +104,7 @@ export function ReviewStep({ fornecedores: initialFornecedores, items, onConfirm
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-heading font-bold text-foreground">Revisão dos Dados Extraídos</h2>
-        <p className="text-muted-foreground">Nossa IA identificou os seguintes itens. Edite os nomes se necessário.</p>
+        <p className="text-muted-foreground">O Zeno identificou os seguintes itens. Edite os nomes se necessário.</p>
       </div>
 
       {fornecedores.length < 3 && (
