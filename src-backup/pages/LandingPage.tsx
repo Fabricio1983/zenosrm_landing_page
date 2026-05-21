@@ -1,0 +1,875 @@
+import React, { useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { EqualizacaoDemo } from "@/components/equalization/EqualizacaoDemo";
+import { DiagnosticQuiz } from "@/components/diagnostic/DiagnosticQuiz";
+import { WaitlistForm } from "@/components/WaitlistForm";
+import {
+  Check,
+  Menu,
+  X,
+  FileText,
+  Calculator,
+  TrendingDown,
+  Clock,
+  BarChart3,
+  Mail,
+  Shield,
+  Box,
+  Users,
+  LayoutDashboard,
+  Factory,
+  Star,
+  Smartphone,
+  BookOpen,
+  MessageSquare,
+  DollarSign,
+  Brain,
+  HelpCircle,
+  Clipboard,
+  RefreshCw,
+  PackageX,
+  Timer,
+  Sparkles
+} from "lucide-react";
+
+// --- Animation variants ---
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut", delay },
+  }),
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    transition: { duration: 0.5, ease: "easeOut", delay },
+  }),
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
+export default function LandingPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { scrollY } = useScroll();
+
+  // E7 — Header background opacity based on scroll
+  const headerBg = useTransform(scrollY, [0, 80], ["rgba(255,255,255,0)", "rgba(255,255,255,0.95)"]);
+  const headerShadow = useTransform(scrollY, [0, 80], ["0 0 0 0 rgba(0,0,0,0)", "0 1px 16px 0 rgba(0,0,0,0.07)"]);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+      setIsMenuOpen(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans">
+
+      {/* 1. Header — E7 dynamic scroll opacity */}
+      <motion.header
+        style={{ backgroundColor: headerBg, boxShadow: headerShadow }}
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-border/40 h-16 sm:h-20"
+      >
+        <div className="container mx-auto px-4 h-full flex items-center justify-between">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
+            <img src="/assets/logo.png" alt="Zeno SRM" className="h-8 sm:h-10 w-auto" />
+            <span className="font-heading font-bold text-xl sm:text-2xl text-primary hidden sm:block">Zeno</span>
+          </div>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => scrollToSection("diagnostic")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Diagnóstico</button>
+            <button onClick={() => scrollToSection("solutions")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Soluções</button>
+            <button onClick={() => scrollToSection("faq")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Para quem é</button>
+            <Button variant="ghost" className="text-primary font-semibold hover:bg-primary/10" onClick={() => window.location.href = "https://app.zenosrm.com"}>
+              Entrar
+            </Button>
+          </nav>
+
+          <div className="hidden md:flex items-center gap-3">
+            <Button variant="outline" className="hidden lg:flex border-primary text-primary hover:bg-primary/10">
+              Testar Zeno
+            </Button>
+            <Button className="bg-accent hover:bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/20" onClick={() => scrollToSection("equalization")}>
+              Equalize orçamentos grátis
+            </Button>
+          </div>
+
+          <button className="md:hidden p-2 text-foreground" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-border p-4 flex flex-col gap-4 shadow-xl"
+            >
+              <button onClick={() => scrollToSection("diagnostic")} className="text-left py-2 font-medium text-muted-foreground">Diagnóstico</button>
+              <button onClick={() => scrollToSection("solutions")} className="text-left py-2 font-medium text-muted-foreground">Soluções</button>
+              <button onClick={() => scrollToSection("faq")} className="text-left py-2 font-medium text-muted-foreground">Para quem é</button>
+              <div className="flex flex-col gap-3 mt-2">
+                <Button variant="ghost" className="justify-start text-primary" onClick={() => window.location.href = "https://app.zenosrm.com"}>Entrar</Button>
+                <Button className="w-full bg-accent hover:bg-orange-600 text-white" onClick={() => scrollToSection("equalization")}>Equalize orçamentos grátis</Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+
+      <main className="flex-1 pt-16 sm:pt-20">
+
+        {/* 2. Hero — E4 sequential fade-up, E5 glow orbs, E6 video glow, E8 badge */}
+        <section className="relative overflow-hidden pt-8 pb-16 lg:pt-12 lg:pb-20 bg-gradient-to-b from-primary/5 via-blue-50/30 to-white">
+
+          {/* E5 — Glow orbs */}
+          <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-20 -right-24 w-[380px] h-[380px] bg-accent/8 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="container mx-auto px-4 relative">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
+
+              {/* Left — E4 sequential text entrance */}
+              <div className="text-center lg:text-left">
+
+                {/* E8 — Badge with scale entrance */}
+                <motion.div
+                  variants={fadeIn}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6 border border-primary/20"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  </span>
+                  +1.200 empresas já testaram
+                </motion.div>
+
+                <motion.h1
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.1}
+                  className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 leading-[1.1]"
+                >
+                  Pare de perder dinheiro em compras. <span className="text-primary">Comece a controlar sua margem.</span>
+                </motion.h1>
+
+                <motion.p
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.2}
+                  className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0"
+                >
+                  Você já faz gestão de fornecedores — no Excel, no email, no WhatsApp. O custo oculto disso é lucro evaporando. O Zeno profissionaliza suas compras e devolve dinheiro para sua empresa.
+                </motion.p>
+
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.3}
+                  className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4"
+                >
+                  <Button size="lg" className="w-full sm:w-auto text-lg h-14 px-8 bg-accent hover:bg-orange-600 text-white shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-0.5" onClick={() => scrollToSection("waitlist")}>
+                    Entrar na Lista de Espera
+                  </Button>
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 px-8 border-2 hover:bg-gray-50 text-foreground" onClick={() => scrollToSection("diagnostic")}>
+                    Fazer Diagnóstico Grátis
+                  </Button>
+                </motion.div>
+              </div>
+
+              {/* Right — E4 scale-in video + E6 glow behind */}
+              <motion.div
+                variants={scaleIn}
+                initial="hidden"
+                animate="visible"
+                className="relative"
+              >
+                {/* E6 — Glow behind video */}
+                <div className="absolute inset-0 bg-primary/20 blur-3xl scale-90 rounded-full -z-10" />
+
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/15 border border-primary/10">
+                  <div className="aspect-square overflow-hidden">
+                    <video className="w-full h-full object-cover scale-[1.03]" autoPlay loop muted playsInline>
+                      <source src="/assets/demo-video.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* 2.3. A Verdade Incomoda — E1 whileInView, E2 stagger */}
+        <section className="py-16 md:py-20 bg-white border-b border-border">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                Você já faz SRM. <span className="text-primary">Só faz mal feito.</span>
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                SRM não é luxo de multinacional. Toda empresa que compra já faz gestão de fornecedores — a questão é como.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+              {[
+                { icon: FileText, label: "No Excel" },
+                { icon: BookOpen, label: "No caderno" },
+                { icon: Smartphone, label: "No WhatsApp" },
+                { icon: Mail, label: "No email" },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.08}
+                  className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-slate-50 border border-border text-center"
+                >
+                  <item.icon className="w-8 h-8 text-muted-foreground" />
+                  <span className="font-semibold text-foreground">{item.label}</span>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="bg-red-50/50 border border-red-200/50 rounded-2xl p-8 md:p-10"
+            >
+              <h3 className="font-heading font-bold text-xl mb-6 text-red-800 text-center">O custo oculto disso:</h3>
+              <div className="grid md:grid-cols-5 gap-4">
+                {[
+                  { icon: Clock, text: "Tempo perdido" },
+                  { icon: PackageX, text: "Compras atrasadas" },
+                  { icon: Users, text: "Fornecedor desorganizado" },
+                  { icon: Brain, text: "Decisão baseada em memória" },
+                  { icon: DollarSign, text: "Lucro evaporando" },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    custom={i * 0.08}
+                    className="flex flex-col items-center gap-2 text-center"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-medium text-red-800">{item.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 2.5. Equalization Widget */}
+        <section id="equalization" className="py-20 bg-slate-50 relative border-y border-border">
+          <div className="container mx-auto px-4">
+            <EqualizacaoDemo />
+          </div>
+        </section>
+
+        {/* 3. Diagnostic Quiz */}
+        <section id="diagnostic" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <DiagnosticQuiz showHeader={true} />
+          </div>
+        </section>
+
+        {/* 3.5 ROI — E1 whileInView, E2 stagger cards, E3 hover */}
+        <section className="py-20 bg-white border-b border-border">
+          <div className="container mx-auto px-4">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-16 max-w-3xl mx-auto"
+            >
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                Matemática simples: O Zeno se paga no primeiro mês.
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Não é apenas um software, é uma ferramenta de geração de caixa para sua empresa.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {[
+                { bg: "bg-blue-50/50", iconBg: "bg-blue-100", iconColor: "text-blue-600", Icon: TrendingDown, stat: "8% a 15%", title: "de Economia Real", desc: "Em cada compra realizada. Compare fornecedores inteligentemente e pague menos pelo mesmo item. Geralmente, uma única compra já paga a mensalidade." },
+                { bg: "bg-orange-50/50", iconBg: "bg-orange-100", iconColor: "text-orange-600", Icon: Clock, stat: "-60%", title: "Tempo Operacional", desc: "Sua equipe custa caro. Libere horas de digitação e planilhas para que eles negociem melhor e foquem em estratégia." },
+                { bg: "bg-green-50/50", iconBg: "bg-green-100", iconColor: "text-green-600", Icon: BarChart3, stat: "Cumulativo", title: "Ganhos Mensais", desc: "A mensalidade é fixa, mas sua economia cresce. Quanto mais você compra pelo Zeno, maior é o retorno financeiro no final do mês." },
+              ].map((card, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.1}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                >
+                  <Card className={`border-none shadow-lg h-full ${card.bg}`}>
+                    <CardContent className="p-8 text-center flex flex-col items-center h-full">
+                      <div className={`w-16 h-16 rounded-full ${card.iconBg} flex items-center justify-center mb-6 ${card.iconColor}`}>
+                        <card.Icon size={32} strokeWidth={2.5} />
+                      </div>
+                      <div className={`text-4xl font-bold ${card.iconColor} mb-2`}>{card.stat}</div>
+                      <h3 className="font-bold text-lg mb-3">{card.title}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">{card.desc}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {[
+                { iconBg: "bg-red-100", iconColor: "text-red-600", Icon: Shield, title: "Fim das Compras Erradas", desc: "Elimine erros de digitação e compras de última hora ou emergenciais, que geram prejuízos dezenas de vezes maiores que o custo do sistema." },
+                { iconBg: "bg-purple-100", iconColor: "text-purple-600", Icon: Calculator, title: "Decisões Baseadas em Dados", desc: "Chega de \"achismo\". Tenha histórico de preços, análise tributária e comparativos estruturados para nunca mais pagar caro por falta de informação." },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.1}
+                  className="flex gap-6 p-6 rounded-xl border border-border hover:border-primary/30 transition-colors"
+                >
+                  <div className={`shrink-0 w-12 h-12 rounded-lg ${item.iconBg} ${item.iconColor} flex items-center justify-center`}>
+                    <item.Icon size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-xl mb-2">{item.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Social Proof — E1, E2 stagger, E3 hover */}
+        <section id="cases" className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl font-heading font-bold mb-4">
+                O ZENO já ajudou empresas a economizar em compras reais.
+              </h2>
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { quote: "Economizamos R$ 7.000 em uma única compra de insumos.", author: "Ricardo M.", role: "Gerente de Compras", savings: "R$ 7k" },
+                { quote: "O processo que levava 3 dias agora fazemos em 20 minutos.", author: "Ana P.", role: "Diretora Financeira", savings: "20h" },
+                { quote: "Visualizar a melhor combinação de fornecedores mudou nosso jogo.", author: "Carlos E.", role: "CEO", savings: "15%" },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.1}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                >
+                  <Card className="bg-slate-50 border-none shadow-sm h-full">
+                    <CardContent className="p-8 flex flex-col h-full">
+                      <div className="flex gap-1 mb-6 text-yellow-400">
+                        {[1,2,3,4,5].map(s => <Star key={s} fill="currentColor" size={16} />)}
+                      </div>
+                      <p className="text-lg text-foreground font-medium mb-6 italic">"{item.quote}"</p>
+                      <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
+                        <div>
+                          <div className="font-bold text-foreground">{item.author}</div>
+                          <div className="text-sm text-muted-foreground">{item.role}</div>
+                        </div>
+                        <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-sm">{item.savings}</div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 5. Pain Points — E1, E2 stagger, E3 hover */}
+        <section className="py-20 bg-slate-50 border-y border-border/50">
+          <div className="container mx-auto px-4">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-16 max-w-3xl mx-auto"
+            >
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                Compras mal gerenciadas não geram bagunça. <span className="text-red-600">Geram prejuízo invisível.</span>
+              </h2>
+              <p className="text-muted-foreground text-lg">Cada falha no processo de compras custa dinheiro real para sua empresa.</p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: Calculator, cause: "Equalização ruim", effect: "Paga mais caro", desc: "Sem comparativo estruturado, você aceita preços acima do mercado sem perceber." },
+                { icon: Timer, cause: "Aprovação lenta", effect: "Perde preço", desc: "Enquanto o processo trava, o fornecedor vende para o concorrente ou reajusta." },
+                { icon: PackageX, cause: "Falta de material", effect: "Produção parada", desc: "Compras reativas geram paradas que custam milhares por hora." },
+                { icon: Brain, cause: "Informação espalhada", effect: "Decisão errada", desc: "Dados em emails, planilhas e cadernos levam a escolhas baseadas em achismo." },
+              ].map((pain, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.08}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="flex flex-col p-6 rounded-2xl bg-white border border-border group cursor-default"
+                >
+                  <div className="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                    <pain.icon className="w-6 h-6" />
+                  </div>
+                  <div className="font-bold text-foreground mb-1">{pain.cause}</div>
+                  <div className="text-red-600 font-semibold text-sm mb-3">= {pain.effect}</div>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{pain.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 6. Features — E1, E2 stagger, E3 hover */}
+        <section id="features" className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Funcionalidades</span>
+              <h2 className="text-4xl font-heading font-bold mb-4 text-foreground">Tudo o que você precisa em um só lugar</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                O Zeno foi feito para quem não sabe estruturar um SRM bem feito. O fluxo já vem pronto — você só segue as etapas.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: LayoutDashboard, title: "Gestão de Solicitações", desc: "Nunca mais perca um pedido. Veja quem faz o quê e quando." },
+                { icon: Box, title: "Controle de Estoque", desc: "Inteligência para saber o que comprar e quando repor." },
+                { icon: Users, title: "Gestão de Fornecedores", desc: "Histórico, avaliação e cadastro centralizado de parceiros." },
+                { icon: Calculator, title: "Produtos e BOM", desc: "Estrutura de produtos finais e lista de materiais completa." },
+                { icon: Factory, title: "Produção e MRP", desc: "Simule necessidades de material baseado na sua produção." },
+                { icon: Mail, title: "Cotações por Email", desc: "Envie RFQs direto da plataforma e receba respostas organizadas." },
+                { icon: Shield, title: "Controle de Acesso", desc: "Multi-tenant com permissões granulares por usuário." },
+                { icon: BarChart3, title: "Dashboards", desc: "Visão estratégica de gastos e economia em tempo real." },
+              ].map((feat, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.06}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="group p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-colors bg-white cursor-default"
+                >
+                  <div className="w-12 h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <feat.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-foreground">{feat.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{feat.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 7. Demo / Video — E1 */}
+        <section className="py-20 bg-slate-50 border-y border-border">
+          <div className="container mx-auto px-4 text-center">
+            <motion.h2
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-3xl font-heading font-bold mb-8"
+            >
+              Se você sabe usar WhatsApp, sabe usar o Zeno.
+            </motion.h2>
+            <motion.div
+              variants={scaleIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl bg-black aspect-video flex items-center justify-center text-white/50"
+            >
+              <div className="text-center">
+                <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center mx-auto mb-4 border border-white/20">
+                  <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-1"></div>
+                </div>
+                <p>Vídeo Demonstração (30s)</p>
+              </div>
+            </motion.div>
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-12 text-left">
+              {[
+                "Crie uma solicitação em segundos",
+                "Dispare cotações para fornecedores",
+                "Escolha a melhor oferta com 1 clique",
+              ].map((step, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.1}
+                  className="flex items-center gap-3 font-medium text-foreground"
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-sm font-bold">
+                    {i + 1}
+                  </div>
+                  {step}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+{/* 8. Pricing - HIDDEN FOR NOW
+        <section id="pricing" className="py-20 bg-white">
+          ...
+        </section>
+*/}
+
+        {/* 9. Antes vs Depois — E1, E2 stagger */}
+        <section className="py-20 bg-slate-50">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">A transformação é real.</h2>
+              <p className="text-lg text-muted-foreground">Veja como o Zeno muda cada etapa do seu processo de compras.</p>
+            </motion.div>
+
+            <div className="space-y-4">
+              {[
+                { before: "Equalizar 5 fornecedores com 10 itens leva uma manhã inteira", after: "Leva minutos. Com o Zeno." },
+                { before: "15 emails manuais para pedir cotação", after: "1 clique. Todos recebem ao mesmo tempo." },
+                { before: "Relatório manual no fim do mês", after: "Dashboard em tempo real, atualizado automaticamente." },
+                { before: "Compras reativas. Correria. Apagar incêndio.", after: "Compras estratégicas. Fluxo previsível. Produção segura." },
+                { before: "Decisão baseada na memória do comprador", after: "Decisão baseada em dados, histórico e comparativos." },
+                { before: "Diretoria sem visibilidade sobre gastos", after: "Diretoria confiante com relatórios claros de economia." },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.07}
+                  className="grid md:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-border bg-white"
+                >
+                  <div className="p-5 md:p-6 bg-slate-100 flex items-start gap-3">
+                    <X className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                    <span className="text-slate-600">{item.before}</span>
+                  </div>
+                  <div className="p-5 md:p-6 flex items-start gap-3">
+                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                    <span className="font-medium text-foreground">{item.after}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 9.5. O Comprador é o Herói Invisível — E1, E2 stagger */}
+        <section className="py-20 bg-white border-y border-border">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <span className="text-primary font-bold tracking-wider uppercase text-sm mb-3 block">Para o comprador</span>
+                <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
+                  O Zeno devolve horas do seu dia.
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8">
+                  O que você faz manualmente no Excel e no email, o Zeno faz sozinho. Você merece focar em negociação e estratégia — não em copiar e colar dados.
+                </p>
+                <Button className="bg-accent hover:bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/20" onClick={() => scrollToSection("equalization")}>
+                  Testar equalização grátis
+                </Button>
+              </motion.div>
+
+              <div className="space-y-3">
+                {[
+                  { icon: Mail, text: "Abre 40+ emails por dia buscando cotações" },
+                  { icon: Clipboard, text: "Copia e cola dados entre planilhas" },
+                  { icon: FileText, text: "Digita item por item manualmente" },
+                  { icon: MessageSquare, text: "Responde \"e aí, já chegou?\" o dia inteiro" },
+                  { icon: RefreshCw, text: "Vira tradutor de pedido mal feito" },
+                  { icon: BarChart3, text: "Faz relatório manual no fim do mês" },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    custom={i * 0.07}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-border"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-foreground font-medium">{item.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 9.7. Segurança para o Empresário — E1, E2 stagger */}
+        <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800 text-white">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <span className="text-primary font-bold tracking-wider uppercase text-sm mb-3 block opacity-80">Para o empresário</span>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-8">
+                Se seu processo de compras depende da memória do comprador, sua empresa está vulnerável.
+              </h2>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {[
+                "Você sabe quanto compra por mês?",
+                "Sabe quanto economizou?",
+                "Sabe qual fornecedor é mais eficiente?",
+                "Sabe onde está vazando dinheiro?",
+              ].map((question, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.08}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur"
+                >
+                  <HelpCircle className="w-6 h-6 text-orange-400 mx-auto mb-3" />
+                  <p className="text-sm text-slate-200 font-medium">{question}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="bg-white/10 backdrop-blur rounded-2xl p-8 border border-white/10 max-w-2xl mx-auto"
+            >
+              <p className="text-xl font-heading font-semibold mb-2">
+                Com o Zeno, o controle deixa de estar na cabeça das pessoas e passa a estar no sistema.
+              </p>
+              <p className="text-slate-400 text-sm">Previsibilidade para o dono. Produtividade para o comprador. Margem para a empresa.</p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 10. FAQ — E1, E2 stagger, E3 hover */}
+        <section id="faq" className="py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <motion.h2
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-3xl font-heading font-bold mb-12 text-center"
+            >
+              Perguntas Frequentes
+            </motion.h2>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                { q: "Isso não é só para empresa grande?", a: "Não. Mais de 70% dos nossos clientes são PMEs. O Zeno foi feito justamente para quem não tem equipe grande de compras mas quer parar de perder dinheiro." },
+                { q: "Já uso Excel, por que mudar?", a: "Pode continuar no Excel — mas o custo oculto é alto: tempo perdido, erros de digitação, falta de histórico e decisões baseadas em achismo. O Zeno elimina tudo isso." },
+                { q: "Quanto tempo leva para implantar?", a: "O fluxo já vem estruturado. Não precisa inventar processo, mapear etapas ou contratar consultoria. Você cadastra a empresa e já começa a usar." },
+                { q: "E se meu comprador não se adaptar?", a: "Se ele sabe usar WhatsApp, sabe usar o Zeno. A interface é visual e intuitiva — sem treinamentos longos ou manuais complicados." },
+                { q: "O Zeno é só um sistema de compras?", a: "Não. O Zeno é um método embutido. Ele estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa. Você ganha processo, controle e economia." },
+                { q: "Tem suporte?", a: "Sim, oferecemos suporte via chat e email em todos os planos, com acompanhamento dedicado para operações maiores." },
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i * 0.07}
+                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                >
+                  <Card className="border border-border shadow-sm bg-white h-full">
+                    <CardContent className="p-6 flex flex-col justify-center h-full">
+                      <h3 className="font-bold text-lg mb-3 text-foreground">{item.q}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{item.a}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 10.5. Frase-Promessa — E1 */}
+        <section className="py-16 bg-primary text-white">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="container mx-auto px-4 text-center max-w-3xl"
+          >
+            <Sparkles className="w-10 h-10 mx-auto mb-6 opacity-80" />
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 leading-tight">
+              Transforme compras operacionais em compras estratégicas.
+            </h2>
+            <p className="text-lg opacity-80 mb-8">
+              Pare de apagar incêndio. Comece a controlar margem. Organize. Automatize. Lucre mais.
+            </p>
+            <Button size="lg" className="bg-white text-primary hover:bg-slate-100 font-bold text-lg h-14 px-10 shadow-xl" onClick={() => scrollToSection("waitlist")}>
+              Quero transformar meu setor de compras
+            </Button>
+          </motion.div>
+        </section>
+
+        {/* 11. Waitlist — E1 */}
+        <section id="waitlist" className="py-24 bg-gradient-to-b from-blue-50/50 to-white border-t border-border">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="container mx-auto px-4"
+          >
+            <div className="max-w-xl mx-auto">
+              <WaitlistForm
+                source="hero"
+                title="Entre na Lista de Espera"
+                subtitle="Seja um dos primeiros a testar o Zeno SRM"
+                buttonText="Garantir minha vaga"
+              />
+            </div>
+          </motion.div>
+        </section>
+      </main>
+
+      {/* Sticky Mobile Banner */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] p-4">
+        <Button className="w-full h-12 text-base font-bold bg-accent hover:bg-orange-600" onClick={() => scrollToSection("waitlist")}>
+          Entrar na Lista de Espera
+        </Button>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div className="container mx-auto px-4 grid md:grid-cols-4 gap-8">
+          <div>
+            <div className="flex items-center gap-2 mb-4 text-white">
+              <span className="font-heading font-bold text-xl">Zeno</span>
+            </div>
+            <p className="text-sm leading-relaxed">
+              O sistema que estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-4">Produto</h4>
+            <ul className="space-y-2 text-sm">
+              <li><button onClick={() => scrollToSection("features")} className="hover:text-primary cursor-pointer">Funcionalidades</button></li>
+              <li><button onClick={() => scrollToSection("cases")} className="hover:text-primary cursor-pointer">Cases</button></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-4">Legal</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="hover:text-primary">Termos de Uso</a></li>
+              <li><a href="#" className="hover:text-primary">Privacidade</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-white font-bold mb-4">Contato</h4>
+            <ul className="space-y-2 text-sm">
+              <li>suporte@zenosrm.com</li>
+              <li>São Paulo, SP</li>
+            </ul>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
+          <span>© {new Date().getFullYear()} Zeno SRM. Todos os direitos reservados.</span>
+        </div>
+      </footer>
+    </div>
+  );
+}

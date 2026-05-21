@@ -1,46 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { EqualizacaoDemo } from "@/components/equalization/EqualizacaoDemo";
-import { DiagnosticQuiz } from "@/components/diagnostic/DiagnosticQuiz";
-import { WaitlistForm } from "@/components/WaitlistForm";
 import {
-  Check,
-  Menu,
-  X,
-  FileText,
-  Calculator,
-  TrendingDown,
-  Clock,
-  BarChart3,
-  Mail,
-  Shield,
-  Box,
-  Users,
-  LayoutDashboard,
-  Factory,
-  Star,
-  Smartphone,
-  BookOpen,
-  MessageSquare,
-  DollarSign,
-  Brain,
-  HelpCircle,
-  Clipboard,
-  RefreshCw,
-  PackageX,
-  Timer,
-  Sparkles
+  Check, Menu, X, FileText, Calculator, TrendingDown, Clock,
+  BarChart3, Mail, Shield, Box, Users, LayoutDashboard, Factory,
+  Star, Smartphone, BookOpen, MessageSquare, DollarSign, Brain,
+  HelpCircle, Clipboard, RefreshCw, PackageX, Timer, Sparkles, ArrowRight, Zap
 } from "lucide-react";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
-// --- Animation variants ---
+// ─── Animation variants ───────────────────────────────────────────────────────
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 28 },
   visible: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: "easeOut", delay },
+    opacity: 1, y: 0,
+    transition: { duration: 0.55, ease: "easeOut" as const, delay },
   }),
 };
 
@@ -48,251 +22,225 @@ const fadeIn = {
   hidden: { opacity: 0 },
   visible: (delay = 0) => ({
     opacity: 1,
-    transition: { duration: 0.5, ease: "easeOut", delay },
+    transition: { duration: 0.5, ease: "easeOut" as const, delay },
   }),
 };
 
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.95 },
+  hidden: { opacity: 0, scale: 0.94 },
   visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.6, ease: "easeOut" },
+    opacity: 1, scale: 1,
+    transition: { duration: 0.65, ease: "easeOut" as const },
   },
 };
+
+// ─── Btn primitive ────────────────────────────────────────────────────────────
+
+function Btn({
+  children, onClick, variant = "primary", size = "md", className = ""
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: "primary" | "accent" | "outline" | "ghost" | "white";
+  size?: "sm" | "md" | "lg";
+  className?: string;
+}) {
+  const base = "inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 cursor-pointer select-none";
+  const sizes = { sm: "px-4 py-2 text-sm", md: "px-5 py-2.5 text-sm", lg: "px-8 py-4 text-base" };
+  const variants = {
+    primary: "bg-[hsl(242,52%,47%)] hover:bg-[hsl(242,52%,42%)] text-white shadow-lg shadow-indigo-500/20 hover:-translate-y-0.5",
+    accent: "bg-[hsl(14,100%,57%)] hover:bg-[hsl(14,100%,50%)] text-white shadow-lg shadow-orange-500/20 hover:-translate-y-0.5",
+    outline: "border-2 border-[hsl(242,52%,47%)] text-[hsl(242,52%,47%)] hover:bg-[hsl(242,52%,47%)] hover:text-white",
+    ghost: "text-[hsl(242,52%,47%)] hover:bg-indigo-50",
+    white: "bg-white text-[hsl(242,52%,47%)] hover:bg-slate-50 shadow-lg hover:-translate-y-0.5",
+  };
+  return (
+    <button className={`${base} ${sizes[size]} ${variants[variant]} ${className}`} onClick={onClick}>
+      {children}
+    </button>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { scrollY } = useScroll();
+  const headerBg = useTransform(scrollY, [0, 60], ["rgba(248,250,252,0)", "rgba(255,255,255,0.96)"]);
+  const headerShadow = useTransform(scrollY, [0, 60], ["0 0 0 0 rgba(0,0,0,0)", "0 1px 24px 0 rgba(0,0,0,0.08)"]);
 
-  // E7 — Header background opacity based on scroll
-  const headerBg = useTransform(scrollY, [0, 80], ["rgba(255,255,255,0)", "rgba(255,255,255,0.95)"]);
-  const headerShadow = useTransform(scrollY, [0, 80], ["0 0 0 0 rgba(0,0,0,0)", "0 1px 16px 0 rgba(0,0,0,0.07)"]);
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setIsMenuOpen(false);
-    }
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setIsMenuOpen(false);
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col" style={{ fontFamily: "'Inter', sans-serif" }}>
 
-      {/* 1. Header — E7 dynamic scroll opacity */}
+      {/* HEADER */}
       <motion.header
         style={{ backgroundColor: headerBg, boxShadow: headerShadow }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-border/40 h-16 sm:h-20"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-slate-200/60 h-16"
       >
-        <div className="container mx-auto px-4 h-full flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-            <img src="/assets/logo.png" alt="Zeno SRM" className="h-8 sm:h-10 w-auto" />
-            <span className="font-heading font-bold text-xl sm:text-2xl text-primary hidden sm:block">Zeno</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
+          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+            <img src="/assets/logo.png" alt="Zeno SRM" className="h-8 w-auto" />
+            <span className="font-bold text-xl text-[hsl(242,52%,47%)] hidden sm:block" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Zeno</span>
           </div>
-
-          <nav className="hidden md:flex items-center gap-8">
-            <button onClick={() => scrollToSection("diagnostic")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Diagnóstico</button>
-            <button onClick={() => scrollToSection("solutions")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Soluções</button>
-            <button onClick={() => scrollToSection("faq")} className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Para quem é</button>
-            <Button variant="ghost" className="text-primary font-semibold hover:bg-primary/10" onClick={() => window.location.href = "https://app.zenosrm.com"}>
-              Entrar
-            </Button>
+          <nav className="hidden md:flex items-center gap-7">
+            {[["Diagnóstico","diagnostic"],["Soluções","features"],["FAQ","faq"]].map(([label,id]) => (
+              <button key={id} onClick={() => scrollTo(id)} className="text-sm font-medium text-slate-500 hover:text-[hsl(242,52%,47%)] transition-colors">{label}</button>
+            ))}
+            <Btn variant="ghost" size="sm" onClick={() => window.open("https://app.zenosrm.com","_blank")}>Entrar</Btn>
           </nav>
-
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="outline" className="hidden lg:flex border-primary text-primary hover:bg-primary/10">
-              Testar Zeno
-            </Button>
-            <Button className="bg-accent hover:bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/20" onClick={() => scrollToSection("equalization")}>
-              Equalize orçamentos grátis
-            </Button>
+            <Btn variant="accent" size="md" onClick={() => scrollTo("waitlist")}>Entrar na lista de espera</Btn>
           </div>
-
-          <button className="md:hidden p-2 text-foreground" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <button className="md:hidden p-2 text-slate-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
-
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-border p-4 flex flex-col gap-4 shadow-xl"
+            <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}
+              className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 p-5 flex flex-col gap-4 shadow-xl"
             >
-              <button onClick={() => scrollToSection("diagnostic")} className="text-left py-2 font-medium text-muted-foreground">Diagnóstico</button>
-              <button onClick={() => scrollToSection("solutions")} className="text-left py-2 font-medium text-muted-foreground">Soluções</button>
-              <button onClick={() => scrollToSection("faq")} className="text-left py-2 font-medium text-muted-foreground">Para quem é</button>
-              <div className="flex flex-col gap-3 mt-2">
-                <Button variant="ghost" className="justify-start text-primary" onClick={() => window.location.href = "https://app.zenosrm.com"}>Entrar</Button>
-                <Button className="w-full bg-accent hover:bg-orange-600 text-white" onClick={() => scrollToSection("equalization")}>Equalize orçamentos grátis</Button>
-              </div>
+              {["Diagnóstico","Soluções","FAQ"].map((label,i) => (
+                <button key={i} onClick={() => scrollTo(["diagnostic","features","faq"][i])} className="text-left py-1.5 font-medium text-slate-600">{label}</button>
+              ))}
+              <Btn variant="accent" size="md" className="w-full mt-2" onClick={() => scrollTo("waitlist")}>Entrar na lista de espera</Btn>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.header>
 
-      <main className="flex-1 pt-16 sm:pt-20">
+      <main className="flex-1 pt-16">
 
-        {/* 2. Hero — E4 sequential fade-up, E5 glow orbs, E6 video glow, E8 badge */}
-        <section className="relative overflow-hidden pt-8 pb-16 lg:pt-12 lg:pb-20 bg-gradient-to-b from-primary/5 via-blue-50/30 to-white">
+        {/* HERO */}
+        <section className="relative overflow-hidden pt-14 pb-20 lg:pt-20 lg:pb-28">
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-orange-50/20 pointer-events-none" />
+          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-200/30 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute top-20 -right-32 w-[440px] h-[440px] bg-orange-200/20 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute inset-0 opacity-[0.025] pointer-events-none" style={{ backgroundImage: "linear-gradient(hsl(242,52%,47%) 1px,transparent 1px),linear-gradient(90deg,hsl(242,52%,47%) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
 
-          {/* E5 — Glow orbs */}
-          <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-          <div className="absolute top-20 -right-24 w-[380px] h-[380px] bg-accent/8 rounded-full blur-[100px] pointer-events-none" />
-
-          <div className="container mx-auto px-4 relative">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
-
-              {/* Left — E4 sequential text entrance */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
+            <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
               <div className="text-center lg:text-left">
-
-                {/* E8 — Badge with scale entrance */}
-                <motion.div
-                  variants={fadeIn}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6 border border-primary/20"
+                <motion.div variants={fadeIn} initial="hidden" animate="visible" custom={0}
+                  className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200/80 text-[hsl(242,52%,47%)] text-sm font-semibold mb-7"
                 >
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(242,52%,47%)] opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[hsl(242,52%,47%)]" />
                   </span>
                   +1.200 empresas já testaram
                 </motion.div>
 
-                <motion.h1
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0.1}
-                  className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 leading-[1.1]"
+                <motion.h1 variants={fadeUp} initial="hidden" animate="visible" custom={0.08}
+                  className="text-4xl md:text-5xl xl:text-[3.4rem] font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 >
-                  Pare de perder dinheiro em compras. <span className="text-primary">Comece a controlar sua margem.</span>
+                  Pare de perder dinheiro em compras.{" "}
+                  <span className="text-[hsl(242,52%,47%)]">Comece a controlar sua margem.</span>
                 </motion.h1>
 
-                <motion.p
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0.2}
-                  className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0"
-                >
+                <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={0.16} className="text-lg text-slate-500 mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0">
                   Você já faz gestão de fornecedores — no Excel, no email, no WhatsApp. O custo oculto disso é lucro evaporando. O Zeno profissionaliza suas compras e devolve dinheiro para sua empresa.
                 </motion.p>
 
-                <motion.div
-                  variants={fadeUp}
-                  initial="hidden"
-                  animate="visible"
-                  custom={0.3}
-                  className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4"
-                >
-                  <Button size="lg" className="w-full sm:w-auto text-lg h-14 px-8 bg-accent hover:bg-orange-600 text-white shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-0.5" onClick={() => scrollToSection("waitlist")}>
-                    Entrar na Lista de Espera
-                  </Button>
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 px-8 border-2 hover:bg-gray-50 text-foreground" onClick={() => scrollToSection("diagnostic")}>
-                    Fazer Diagnóstico Grátis
-                  </Button>
+                <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.24} className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
+                  <Btn variant="accent" size="lg" onClick={() => scrollTo("waitlist")}><Sparkles size={18} />Entrar na Lista de Espera</Btn>
+                  <Btn variant="outline" size="lg" onClick={() => scrollTo("diagnostic")}>Fazer Diagnóstico Grátis<ArrowRight size={16} /></Btn>
+                </motion.div>
+
+                <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0.32} className="flex flex-wrap items-center justify-center lg:justify-start gap-5 mt-10 text-sm text-slate-400">
+                  {["Sem cartão de crédito","Setup em minutos","Suporte em português"].map((t,i) => (
+                    <span key={i} className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" />{t}</span>
+                  ))}
                 </motion.div>
               </div>
 
-              {/* Right — E4 scale-in video + E6 glow behind */}
-              <motion.div
-                variants={scaleIn}
-                initial="hidden"
-                animate="visible"
-                className="relative"
-              >
-                {/* E6 — Glow behind video */}
-                <div className="absolute inset-0 bg-primary/20 blur-3xl scale-90 rounded-full -z-10" />
-
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/15 border border-primary/10">
-                  <div className="aspect-square overflow-hidden">
-                    <video className="w-full h-full object-cover scale-[1.03]" autoPlay loop muted playsInline>
-                      <source src="/assets/demo-video.mp4" type="video/mp4" />
-                    </video>
+              <motion.div variants={scaleIn} initial="hidden" animate="visible" className="relative">
+                <div className="absolute inset-0 bg-indigo-400/15 blur-3xl scale-90 rounded-full -z-10" />
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-indigo-900/15 border border-indigo-100/60 bg-white">
+                  <div className="bg-[hsl(242,52%,47%)] px-5 py-3 flex items-center gap-3">
+                    <div className="flex gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-red-400/70" /><span className="w-3 h-3 rounded-full bg-yellow-400/70" /><span className="w-3 h-3 rounded-full bg-green-400/70" />
+                    </div>
+                    <span className="text-indigo-200 text-xs font-medium ml-2">Zeno SRM — Equalização de Orçamentos</span>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
+                  <div className="p-6 bg-slate-50">
+                    <div className="grid grid-cols-3 gap-3 mb-5">
+                      {[
+                        { label: "Economia total", value: "R$ 23.400", color: "text-emerald-600", bg: "bg-emerald-50" },
+                        { label: "Cotações ativas", value: "12", color: "text-[hsl(242,52%,47%)]", bg: "bg-indigo-50" },
+                        { label: "Fornecedores", value: "38", color: "text-orange-600", bg: "bg-orange-50" },
+                      ].map((s,i) => (
+                        <div key={i} className={`${s.bg} rounded-xl p-3 text-center`}>
+                          <div className={`text-xl font-bold ${s.color}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{s.value}</div>
+                          <div className="text-xs text-slate-500 mt-0.5">{s.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                      <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-600">Comparativo de Fornecedores</span>
+                        <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">3 cotações</span>
+                      </div>
+                      {[
+                        { name: "MetalSul Ltda", value: "R$ 4.200", diff: "-12%", best: true },
+                        { name: "FornMax Ind.", value: "R$ 4.800", diff: "ref", best: false },
+                        { name: "AçosPrime", value: "R$ 5.100", diff: "+6%", best: false },
+                      ].map((row,i) => (
+                        <div key={i} className={`flex items-center justify-between px-4 py-2.5 text-sm ${row.best ? "bg-emerald-50/60" : ""}`}>
+                          <div className="flex items-center gap-2">
+                            <span className={`w-1.5 h-1.5 rounded-full ${row.best ? "bg-emerald-500" : "bg-slate-200"}`} />
+                            <span className={row.best ? "font-semibold text-slate-800" : "text-slate-500"}>{row.name}</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className={row.best ? "font-bold text-slate-800" : "text-slate-500"}>{row.value}</span>
+                            <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${row.best ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{row.diff}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-xs text-slate-400">Equalizado automaticamente pelo Zeno</span>
+                      <button className="text-xs font-semibold text-[hsl(242,52%,47%)] flex items-center gap-1">Aprovar melhor oferta <ArrowRight size={12} /></button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </div>
           </div>
         </section>
 
-        {/* 2.3. A Verdade Incomoda — E1 whileInView, E2 stagger */}
-        <section className="py-16 md:py-20 bg-white border-b border-border">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
-                Você já faz SRM. <span className="text-primary">Só faz mal feito.</span>
+        {/* TRUTH */}
+        <section className="py-20 bg-white border-y border-slate-100">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                Você já faz SRM. <span className="text-[hsl(242,52%,47%)]">Só faz mal feito.</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                SRM não é luxo de multinacional. Toda empresa que compra já faz gestão de fornecedores — a questão é como.
-              </p>
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto">SRM não é luxo de multinacional. Toda empresa que compra já faz gestão de fornecedores — a questão é <em>como</em>.</p>
             </motion.div>
-
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-              {[
-                { icon: FileText, label: "No Excel" },
-                { icon: BookOpen, label: "No caderno" },
-                { icon: Smartphone, label: "No WhatsApp" },
-                { icon: Mail, label: "No email" },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.08}
-                  className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-slate-50 border border-border text-center"
+              {[{icon:FileText,label:"No Excel"},{icon:BookOpen,label:"No caderno"},{icon:Smartphone,label:"No WhatsApp"},{icon:Mail,label:"No email"}].map(({icon:Icon,label},i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.07}
+                  className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center group hover:border-indigo-200 hover:bg-indigo-50/40 transition-colors"
                 >
-                  <item.icon className="w-8 h-8 text-muted-foreground" />
-                  <span className="font-semibold text-foreground">{item.label}</span>
+                  <Icon className="w-8 h-8 text-slate-400 group-hover:text-[hsl(242,52%,47%)] transition-colors" />
+                  <span className="font-semibold text-slate-700">{label}</span>
                 </motion.div>
               ))}
             </div>
-
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="bg-red-50/50 border border-red-200/50 rounded-2xl p-8 md:p-10"
-            >
-              <h3 className="font-heading font-bold text-xl mb-6 text-red-800 text-center">O custo oculto disso:</h3>
-              <div className="grid md:grid-cols-5 gap-4">
-                {[
-                  { icon: Clock, text: "Tempo perdido" },
-                  { icon: PackageX, text: "Compras atrasadas" },
-                  { icon: Users, text: "Fornecedor desorganizado" },
-                  { icon: Brain, text: "Decisão baseada em memória" },
-                  { icon: DollarSign, text: "Lucro evaporando" },
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    custom={i * 0.08}
-                    className="flex flex-col items-center gap-2 text-center"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
-                      <item.icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-sm font-medium text-red-800">{item.text}</span>
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="bg-red-50 border border-red-200/70 rounded-2xl p-8 md:p-10">
+              <h3 className="font-bold text-xl mb-8 text-red-800 text-center" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>O custo oculto disso:</h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+                {[{icon:Clock,text:"Tempo perdido"},{icon:PackageX,text:"Compras atrasadas"},{icon:Users,text:"Fornecedor desorganizado"},{icon:Brain,text:"Decisão por memória"},{icon:DollarSign,text:"Lucro evaporando"}].map(({icon:Icon,text},i) => (
+                  <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.07} className="flex flex-col items-center gap-2 text-center">
+                    <div className="w-11 h-11 rounded-full bg-red-100 text-red-600 flex items-center justify-center"><Icon className="w-5 h-5" /></div>
+                    <span className="text-sm font-semibold text-red-800">{text}</span>
                   </motion.div>
                 ))}
               </div>
@@ -300,87 +248,77 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 2.5. Equalization Widget */}
-        <section id="equalization" className="py-20 bg-slate-50 relative border-y border-border">
-          <div className="container mx-auto px-4">
-            <EqualizacaoDemo />
-          </div>
-        </section>
-
-        {/* 3. Diagnostic Quiz */}
-        <section id="diagnostic" className="py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <DiagnosticQuiz showHeader={true} />
-          </div>
-        </section>
-
-        {/* 3.5 ROI — E1 whileInView, E2 stagger cards, E3 hover */}
-        <section className="py-20 bg-white border-b border-border">
-          <div className="container mx-auto px-4">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-center mb-16 max-w-3xl mx-auto"
-            >
-              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
-                Matemática simples: O Zeno se paga no primeiro mês.
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Não é apenas um software, é uma ferramenta de geração de caixa para sua empresa.
-              </p>
+        {/* DIAGNOSTIC */}
+        <section id="diagnostic" className="py-20 bg-slate-50 border-b border-slate-100">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <span className="inline-block text-xs font-bold tracking-widest text-[hsl(242,52%,47%)] uppercase mb-4">Diagnóstico gratuito</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Quanto sua empresa está perdendo em compras?</h2>
+              <p className="text-lg text-slate-500 mb-10 max-w-2xl mx-auto">Responda 5 perguntas rápidas e descubra os pontos de fuga de margem.</p>
             </motion.div>
+            <DiagnosticQuiz onCTAClick={() => scrollTo("waitlist")} />
+          </div>
+        </section>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
+        {/* ROI */}
+        <section className="py-20 bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-16 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Matemática simples: o Zeno se paga no primeiro mês.</h2>
+              <p className="text-lg text-slate-500">Não é só software. É uma ferramenta de geração de caixa.</p>
+            </motion.div>
+            <div className="grid md:grid-cols-3 gap-7 mb-10">
               {[
-                { bg: "bg-blue-50/50", iconBg: "bg-blue-100", iconColor: "text-blue-600", Icon: TrendingDown, stat: "8% a 15%", title: "de Economia Real", desc: "Em cada compra realizada. Compare fornecedores inteligentemente e pague menos pelo mesmo item. Geralmente, uma única compra já paga a mensalidade." },
-                { bg: "bg-orange-50/50", iconBg: "bg-orange-100", iconColor: "text-orange-600", Icon: Clock, stat: "-60%", title: "Tempo Operacional", desc: "Sua equipe custa caro. Libere horas de digitação e planilhas para que eles negociem melhor e foquem em estratégia." },
-                { bg: "bg-green-50/50", iconBg: "bg-green-100", iconColor: "text-green-600", Icon: BarChart3, stat: "Cumulativo", title: "Ganhos Mensais", desc: "A mensalidade é fixa, mas sua economia cresce. Quanto mais você compra pelo Zeno, maior é o retorno financeiro no final do mês." },
-              ].map((card, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.1}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                { bg:"bg-indigo-50", iconBg:"bg-indigo-100", iconColor:"text-[hsl(242,52%,47%)]", Icon:TrendingDown, stat:"8–15%", title:"Economia Real", desc:"Em cada compra realizada. Compare fornecedores inteligentemente e pague menos. Geralmente uma única compra paga a mensalidade." },
+                { bg:"bg-orange-50", iconBg:"bg-orange-100", iconColor:"text-orange-600", Icon:Clock, stat:"−60%", title:"Tempo Operacional", desc:"Sua equipe custa caro. Libere horas de digitação para que foquem em negociação e estratégia." },
+                { bg:"bg-emerald-50", iconBg:"bg-emerald-100", iconColor:"text-emerald-600", Icon:BarChart3, stat:"Cumulativo", title:"Ganhos Mensais", desc:"A mensalidade é fixa, mas a economia cresce. Quanto mais você compra pelo Zeno, maior o retorno financeiro." },
+              ].map((card,i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.1} whileHover={{ y:-5, transition:{ duration:0.2 } }}
+                  className={`${card.bg} rounded-2xl p-8 text-center flex flex-col items-center border border-white shadow-sm`}
                 >
-                  <Card className={`border-none shadow-lg h-full ${card.bg}`}>
-                    <CardContent className="p-8 text-center flex flex-col items-center h-full">
-                      <div className={`w-16 h-16 rounded-full ${card.iconBg} flex items-center justify-center mb-6 ${card.iconColor}`}>
-                        <card.Icon size={32} strokeWidth={2.5} />
-                      </div>
-                      <div className={`text-4xl font-bold ${card.iconColor} mb-2`}>{card.stat}</div>
-                      <h3 className="font-bold text-lg mb-3">{card.title}</h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">{card.desc}</p>
-                    </CardContent>
-                  </Card>
+                  <div className={`w-16 h-16 rounded-2xl ${card.iconBg} ${card.iconColor} flex items-center justify-center mb-5`}><card.Icon size={30} strokeWidth={2} /></div>
+                  <div className={`text-4xl font-extrabold ${card.iconColor} mb-2`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{card.stat}</div>
+                  <h3 className="font-bold text-lg text-slate-800 mb-3">{card.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{card.desc}</p>
                 </motion.div>
               ))}
             </div>
-
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {[
-                { iconBg: "bg-red-100", iconColor: "text-red-600", Icon: Shield, title: "Fim das Compras Erradas", desc: "Elimine erros de digitação e compras de última hora ou emergenciais, que geram prejuízos dezenas de vezes maiores que o custo do sistema." },
-                { iconBg: "bg-purple-100", iconColor: "text-purple-600", Icon: Calculator, title: "Decisões Baseadas em Dados", desc: "Chega de \"achismo\". Tenha histórico de preços, análise tributária e comparativos estruturados para nunca mais pagar caro por falta de informação." },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.1}
-                  className="flex gap-6 p-6 rounded-xl border border-border hover:border-primary/30 transition-colors"
+                { iconBg:"bg-red-100", iconColor:"text-red-600", Icon:Shield, title:"Fim das Compras Erradas", desc:"Elimine erros de digitação e compras de emergência que geram prejuízos dezenas de vezes maiores que o custo do sistema." },
+                { iconBg:"bg-purple-100", iconColor:"text-purple-600", Icon:Calculator, title:"Decisões Baseadas em Dados", desc:'Chega de "achismo". Tenha histórico de preços, análise tributária e comparativos estruturados para nunca mais pagar caro.' },
+              ].map((item,i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.1}
+                  className="flex gap-5 p-6 rounded-2xl border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-all"
                 >
-                  <div className={`shrink-0 w-12 h-12 rounded-lg ${item.iconBg} ${item.iconColor} flex items-center justify-center`}>
-                    <item.Icon size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <div className={`shrink-0 w-12 h-12 rounded-xl ${item.iconBg} ${item.iconColor} flex items-center justify-center`}><item.Icon size={22} /></div>
+                  <div><h3 className="font-bold text-slate-800 mb-2">{item.title}</h3><p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p></div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SOCIAL PROOF */}
+        <section id="cases" className="py-20 bg-slate-50 border-y border-slate-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
+              <h2 className="text-3xl font-bold text-slate-900 mb-3" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>O Zeno já ajudou empresas a economizar em compras reais.</h2>
+            </motion.div>
+            <div className="grid md:grid-cols-3 gap-7">
+              {[
+                { quote:"Economizamos R$ 7.000 em uma única compra de insumos.", author:"Ricardo M.", role:"Gerente de Compras", savings:"R$ 7k" },
+                { quote:"O processo que levava 3 dias agora fazemos em 20 minutos.", author:"Ana P.", role:"Diretora Financeira", savings:"20h" },
+                { quote:"Visualizar a melhor combinação de fornecedores mudou nosso jogo.", author:"Carlos E.", role:"CEO", savings:"15%" },
+              ].map((item,i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.1} whileHover={{ y:-4, transition:{duration:0.2} }}
+                  className="bg-white rounded-2xl border border-slate-200 p-7 flex flex-col shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex gap-1 mb-5 text-yellow-400">{[0,1,2,3,4].map(s=><Star key={s} fill="currentColor" size={15} />)}</div>
+                  <p className="text-slate-700 font-medium mb-6 italic leading-relaxed flex-1">"{item.quote}"</p>
+                  <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+                    <div><div className="font-bold text-slate-800 text-sm">{item.author}</div><div className="text-xs text-slate-400">{item.role}</div></div>
+                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold text-sm">{item.savings}</span>
                   </div>
                 </motion.div>
               ))}
@@ -388,298 +326,86 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 4. Social Proof — E1, E2 stagger, E3 hover */}
-        <section id="cases" className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl font-heading font-bold mb-4">
-                O ZENO já ajudou empresas a economizar em compras reais.
-              </h2>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { quote: "Economizamos R$ 7.000 em uma única compra de insumos.", author: "Ricardo M.", role: "Gerente de Compras", savings: "R$ 7k" },
-                { quote: "O processo que levava 3 dias agora fazemos em 20 minutos.", author: "Ana P.", role: "Diretora Financeira", savings: "20h" },
-                { quote: "Visualizar a melhor combinação de fornecedores mudou nosso jogo.", author: "Carlos E.", role: "CEO", savings: "15%" },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.1}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                >
-                  <Card className="bg-slate-50 border-none shadow-sm h-full">
-                    <CardContent className="p-8 flex flex-col h-full">
-                      <div className="flex gap-1 mb-6 text-yellow-400">
-                        {[1,2,3,4,5].map(s => <Star key={s} fill="currentColor" size={16} />)}
-                      </div>
-                      <p className="text-lg text-foreground font-medium mb-6 italic">"{item.quote}"</p>
-                      <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
-                        <div>
-                          <div className="font-bold text-foreground">{item.author}</div>
-                          <div className="text-sm text-muted-foreground">{item.role}</div>
-                        </div>
-                        <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-sm">{item.savings}</div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 5. Pain Points — E1, E2 stagger, E3 hover */}
-        <section className="py-20 bg-slate-50 border-y border-border/50">
-          <div className="container mx-auto px-4">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-center mb-16 max-w-3xl mx-auto"
-            >
-              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
-                Compras mal gerenciadas não geram bagunça. <span className="text-red-600">Geram prejuízo invisível.</span>
-              </h2>
-              <p className="text-muted-foreground text-lg">Cada falha no processo de compras custa dinheiro real para sua empresa.</p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { icon: Calculator, cause: "Equalização ruim", effect: "Paga mais caro", desc: "Sem comparativo estruturado, você aceita preços acima do mercado sem perceber." },
-                { icon: Timer, cause: "Aprovação lenta", effect: "Perde preço", desc: "Enquanto o processo trava, o fornecedor vende para o concorrente ou reajusta." },
-                { icon: PackageX, cause: "Falta de material", effect: "Produção parada", desc: "Compras reativas geram paradas que custam milhares por hora." },
-                { icon: Brain, cause: "Informação espalhada", effect: "Decisão errada", desc: "Dados em emails, planilhas e cadernos levam a escolhas baseadas em achismo." },
-              ].map((pain, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.08}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className="flex flex-col p-6 rounded-2xl bg-white border border-border group cursor-default"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mb-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
-                    <pain.icon className="w-6 h-6" />
-                  </div>
-                  <div className="font-bold text-foreground mb-1">{pain.cause}</div>
-                  <div className="text-red-600 font-semibold text-sm mb-3">= {pain.effect}</div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{pain.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 6. Features — E1, E2 stagger, E3 hover */}
+        {/* FEATURES */}
         <section id="features" className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Funcionalidades</span>
-              <h2 className="text-4xl font-heading font-bold mb-4 text-foreground">Tudo o que você precisa em um só lugar</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                O Zeno foi feito para quem não sabe estruturar um SRM bem feito. O fluxo já vem pronto — você só segue as etapas.
-              </p>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
+              <span className="text-xs font-bold tracking-widest text-[hsl(242,52%,47%)] uppercase mb-3 block">Funcionalidades</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Tudo o que você precisa em um só lugar</h2>
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto">O Zeno foi feito para quem não tem equipe grande de compras. O fluxo já vem pronto — você só segue as etapas.</p>
             </motion.div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
               {[
-                { icon: LayoutDashboard, title: "Gestão de Solicitações", desc: "Nunca mais perca um pedido. Veja quem faz o quê e quando." },
-                { icon: Box, title: "Controle de Estoque", desc: "Inteligência para saber o que comprar e quando repor." },
-                { icon: Users, title: "Gestão de Fornecedores", desc: "Histórico, avaliação e cadastro centralizado de parceiros." },
-                { icon: Calculator, title: "Produtos e BOM", desc: "Estrutura de produtos finais e lista de materiais completa." },
-                { icon: Factory, title: "Produção e MRP", desc: "Simule necessidades de material baseado na sua produção." },
-                { icon: Mail, title: "Cotações por Email", desc: "Envie RFQs direto da plataforma e receba respostas organizadas." },
-                { icon: Shield, title: "Controle de Acesso", desc: "Multi-tenant com permissões granulares por usuário." },
-                { icon: BarChart3, title: "Dashboards", desc: "Visão estratégica de gastos e economia em tempo real." },
-              ].map((feat, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.06}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className="group p-6 rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-colors bg-white cursor-default"
+                {icon:LayoutDashboard,title:"Gestão de Solicitações",desc:"Nunca mais perca um pedido. Veja quem faz o quê e quando."},
+                {icon:Box,title:"Controle de Estoque",desc:"Inteligência para saber o que comprar e quando repor."},
+                {icon:Users,title:"Gestão de Fornecedores",desc:"Histórico, avaliação e cadastro centralizado de parceiros."},
+                {icon:Calculator,title:"Produtos e BOM",desc:"Estrutura de produtos finais e lista de materiais completa."},
+                {icon:Factory,title:"Produção e MRP",desc:"Simule necessidades de material baseado na sua produção."},
+                {icon:Mail,title:"Cotações por Email",desc:"Envie RFQs direto da plataforma e receba respostas organizadas."},
+                {icon:Shield,title:"Controle de Acesso",desc:"Multi-tenant com permissões granulares por usuário."},
+                {icon:BarChart3,title:"Dashboards",desc:"Visão estratégica de gastos e economia em tempo real."},
+              ].map((feat,i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.06} whileHover={{ y:-4, transition:{duration:0.2} }}
+                  className="group p-6 rounded-2xl bg-white border border-slate-200 hover:border-indigo-200 hover:shadow-md transition-all cursor-default"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
-                    <feat.icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-foreground">{feat.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{feat.desc}</p>
+                  <div className="w-11 h-11 rounded-xl bg-indigo-50 text-[hsl(242,52%,47%)] flex items-center justify-center mb-5 group-hover:bg-[hsl(242,52%,47%)] group-hover:text-white transition-colors"><feat.icon className="w-5 h-5" /></div>
+                  <h3 className="font-bold text-slate-800 mb-2">{feat.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{feat.desc}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 7. Demo / Video — E1 */}
-        <section className="py-20 bg-slate-50 border-y border-border">
-          <div className="container mx-auto px-4 text-center">
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-3xl font-heading font-bold mb-8"
-            >
-              Se você sabe usar WhatsApp, sabe usar o Zeno.
-            </motion.h2>
-            <motion.div
-              variants={scaleIn}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl bg-black aspect-video flex items-center justify-center text-white/50"
-            >
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center mx-auto mb-4 border border-white/20">
-                  <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-1"></div>
-                </div>
-                <p>Vídeo Demonstração (30s)</p>
-              </div>
+        {/* BEFORE/AFTER */}
+        <section className="py-20 bg-slate-50 border-y border-slate-100">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>A transformação é real.</h2>
+              <p className="text-slate-500 text-lg">Veja como o Zeno muda cada etapa do seu processo de compras.</p>
             </motion.div>
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto mt-12 text-left">
+            <div className="space-y-3">
               {[
-                "Crie uma solicitação em segundos",
-                "Dispare cotações para fornecedores",
-                "Escolha a melhor oferta com 1 clique",
-              ].map((step, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.1}
-                  className="flex items-center gap-3 font-medium text-foreground"
-                >
-                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-sm font-bold">
-                    {i + 1}
-                  </div>
-                  {step}
+                { before:"Equalizar 5 fornecedores com 10 itens leva uma manhã inteira", after:"Leva minutos. Com o Zeno." },
+                { before:"15 emails manuais para pedir cotação", after:"1 clique. Todos recebem ao mesmo tempo." },
+                { before:"Relatório manual no fim do mês", after:"Dashboard em tempo real, atualizado automaticamente." },
+                { before:"Compras reativas. Correria. Apagar incêndio.", after:"Compras estratégicas. Fluxo previsível. Produção segura." },
+                { before:"Decisão baseada na memória do comprador", after:"Decisão baseada em dados, histórico e comparativos." },
+                { before:"Diretoria sem visibilidade sobre gastos", after:"Diretoria confiante com relatórios claros de economia." },
+              ].map((item,i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.07} className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden border border-slate-200">
+                  <div className="p-5 bg-slate-100 flex items-start gap-3"><X className="w-5 h-5 text-red-400 shrink-0 mt-0.5" /><span className="text-slate-500 text-sm">{item.before}</span></div>
+                  <div className="p-5 bg-white flex items-start gap-3"><Check className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" /><span className="font-semibold text-slate-800 text-sm">{item.after}</span></div>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-{/* 8. Pricing - HIDDEN FOR NOW
-        <section id="pricing" className="py-20 bg-white">
-          ...
-        </section>
-*/}
-
-        {/* 9. Antes vs Depois — E1, E2 stagger */}
-        <section className="py-20 bg-slate-50">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">A transformação é real.</h2>
-              <p className="text-lg text-muted-foreground">Veja como o Zeno muda cada etapa do seu processo de compras.</p>
-            </motion.div>
-
-            <div className="space-y-4">
-              {[
-                { before: "Equalizar 5 fornecedores com 10 itens leva uma manhã inteira", after: "Leva minutos. Com o Zeno." },
-                { before: "15 emails manuais para pedir cotação", after: "1 clique. Todos recebem ao mesmo tempo." },
-                { before: "Relatório manual no fim do mês", after: "Dashboard em tempo real, atualizado automaticamente." },
-                { before: "Compras reativas. Correria. Apagar incêndio.", after: "Compras estratégicas. Fluxo previsível. Produção segura." },
-                { before: "Decisão baseada na memória do comprador", after: "Decisão baseada em dados, histórico e comparativos." },
-                { before: "Diretoria sem visibilidade sobre gastos", after: "Diretoria confiante com relatórios claros de economia." },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.07}
-                  className="grid md:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-border bg-white"
-                >
-                  <div className="p-5 md:p-6 bg-slate-100 flex items-start gap-3">
-                    <X className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-600">{item.before}</span>
-                  </div>
-                  <div className="p-5 md:p-6 flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                    <span className="font-medium text-foreground">{item.after}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 9.5. O Comprador é o Herói Invisível — E1, E2 stagger */}
-        <section className="py-20 bg-white border-y border-border">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <span className="text-primary font-bold tracking-wider uppercase text-sm mb-3 block">Para o comprador</span>
-                <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 text-foreground">
-                  O Zeno devolve horas do seu dia.
-                </h2>
-                <p className="text-lg text-muted-foreground mb-8">
-                  O que você faz manualmente no Excel e no email, o Zeno faz sozinho. Você merece focar em negociação e estratégia — não em copiar e colar dados.
-                </p>
-                <Button className="bg-accent hover:bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/20" onClick={() => scrollToSection("equalization")}>
-                  Testar equalização grátis
-                </Button>
+        {/* BUYER HERO */}
+        <section className="py-20 bg-white border-b border-slate-100">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="grid lg:grid-cols-2 gap-14 items-center">
+              <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <span className="text-xs font-bold tracking-widest text-[hsl(242,52%,47%)] uppercase mb-4 block">Para o comprador</span>
+                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-5" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>O Zeno devolve horas do seu dia.</h2>
+                <p className="text-slate-500 text-lg mb-8 leading-relaxed">O que você faz manualmente no Excel e no email, o Zeno faz sozinho. Você merece focar em negociação e estratégia — não em copiar e colar dados.</p>
+                <Btn variant="accent" size="md" onClick={() => scrollTo("waitlist")}><Zap size={16} />Quero economizar tempo agora</Btn>
               </motion.div>
-
               <div className="space-y-3">
                 {[
-                  { icon: Mail, text: "Abre 40+ emails por dia buscando cotações" },
-                  { icon: Clipboard, text: "Copia e cola dados entre planilhas" },
-                  { icon: FileText, text: "Digita item por item manualmente" },
-                  { icon: MessageSquare, text: "Responde \"e aí, já chegou?\" o dia inteiro" },
-                  { icon: RefreshCw, text: "Vira tradutor de pedido mal feito" },
-                  { icon: BarChart3, text: "Faz relatório manual no fim do mês" },
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    custom={i * 0.07}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-border"
+                  {icon:Mail,text:"Abre 40+ emails por dia buscando cotações"},
+                  {icon:Clipboard,text:"Copia e cola dados entre planilhas"},
+                  {icon:FileText,text:"Digita item por item manualmente"},
+                  {icon:MessageSquare,text:'Responde "e aí, já chegou?" o dia inteiro'},
+                  {icon:RefreshCw,text:"Vira tradutor de pedido mal feito"},
+                  {icon:BarChart3,text:"Faz relatório manual no fim do mês"},
+                ].map(({icon:Icon,text},i) => (
+                  <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.07}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-200 hover:border-orange-200 transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
-                      <item.icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-foreground font-medium">{item.text}</span>
+                    <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0"><Icon className="w-5 h-5" /></div>
+                    <span className="text-slate-700 font-medium text-sm">{text}</span>
                   </motion.div>
                 ))}
               </div>
@@ -687,189 +413,199 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 9.7. Segurança para o Empresário — E1, E2 stagger */}
-        <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              <span className="text-primary font-bold tracking-wider uppercase text-sm mb-3 block opacity-80">Para o empresário</span>
-              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-8">
+        {/* CEO SECTION */}
+        <section className="py-20 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage:"radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize:"40px 40px" }} />
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <span className="text-xs font-bold tracking-widest text-indigo-300 uppercase mb-4 block">Para o empresário</span>
+              <h2 className="text-3xl md:text-4xl font-bold mb-10 leading-tight" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                 Se seu processo de compras depende da memória do comprador, sua empresa está vulnerável.
               </h2>
             </motion.div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              {[
-                "Você sabe quanto compra por mês?",
-                "Sabe quanto economizou?",
-                "Sabe qual fornecedor é mais eficiente?",
-                "Sabe onde está vazando dinheiro?",
-              ].map((question, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.08}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className="p-5 rounded-xl bg-white/5 border border-white/10 backdrop-blur"
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
+              {["Você sabe quanto compra por mês?","Sabe quanto economizou?","Sabe qual fornecedor é mais eficiente?","Sabe onde está vazando dinheiro?"].map((question,i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.08} whileHover={{ y:-4, transition:{duration:0.2} }}
+                  className="p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur"
                 >
                   <HelpCircle className="w-6 h-6 text-orange-400 mx-auto mb-3" />
                   <p className="text-sm text-slate-200 font-medium">{question}</p>
                 </motion.div>
               ))}
             </div>
-
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="bg-white/10 backdrop-blur rounded-2xl p-8 border border-white/10 max-w-2xl mx-auto"
-            >
-              <p className="text-xl font-heading font-semibold mb-2">
-                Com o Zeno, o controle deixa de estar na cabeça das pessoas e passa a estar no sistema.
-              </p>
-              <p className="text-slate-400 text-sm">Previsibilidade para o dono. Produtividade para o comprador. Margem para a empresa.</p>
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="bg-white/8 backdrop-blur rounded-2xl p-8 border border-white/10 max-w-2xl mx-auto">
+              <p className="text-xl font-bold mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Com o Zeno, o controle deixa de estar na cabeça das pessoas e passa a estar no sistema.</p>
+              <p className="text-slate-400 text-sm mt-3">Previsibilidade para o dono. Produtividade para o comprador. Margem para a empresa.</p>
             </motion.div>
           </div>
         </section>
 
-        {/* 10. FAQ — E1, E2 stagger, E3 hover */}
+        {/* FAQ */}
         <section id="faq" className="py-20 bg-white">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <motion.h2
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="text-3xl font-heading font-bold mb-12 text-center"
-            >
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-3xl font-bold text-slate-900 mb-14 text-center" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Perguntas Frequentes
             </motion.h2>
-
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-5">
               {[
-                { q: "Isso não é só para empresa grande?", a: "Não. Mais de 70% dos nossos clientes são PMEs. O Zeno foi feito justamente para quem não tem equipe grande de compras mas quer parar de perder dinheiro." },
-                { q: "Já uso Excel, por que mudar?", a: "Pode continuar no Excel — mas o custo oculto é alto: tempo perdido, erros de digitação, falta de histórico e decisões baseadas em achismo. O Zeno elimina tudo isso." },
-                { q: "Quanto tempo leva para implantar?", a: "O fluxo já vem estruturado. Não precisa inventar processo, mapear etapas ou contratar consultoria. Você cadastra a empresa e já começa a usar." },
-                { q: "E se meu comprador não se adaptar?", a: "Se ele sabe usar WhatsApp, sabe usar o Zeno. A interface é visual e intuitiva — sem treinamentos longos ou manuais complicados." },
-                { q: "O Zeno é só um sistema de compras?", a: "Não. O Zeno é um método embutido. Ele estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa. Você ganha processo, controle e economia." },
-                { q: "Tem suporte?", a: "Sim, oferecemos suporte via chat e email em todos os planos, com acompanhamento dedicado para operações maiores." },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  custom={i * 0.07}
-                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                { q:"Isso não é só para empresa grande?", a:"Não. Mais de 70% dos nossos clientes são PMEs. O Zeno foi feito justamente para quem não tem equipe grande de compras." },
+                { q:"Já uso Excel, por que mudar?", a:"O custo oculto é alto: tempo perdido, erros de digitação, falta de histórico e decisões baseadas em achismo. O Zeno elimina tudo isso." },
+                { q:"Quanto tempo leva para implantar?", a:"O fluxo já vem estruturado. Não precisa inventar processo ou contratar consultoria. Você cadastra a empresa e já começa a usar." },
+                { q:"E se meu comprador não se adaptar?", a:"Se ele sabe usar WhatsApp, sabe usar o Zeno. A interface é visual e intuitiva — sem treinamentos longos." },
+                { q:"O Zeno é só um sistema de compras?", a:"Não. O Zeno é um método embutido. Ele estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa." },
+                { q:"Tem suporte?", a:"Sim, suporte via chat e email em todos os planos, com acompanhamento dedicado para operações maiores." },
+              ].map((item,i) => (
+                <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i*0.07} whileHover={{ y:-3, transition:{duration:0.2} }}
+                  className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-indigo-200 hover:shadow-sm transition-all"
                 >
-                  <Card className="border border-border shadow-sm bg-white h-full">
-                    <CardContent className="p-6 flex flex-col justify-center h-full">
-                      <h3 className="font-bold text-lg mb-3 text-foreground">{item.q}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{item.a}</p>
-                    </CardContent>
-                  </Card>
+                  <h3 className="font-bold text-slate-800 mb-3">{item.q}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{item.a}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 10.5. Frase-Promessa — E1 */}
-        <section className="py-16 bg-primary text-white">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="container mx-auto px-4 text-center max-w-3xl"
-          >
-            <Sparkles className="w-10 h-10 mx-auto mb-6 opacity-80" />
-            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 leading-tight">
-              Transforme compras operacionais em compras estratégicas.
-            </h2>
-            <p className="text-lg opacity-80 mb-8">
-              Pare de apagar incêndio. Comece a controlar margem. Organize. Automatize. Lucre mais.
-            </p>
-            <Button size="lg" className="bg-white text-primary hover:bg-slate-100 font-bold text-lg h-14 px-10 shadow-xl" onClick={() => scrollToSection("waitlist")}>
-              Quero transformar meu setor de compras
-            </Button>
+        {/* PROMISE CTA */}
+        <section className="py-16 bg-[hsl(242,52%,47%)] text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/30 to-transparent pointer-events-none" />
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mx-auto px-4 sm:px-6 text-center relative">
+            <Sparkles className="w-10 h-10 mx-auto mb-6 opacity-75" />
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Transforme compras operacionais em compras estratégicas.</h2>
+            <p className="text-lg opacity-80 mb-10">Pare de apagar incêndio. Comece a controlar margem. Organize. Automatize. Lucre mais.</p>
+            <Btn variant="white" size="lg" onClick={() => scrollTo("waitlist")}><Sparkles size={18} />Quero transformar meu setor de compras</Btn>
           </motion.div>
         </section>
 
-        {/* 11. Waitlist — E1 */}
-        <section id="waitlist" className="py-24 bg-gradient-to-b from-blue-50/50 to-white border-t border-border">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="container mx-auto px-4"
-          >
-            <div className="max-w-xl mx-auto">
-              <WaitlistForm
-                source="hero"
-                title="Entre na Lista de Espera"
-                subtitle="Seja um dos primeiros a testar o Zeno SRM"
-                buttonText="Garantir minha vaga"
-              />
-            </div>
+        {/* WAITLIST */}
+        <section id="waitlist" className="py-24 bg-gradient-to-b from-indigo-50/60 to-white border-t border-slate-100">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-xl mx-auto px-4 sm:px-6">
+            <WaitlistForm source="hero" title="Entre na Lista de Espera" subtitle="Seja um dos primeiros a testar o Zeno SRM" buttonText="Garantir minha vaga" />
           </motion.div>
         </section>
       </main>
 
-      {/* Sticky Mobile Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] p-4">
-        <Button className="w-full h-12 text-base font-bold bg-accent hover:bg-orange-600" onClick={() => scrollToSection("waitlist")}>
-          Entrar na Lista de Espera
-        </Button>
+      {/* STICKY MOBILE */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4">
+        <Btn variant="accent" size="lg" className="w-full" onClick={() => scrollTo("waitlist")}>Entrar na Lista de Espera</Btn>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-        <div className="container mx-auto px-4 grid md:grid-cols-4 gap-8">
+      {/* FOOTER */}
+      <footer className="bg-slate-900 text-slate-400 py-14 border-t border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 grid md:grid-cols-4 gap-10">
           <div>
-            <div className="flex items-center gap-2 mb-4 text-white">
-              <span className="font-heading font-bold text-xl">Zeno</span>
+            <div className="flex items-center gap-2 mb-4">
+              <img src="/assets/logo.png" alt="Zeno" className="h-7 w-auto brightness-0 invert" />
+              <span className="font-bold text-lg text-white" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Zeno</span>
             </div>
-            <p className="text-sm leading-relaxed">
-              O sistema que estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa.
-            </p>
+            <p className="text-sm leading-relaxed">O sistema que estrutura e profissionaliza o setor que mais impacta o lucro da sua empresa.</p>
           </div>
           <div>
-            <h4 className="text-white font-bold mb-4">Produto</h4>
-            <ul className="space-y-2 text-sm">
-              <li><button onClick={() => scrollToSection("features")} className="hover:text-primary cursor-pointer">Funcionalidades</button></li>
-              <li><button onClick={() => scrollToSection("cases")} className="hover:text-primary cursor-pointer">Cases</button></li>
+            <h4 className="text-white font-bold mb-5">Produto</h4>
+            <ul className="space-y-2.5 text-sm">
+              {[["Funcionalidades","features"],["Cases","cases"],["FAQ","faq"]].map(([label,id]) => (
+                <li key={id}><button onClick={() => scrollTo(id)} className="hover:text-indigo-400 transition-colors">{label}</button></li>
+              ))}
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-bold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary">Termos de Uso</a></li>
-              <li><a href="#" className="hover:text-primary">Privacidade</a></li>
+            <h4 className="text-white font-bold mb-5">Legal</h4>
+            <ul className="space-y-2.5 text-sm">
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Termos de Uso</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Privacidade</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-bold mb-4">Contato</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="text-white font-bold mb-5">Contato</h4>
+            <ul className="space-y-2.5 text-sm">
               <li>suporte@zenosrm.com</li>
               <li>São Paulo, SP</li>
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
-          <span>© {new Date().getFullYear()} Zeno SRM. Todos os direitos reservados.</span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-12 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
+          © {new Date().getFullYear()} Zeno SRM. Todos os direitos reservados.
         </div>
       </footer>
+    </div>
+  );
+}
+
+// ─── DiagnosticQuiz ────────────────────────────────────────────────────────────
+
+function DiagnosticQuiz({ onCTAClick }: { onCTAClick: () => void }) {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [done, setDone] = useState(false);
+
+  const questions = [
+    { q:"Como você organiza suas cotações hoje?", options:["Planilha Excel","Email/WhatsApp","Sistema dedicado","Papel/caderno"] },
+    { q:"Quanto tempo leva para equalizar 3 fornecedores?", options:["Menos de 30 min","Meio dia","1 dia inteiro","Mais de 1 dia"] },
+    { q:"Você consegue ver o histórico de preços de um item rapidamente?", options:["Sim, em segundos","Leva algum tempo","É difícil achar","Não tenho histórico"] },
+    { q:"A diretoria tem visibilidade dos gastos em compras?", options:["Relatório em tempo real","Relatório mensal manual","Apenas estimativas","Sem visibilidade"] },
+    { q:"Com que frequência ocorrem compras de emergência?", options:["Raramente","Às vezes","Frequente","Quase sempre"] },
+  ];
+
+  const score = answers.reduce((acc,a) => acc+a, 0);
+  const pct = Math.round((score / (questions.length * 3)) * 100);
+  const getRisk = () => {
+    if (pct < 30) return { label:"Baixo risco", color:"text-emerald-600", bg:"bg-emerald-50", bar:"bg-emerald-500" };
+    if (pct < 60) return { label:"Risco moderado", color:"text-yellow-600", bg:"bg-yellow-50", bar:"bg-yellow-500" };
+    return { label:"Alto risco de perda", color:"text-red-600", bg:"bg-red-50", bar:"bg-red-500" };
+  };
+
+  const answer = (idx: number) => {
+    const newAnswers = [...answers, idx];
+    setAnswers(newAnswers);
+    if (step + 1 >= questions.length) setDone(true);
+    else setStep(step + 1);
+  };
+
+  if (done) {
+    const risk = getRisk();
+    return (
+      <motion.div variants={scaleIn} initial="hidden" animate="visible" className="max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-left">
+        <div className="text-center mb-6">
+          <div className={`inline-block px-4 py-1.5 rounded-full ${risk.bg} ${risk.color} font-bold text-sm mb-3`}>{risk.label}</div>
+          <div className="text-5xl font-extrabold text-slate-900 mb-1" style={{ fontFamily:"'Plus Jakarta Sans', sans-serif" }}>{pct}%</div>
+          <p className="text-slate-500 text-sm">nível de exposição a perdas em compras</p>
+        </div>
+        <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-8">
+          <motion.div initial={{ width:0 }} animate={{ width:`${pct}%` }} transition={{ duration:1, ease:"easeOut", delay:0.3 }} className={`h-full rounded-full ${risk.bar}`} />
+        </div>
+        <p className="text-slate-600 text-sm mb-6 text-center leading-relaxed">
+          {pct >= 60 ? "Seu processo de compras está exposto a perdas significativas. Cada compra sem estrutura é margem que some."
+            : pct >= 30 ? "Há oportunidades claras de melhoria. Pequenas mudanças no processo podem representar economia real."
+            : "Você está no caminho certo! O Zeno pode ajudar a escalar e automatizar o que você já faz bem."}
+        </p>
+        <Btn variant="accent" size="lg" className="w-full" onClick={onCTAClick}><Sparkles size={18} />Quero resolver isso agora</Btn>
+      </motion.div>
+    );
+  }
+
+  const q = questions[step];
+  return (
+    <div className="max-w-lg mx-auto">
+      <div className="flex gap-1.5 mb-8 justify-center">
+        {questions.map((_,i) => (
+          <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i <= step ? "bg-[hsl(242,52%,47%)] w-8" : "bg-slate-200 w-6"}`} />
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div key={step} initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }} transition={{ duration:0.25 }}
+          className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm"
+        >
+          <div className="text-xs font-bold text-[hsl(242,52%,47%)] uppercase tracking-widest mb-3">Pergunta {step+1} de {questions.length}</div>
+          <h3 className="font-bold text-slate-900 text-xl mb-6 leading-tight" style={{ fontFamily:"'Plus Jakarta Sans', sans-serif" }}>{q.q}</h3>
+          <div className="space-y-3">
+            {q.options.map((opt,i) => (
+              <button key={i} onClick={() => answer(i)}
+                className="w-full text-left p-4 rounded-xl border-2 border-slate-200 text-slate-700 font-medium text-sm hover:border-[hsl(242,52%,47%)] hover:bg-indigo-50 hover:text-[hsl(242,52%,47%)] transition-all"
+              >{opt}</button>
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
