@@ -299,6 +299,9 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* CALCULADORA DE IMPACTO */}
+        <ImpactCalculator onCTAClick={() => scrollTo("waitlist")} />
+
         {/* SOCIAL PROOF */}
         <section id="cases" className="py-20 bg-slate-50 border-y border-slate-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -527,6 +530,205 @@ export default function LandingPage() {
           © {new Date().getFullYear()} Zeno SRM. Todos os direitos reservados.
         </div>
       </footer>
+    </div>
+  );
+}
+
+// ─── ImpactCalculator ─────────────────────────────────────────────────────────
+
+function ImpactCalculator({ onCTAClick }: { onCTAClick: () => void }) {
+  const [volume, setVolume] = useState(20000);
+  const [cotacoes, setCotacoes] = useState(15);
+  const [fornecedores, setFornecedores] = useState(4);
+
+  // Calculations
+  const economiaMin = Math.round(volume * 0.08);
+  const economiaMax = Math.round(volume * 0.15);
+  const tempoManualHoras = Math.round(cotacoes * fornecedores * 0.5); // 30min por fornecedor por cotação
+  const tempoZenoHoras = Math.max(1, Math.round(tempoManualHoras * 0.05)); // 95% redução
+  const horasEconomizadas = tempoManualHoras - tempoZenoHoras;
+  const valorHora = 35; // R$ médio hora comprador
+  const valorTempo = horasEconomizadas * valorHora;
+  const retornoTotal = economiaMin + valorTempo;
+
+  const fmt = (n: number) =>
+    n >= 1000 ? `R$ ${(n / 1000).toFixed(0)}k` : `R$ ${n}`;
+
+  return (
+    <section className="py-20 bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 relative">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
+          <span className="inline-block text-xs font-bold tracking-widest text-indigo-300 uppercase mb-4">Calculadora de impacto</span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-tight" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            Quanto o Zeno vale para a sua empresa?
+          </h2>
+          <p className="text-indigo-200 text-lg max-w-2xl mx-auto">
+            Ajuste os números da sua operação e veja o retorno real — em reais e em horas.
+          </p>
+        </motion.div>
+
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0.1}
+          className="grid lg:grid-cols-2 gap-8"
+        >
+          {/* Sliders */}
+          <div className="bg-white/8 backdrop-blur rounded-2xl border border-white/10 p-8 space-y-8">
+            <SliderInput
+              label="Volume de compras por mês"
+              value={volume}
+              min={5000} max={500000} step={5000}
+              format={(v) => `R$ ${v.toLocaleString("pt-BR")}`}
+              onChange={setVolume}
+              color="indigo"
+            />
+            <SliderInput
+              label="Cotações realizadas por mês"
+              value={cotacoes}
+              min={2} max={100} step={1}
+              format={(v) => `${v} cotações`}
+              onChange={setCotacoes}
+              color="orange"
+            />
+            <SliderInput
+              label="Fornecedores por cotação"
+              value={fornecedores}
+              min={2} max={10} step={1}
+              format={(v) => `${v} fornecedores`}
+              onChange={setFornecedores}
+              color="emerald"
+            />
+          </div>
+
+          {/* Results */}
+          <div className="flex flex-col gap-4">
+            {/* Economia em compras */}
+            <motion.div
+              key={`${economiaMin}-${economiaMax}`}
+              initial={{ scale: 0.97, opacity: 0.7 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.25 }}
+              className="bg-emerald-500/15 border border-emerald-400/30 rounded-2xl p-6"
+            >
+              <div className="flex items-start justify-between mb-1">
+                <span className="text-emerald-300 text-sm font-semibold uppercase tracking-wide">Economia em compras</span>
+                <TrendingDown className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div className="text-4xl font-extrabold text-white mb-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                {fmt(economiaMin)} – {fmt(economiaMax)}
+                <span className="text-emerald-300 text-xl font-bold">/mês</span>
+              </div>
+              <p className="text-emerald-200/70 text-sm">Redução de 8–15% no valor pago por compra com equalização estruturada</p>
+            </motion.div>
+
+            {/* Tempo recuperado */}
+            <motion.div
+              key={`tempo-${horasEconomizadas}`}
+              initial={{ scale: 0.97, opacity: 0.7 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.25, delay: 0.05 }}
+              className="bg-orange-500/15 border border-orange-400/30 rounded-2xl p-6"
+            >
+              <div className="flex items-start justify-between mb-1">
+                <span className="text-orange-300 text-sm font-semibold uppercase tracking-wide">Tempo recuperado</span>
+                <Clock className="w-5 h-5 text-orange-400" />
+              </div>
+              <div className="text-4xl font-extrabold text-white mb-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                {horasEconomizadas}h
+                <span className="text-orange-300 text-xl font-bold">/mês</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <span className="text-red-300 line-through">{tempoManualHoras}h manual</span>
+                <span className="text-slate-400">→</span>
+                <span className="text-emerald-300 font-semibold">{tempoZenoHoras}h com Zeno</span>
+                <span className="text-orange-200/70 ml-auto">≈ {fmt(valorTempo)}</span>
+              </div>
+            </motion.div>
+
+            {/* Retorno total */}
+            <motion.div
+              key={`total-${retornoTotal}`}
+              initial={{ scale: 0.97, opacity: 0.7 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.25, delay: 0.1 }}
+              className="bg-[hsl(242,52%,47%)]/30 border border-indigo-400/40 rounded-2xl p-6"
+            >
+              <div className="flex items-start justify-between mb-1">
+                <span className="text-indigo-300 text-sm font-semibold uppercase tracking-wide">Retorno total estimado</span>
+                <Sparkles className="w-5 h-5 text-indigo-300" />
+              </div>
+              <div className="text-5xl font-extrabold text-white mb-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                {fmt(retornoTotal)}
+                <span className="text-indigo-300 text-xl font-bold">/mês</span>
+              </div>
+              <p className="text-indigo-200/70 text-sm">Economia em compras + valor do tempo recuperado pela equipe</p>
+            </motion.div>
+
+            <button
+              onClick={onCTAClick}
+              className="w-full py-4 rounded-2xl bg-[hsl(14,100%,57%)] hover:bg-[hsl(14,100%,50%)] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5"
+            >
+              <Sparkles size={18} />
+              Quero esse retorno — entrar na lista de espera
+            </button>
+          </div>
+        </motion.div>
+
+        <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0.2}
+          className="text-center text-indigo-300/50 text-xs mt-8"
+        >
+          * Estimativas baseadas em médias de clientes Zeno. Resultados reais variam conforme volume, poder de negociação e perfil de fornecedores.
+        </motion.p>
+      </div>
+    </section>
+  );
+}
+
+function SliderInput({
+  label, value, min, max, step, format, onChange, color
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  format: (v: number) => string;
+  onChange: (v: number) => void;
+  color: "indigo" | "orange" | "emerald";
+}) {
+  const colors = {
+    indigo: { track: "accent-indigo-400", text: "text-indigo-300" },
+    orange: { track: "accent-orange-400", text: "text-orange-300" },
+    emerald: { track: "accent-emerald-400", text: "text-emerald-300" },
+  };
+  const c = colors[color];
+  const pct = ((value - min) / (max - min)) * 100;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-slate-300 text-sm font-medium">{label}</span>
+        <span className={`${c.text} font-bold text-sm`}>{format(value)}</span>
+      </div>
+      <div className="relative h-2 bg-white/10 rounded-full">
+        <div
+          className={`absolute left-0 top-0 h-2 rounded-full transition-all duration-150 ${color === "indigo" ? "bg-indigo-400" : color === "orange" ? "bg-orange-400" : "bg-emerald-400"}`}
+          style={{ width: `${pct}%` }}
+        />
+        <input
+          type="range"
+          min={min} max={max} step={step}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className={`absolute inset-0 w-full h-2 opacity-0 cursor-pointer`}
+        />
+      </div>
+      <div className="flex justify-between mt-1 text-xs text-slate-500">
+        <span>{format(min)}</span>
+        <span>{format(max)}</span>
+      </div>
     </div>
   );
 }
