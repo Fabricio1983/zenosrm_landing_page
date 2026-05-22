@@ -40,7 +40,8 @@ export function WaitlistForm({
 
   const mutation = useMutation({
     mutationFn: async (data: WaitlistData) => {
-      const response = await fetch('/api/waitlist', {
+      const apiUrl = import.meta.env.VITE_WAITLIST_API_URL || '/api/waitlist';
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
