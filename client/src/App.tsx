@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LandingPage from "@/pages/LandingPage";
 import LeadsPage from "@/pages/LeadsPage";
+import FornecedoresPage from "@/pages/FornecedoresPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
       <Switch>
         <Route path="/" component={LandingPage} />
         <Route path="/leadsadmin" component={LeadsPage} />
+        <Route path="/para-fornecedores" component={FornecedoresPage} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>
